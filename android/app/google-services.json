@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "247288800844",
+    "firebase_url": "https://mobileauthv2-default-rtdb.firebaseio.com",
+    "project_id": "mobileauthv2",
+    "storage_bucket": "mobileauthv2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247288800844:android:97df21ff6b4dc7021576e9",
+        "android_client_info": {
+          "package_name": "com.example.kraapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzAC7XngyTqEcEuLn6ylCk8tg_LZqJ0_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
