@@ -56,6 +56,7 @@ dependencies:
   firebase_storage: ^11.4.1
   provider: ^6.0.5
   firebase_analytics: 10.6.3 
+  device_info: ^2.0.3
   
 
 

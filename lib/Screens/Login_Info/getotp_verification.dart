@@ -13,13 +13,10 @@ class GetMobileOtp extends StatefulWidget {
 }
 
 class _GetMobileOtp extends State<GetMobileOtp> {
-  String smscode = '';
-  final TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
 
   Future<void> signInWithMobile(BuildContext context) async {
     String phoneNumber = "+91" + phoneNumberController.text;
-
-    PhoneAuthCredential credential; // Declare credential variable
 
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
@@ -30,21 +27,16 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         print("verification Failed");
         print('verificationFailed---> ${ex}');
       },
-      codeSent: (String verificationId, int? resentToken) {
+      codeSent: (String verificationId, int? resendToken) {
         print("code sent");
         print('codeSent $verificationId');
-        verificationId = verificationId;
 
-        credential = PhoneAuthProvider.credential(
-            verificationId: verificationId,
-            smsCode: smscode); // Assign the value
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => OtpVerificationScreen(
               verificationId: verificationId,
-              // Pass the variable
-              credential: credential, // Pass the variable
+              resendToken: resendToken,
             ),
           ),
         );

@@ -44,42 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCkvgyFkEC5IafbgOmvLRwWnO3xsgG4nZs',
-    appId: '1:247288800844:web:56955f819ba453231576e9',
-    messagingSenderId: '247288800844',
-    projectId: 'mobileauthv2',
-    authDomain: 'mobileauthv2.firebaseapp.com',
-    databaseURL: 'https://mobileauthv2-default-rtdb.firebaseio.com',
-    storageBucket: 'mobileauthv2.appspot.com',
-    measurementId: 'G-L8PBEZTWMB',
+    apiKey: 'AIzaSyAxMj1T3o-ufX9GjdiwMQUjbkcWZSgT6i8',
+    appId: '1:87513680665:web:4604b41b7b42c5bb1a1388',
+    messagingSenderId: '87513680665',
+    projectId: 'mobileauthv3-c6f14',
+    authDomain: 'mobileauthv3-c6f14.firebaseapp.com',
+    storageBucket: 'mobileauthv3-c6f14.appspot.com',
+    measurementId: 'G-H8TWESFR01',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDzAC7XngyTqEcEuLn6ylCk8tg_LZqJ0_8',
-    appId: '1:247288800844:android:97df21ff6b4dc7021576e9',
-    messagingSenderId: '247288800844',
-    projectId: 'mobileauthv2',
-    databaseURL: 'https://mobileauthv2-default-rtdb.firebaseio.com',
-    storageBucket: 'mobileauthv2.appspot.com',
+    apiKey: 'AIzaSyBnT2fq94P5oxAr6-mHcsx-cYq1-KkYsiQ',
+    appId: '1:87513680665:android:d98b6ce2ade3e1621a1388',
+    messagingSenderId: '87513680665',
+    projectId: 'mobileauthv3-c6f14',
+    storageBucket: 'mobileauthv3-c6f14.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBDB97X6Rsu5e1JvdDrzIYSmfKfvtWhlXo',
-    appId: '1:247288800844:ios:f26a0d3f20a5713c1576e9',
-    messagingSenderId: '247288800844',
-    projectId: 'mobileauthv2',
-    databaseURL: 'https://mobileauthv2-default-rtdb.firebaseio.com',
-    storageBucket: 'mobileauthv2.appspot.com',
+    apiKey: 'AIzaSyB-xEV0xL9nlrEb0Zpw0qo5dsofJdDzUOI',
+    appId: '1:87513680665:ios:cc29c90f92f31bab1a1388',
+    messagingSenderId: '87513680665',
+    projectId: 'mobileauthv3-c6f14',
+    storageBucket: 'mobileauthv3-c6f14.appspot.com',
     iosBundleId: 'com.example.kraapp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBDB97X6Rsu5e1JvdDrzIYSmfKfvtWhlXo',
-    appId: '1:247288800844:ios:4108567c67b5145d1576e9',
-    messagingSenderId: '247288800844',
-    projectId: 'mobileauthv2',
-    databaseURL: 'https://mobileauthv2-default-rtdb.firebaseio.com',
-    storageBucket: 'mobileauthv2.appspot.com',
+    apiKey: 'AIzaSyB-xEV0xL9nlrEb0Zpw0qo5dsofJdDzUOI',
+    appId: '1:87513680665:ios:1b2827bb24806e1a1a1388',
+    messagingSenderId: '87513680665',
+    projectId: 'mobileauthv3-c6f14',
+    storageBucket: 'mobileauthv3-c6f14.appspot.com',
     iosBundleId: 'com.example.kraapp.RunnerTests',
   );
 }
