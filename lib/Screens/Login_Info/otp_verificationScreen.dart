@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
 import 'package:kraapp/app_color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String verificationId;
@@ -33,17 +37,35 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   void _otpChanged(int index, String value) {
     if (value.isNotEmpty) {
       if (index < 5) {
-        FocusScope.of(context).nextFocus(); // Move focus to the next TextField
+        FocusScope.of(context).nextFocus();
       } else {}
     }
   }
 
-  String selectedGender = 'Male';
+  String selectedGender = '';
 
   void handleRadioValueChange(String? value) {
-    setState(() {
-      selectedGender = value!;
-    });
+    if (value != null) {
+      setState(() {
+        selectedGender = value;
+      });
+    }
+    ;
+  }
+
+  Future<void> createToken() async {
+    final pref = await SharedPreferences.getInstance();
+
+    String token = generateToken(32);
+
+    await pref.setString('token', token);
+    print(token);
+  }
+
+  String generateToken(int length) {
+    final random = Random.secure();
+    var values = List<int>.generate(length, (i) => random.nextInt(256));
+    return base64Url.encode(values);
   }
 
   void signInWithOtp(BuildContext context) async {
@@ -56,9 +78,9 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
         verificationId: widget.verificationId,
         smsCode: smsCode,
       );
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      User user = userCredential.user!;
+      //UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      // User user = userCredential.user!;
 
       showDialog(
         context: context,
@@ -325,36 +347,33 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                             Row(
                               children: <Widget>[
                                 Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      handleRadioValueChange("Male");
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: AppColors.lightShadow,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            'Male',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontFamily: 'poppins',
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Radio(
-                                            value: 'Male',
-                                            groupValue: selectedGender,
-                                            onChanged: handleRadioValueChange,
-                                            activeColor: AppColors.primaryColor,
-                                          ),
-                                        ],
-                                      ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColors.lightShadow,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 3, horizontal: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          'Male',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: 'poppins',
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Radio(
+                                          value: 'Male',
+                                          groupValue: selectedGender,
+                                          onChanged: (value) {
+                                            handleRadioValueChange(value);
+                                          },
+                                          activeColor: AppColors.primaryColor,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -362,36 +381,33 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                   width: 10,
                                 ),
                                 Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      handleRadioValueChange("Female");
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 10),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.lightShadow,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            'Female',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontFamily: 'poppins',
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Radio(
-                                            value: 'Female',
-                                            groupValue: selectedGender,
-                                            onChanged: handleRadioValueChange,
-                                            activeColor: AppColors.primaryColor,
-                                          ),
-                                        ],
-                                      ),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 3, horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.lightShadow,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          'Female',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: 'poppins',
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Radio(
+                                          value: 'Female',
+                                          groupValue: selectedGender,
+                                          onChanged: (value) {
+                                            handleRadioValueChange(value);
+                                          },
+                                          activeColor: AppColors.primaryColor,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -409,11 +425,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
+                                    createToken();
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              HomeScreen(user),
+                                          builder: (context) => HomeScreen(),
                                         ));
                                   }
                                 },

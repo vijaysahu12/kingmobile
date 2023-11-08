@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:device_info/device_info.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/Login_Info/otp_verificationScreen.dart';
 
 import 'package:kraapp/app_color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GetMobileOtp extends StatefulWidget {
   const GetMobileOtp({super.key});
@@ -17,6 +19,13 @@ class _GetMobileOtp extends State<GetMobileOtp> {
 
   Future<void> signInWithMobile(BuildContext context) async {
     String phoneNumber = "+91" + phoneNumberController.text;
+    String? imei = await getImei();
+
+    if (imei != null) {
+      print('IMEI: $imei');
+    } else {
+      print('Failed to get IMEI');
+    }
 
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
@@ -27,7 +36,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         print("verification Failed");
         print('verificationFailed---> ${ex}');
       },
-      codeSent: (String verificationId, int? resendToken) {
+      codeSent: (String verificationId, int? resendToken) async {
         print("code sent");
         print('codeSent $verificationId');
 
@@ -45,6 +54,24 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         print(' $verificationId');
       },
     );
+  }
+
+  Future<String?> getImei() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    try {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        return 'Device Type is Android  and AndroidID: ${androidInfo.androidId}';
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        return 'Device Type is IOS & IosId ${iosInfo.identifierForVendor}';
+      }
+    } catch (e) {
+      print('Error getting IMEI: $e');
+      return null;
+    }
+    return null;
   }
 
   @override
@@ -126,8 +153,11 @@ class _GetMobileOtp extends State<GetMobileOtp> {
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         signInWithMobile(context);
+                        SharedPreferences pref =
+                            await SharedPreferences.getInstance();
+                        pref.setBool('isLoggedIn', true);
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
