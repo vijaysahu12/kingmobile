@@ -19,7 +19,7 @@ class HttpRequestHelper {
       Uri.parse(url),
       headers: {
         HttpHeaders.authorizationHeader:
-            "Bearer " + _sharedPref.read("KingUserToken"),
+            "Bearer " + await _sharedPref.read("KingUserToken"),
       },
     );
   }
@@ -29,7 +29,7 @@ class HttpRequestHelper {
       Uri.parse(url),
       headers: {
         HttpHeaders.authorizationHeader:
-            "Bearer " + _sharedPref.read("KingUserToken"),
+            "Bearer " + await _sharedPref.read("KingUserToken"),
       },
     );
 

@@ -4,10 +4,12 @@ import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
 import 'package:kraapp/Screens/Profile_and_settings/notifications.dart';
 import 'package:kraapp/Screens/Profile_and_settings/personal_details.dart';
 import 'package:kraapp/Screens/Profile_and_settings/settings.dart';
+import 'package:kraapp/Services/Helpers/prodUrl.dart';
+import 'package:kraapp/Services/Helpers/sharedPref.dart';
 // import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
 import 'package:kraapp/app_color.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:sliding_switch/sliding_switch.dart';
 
 class PersonalInformation extends StatefulWidget {
@@ -18,10 +20,7 @@ class PersonalInformation extends StatefulWidget {
 }
 
 class _PersonalInformation extends State<PersonalInformation> {
-  Future<void> removeToken() async {
-    final pref = await SharedPreferences.getInstance();
-    await pref.clear();
-  }
+  SharedPref _sharedPref = SharedPref();
 
   bool isSwtitched = false;
   @override
@@ -227,7 +226,7 @@ class _PersonalInformation extends State<PersonalInformation> {
             ),
             GestureDetector(
               onTap: () {
-                removeToken();
+                _sharedPref.remove(SessionConstants.Token);
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => GetMobileOtp()),

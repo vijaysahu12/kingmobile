@@ -59,6 +59,7 @@ dependencies:
   device_info: ^2.0.3
   device_imei: ^0.0.4+1
   unique_identifier: ^0.3.0
+  dio: ^5.3.3
   
 
 

@@ -1,12 +1,8 @@
-// import 'dart:async';
-
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-//import 'package:kraapp/Screens/all_screens.dart';
 import 'package:kraapp/Screens/login_and_register/login_screen.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+
 import '../firebase_options.dart';
 
 void main() async {
@@ -25,33 +21,29 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // bool isLoggedIn = false;
-  // late User user;
+//   SharedPref _sharedPref = SharedPref();
 
-  // getLoggedInState() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   bool? value = prefs.getBool('isLoggedIn');
+//   @override
+//   void initState() async {
+//     super.initState();
+//     //final tokenValue = await _sharedPref.read(SessionConstants.Token);
+//     bool isLoggedIn = false;
 
-  //   if (value != null) {
-  //     setState(() {
-  //       isLoggedIn = value;
-  //     });
-  //   }
-  // }
+//     // if (tokenValue != '') {
+//     //   isLoggedIn = true;
+//     // }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getLoggedInState();
-  //   Timer(Duration(minutes: 15), () {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => isLoggedIn ? HomeScreen() : LoginScreen(),
-  //       ),
-  //     );
-  //   });
-  // }
+// // isLoggedIn ? HomeScreen() :
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(
+//         builder: (context) => LoginScreen(),
+//       ),
+//     );
+//     // Timer(Duration(seconds: 15), () {
+
+//     // });
+//   }
 
   @override
   Widget build(BuildContext context) {

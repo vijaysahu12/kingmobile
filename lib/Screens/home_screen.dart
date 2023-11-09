@@ -21,6 +21,7 @@ class _Personal extends State<Personal> {
 
   @override
   void initState() {
+    print("Home Screen");
     super.initState();
     fetchData();
   }

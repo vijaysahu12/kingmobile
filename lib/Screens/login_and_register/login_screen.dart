@@ -9,7 +9,7 @@ import 'package:kraapp/Services/Helpers/sharedPref.dart';
 
 import 'package:kraapp/app_color.dart';
 //import 'package:kraapp/Screens/login_and_register/register_screen.dart';
-// import 'package:http/http.dart' as http;
+
 import 'package:kraapp/Services/Helpers/prodUrl.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,6 +30,7 @@ class _LoginScreen extends State<LoginScreen> {
 
   void _handleSignInWithEmailPassword() async {
     if (_formKey.currentState!.validate()) {
+      print("login button is clicked");
       if (_isChecked) {
         String _emailOrMobile = _usernameController.text;
         String _password = _passwordController.text;
@@ -44,7 +45,7 @@ class _LoginScreen extends State<LoginScreen> {
 
         final apiUrl = ApiConstants.baseUrl +
             ApiConstants.login +
-            '?username=$_emailOrMobile&password=$_password';
+            '?userName=$_emailOrMobile&password=$_password';
 
         // final response = await http.get(Uri.parse(apiUrl));
         final response = await _httpHelper.getWithOutToken(apiUrl);

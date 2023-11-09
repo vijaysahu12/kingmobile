@@ -36,7 +36,7 @@ class _HomeScreen extends State<HomeScreen> {
     final apiUrl = ApiConstants.baseUrl + ApiConstants.getProducts;
     final response = await _httpHelper.get(apiUrl);
 
-    SharedPref _sharedPref = SharedPref();
+    SharedPref _sharedPref = new SharedPref();
 
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = json.decode(response.body);
@@ -77,7 +77,6 @@ class _HomeScreen extends State<HomeScreen> {
     } else {
       print('API Request Failed with status code: ${response.statusCode}');
     }
-
     return [];
   }
 

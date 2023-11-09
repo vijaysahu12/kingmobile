@@ -2,9 +2,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class SharedPref {
-  read(String key) async {
+  Future<String> read(String key) async {
     final prefs = await SharedPreferences.getInstance();
-    return (prefs.getString(key));
+    var result = prefs.getString(key);
+    return (result == null ? '' : result.toString());
   }
 
   save(String key, value) async {
