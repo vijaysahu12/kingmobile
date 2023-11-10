@@ -11,7 +11,6 @@ import 'package:kraapp/app_color.dart';
 //import 'package:kraapp/Screens/login_and_register/register_screen.dart';
 
 import 'package:kraapp/Services/Helpers/prodUrl.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,6 +41,7 @@ class _LoginScreen extends State<LoginScreen> {
           });
           return;
         }
+        _httpHelper.checkInternetConnection(context);
 
         final apiUrl = ApiConstants.baseUrl +
             ApiConstants.login +

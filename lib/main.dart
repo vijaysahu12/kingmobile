@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:kraapp/Screens/all_screens.dart';
 
 import 'package:kraapp/Screens/login_and_register/login_screen.dart';
+
+import 'package:kraapp/Services/Helpers/sharedPref.dart';
 
 import '../firebase_options.dart';
 
@@ -21,37 +24,28 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-//   SharedPref _sharedPref = SharedPref();
+  bool isLoggedIn = false;
+  SharedPref _sharedPref = SharedPref();
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
 
-//   @override
-//   void initState() async {
-//     super.initState();
-//     //final tokenValue = await _sharedPref.read(SessionConstants.Token);
-//     bool isLoggedIn = false;
+  void checkLoginStatus() async {
+    String userId = await _sharedPref.read("KingUserToken");
 
-//     // if (tokenValue != '') {
-//     //   isLoggedIn = true;
-//     // }
-
-// // isLoggedIn ? HomeScreen() :
-//     Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(
-//         builder: (context) => LoginScreen(),
-//       ),
-//     );
-//     // Timer(Duration(seconds: 15), () {
-
-//     // });
-//   }
+    setState(() {
+      isLoggedIn = userId.isNotEmpty;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Color.fromARGB(255, 252, 251, 251),
-        body: LoginScreen(),
+        body: isLoggedIn ? HomeScreen() : LoginScreen(),
       ),
     );
   }

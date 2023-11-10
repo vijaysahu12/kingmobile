@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
+
 // import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
 import 'package:kraapp/Screens/Profile_and_settings/notifications.dart';
 import 'package:kraapp/Screens/Profile_and_settings/personal_details.dart';
 import 'package:kraapp/Screens/Profile_and_settings/settings.dart';
-import 'package:kraapp/Services/Helpers/prodUrl.dart';
+import 'package:kraapp/Screens/login_and_register/login_screen.dart';
+
 import 'package:kraapp/Services/Helpers/sharedPref.dart';
 // import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
@@ -226,10 +227,10 @@ class _PersonalInformation extends State<PersonalInformation> {
             ),
             GestureDetector(
               onTap: () {
-                _sharedPref.remove(SessionConstants.Token);
+                _sharedPref.remove("KingUserId");
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => GetMobileOtp()),
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
                     (route) => false);
               },
               child: Container(

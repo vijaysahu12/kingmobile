@@ -60,6 +60,7 @@ dependencies:
   device_imei: ^0.0.4+1
   unique_identifier: ^0.3.0
   dio: ^5.3.3
+  connectivity_plus: ^5.0.1
   
 
 

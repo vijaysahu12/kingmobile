@@ -24,9 +24,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  int _currentIndex = 0;
   HttpRequestHelper _httpHelper = HttpRequestHelper();
+  int _currentIndex = 0;
+
   void _onTabTapped(int index) {
+    _httpHelper.checkInternetConnection(context);
     setState(() {
       _currentIndex = index;
     });
