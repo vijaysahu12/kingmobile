@@ -21,7 +21,6 @@ class _TradingScreenState extends State<TradingScreen> {
   @override
   void initState() {
     super.initState();
-
     productsFuture = fetchData();
   }
 

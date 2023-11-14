@@ -13,14 +13,15 @@ AppBar buildAppBar(BuildContext context, int currentIndex) {
       title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage('images/seshi.jpg'),
+            backgroundImage: NetworkImage(
+                'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png'),
             radius: 20,
           ),
           SizedBox(
             width: 10,
           ),
           Text(
-            'Seshadri Kaku',
+            'User Name',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:kraapp/app_color.dart';
+import 'package:kraapp/Services/Helpers/prodUrl.dart';
 
 class CommunityGroup extends StatefulWidget {
   const CommunityGroup({super.key});
@@ -13,17 +14,10 @@ class CommunityGroup extends StatefulWidget {
 
 class _CommunityGroup extends State<CommunityGroup> {
   bool isCommunitySelected = true;
-  String apiUrl = 'https://fakestoreapi.com/products';
+  String apiUrl = ApiConstants.getProducts;
 
   Future<List<Map<String, dynamic>>> fetchData() async {
-    String url;
-    if (isCommunitySelected) {
-      url = apiUrl;
-    } else {
-      url = apiUrl;
-    }
-
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
@@ -127,7 +121,12 @@ class _CommunityGroup extends State<CommunityGroup> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Image.network(
-                                    data[index]['image'],
+                                    data[index]['image'] != null &&
+                                            data[index]['image'].isNotEmpty
+                                        ? data[index]['image']
+                                        : 'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
+                                    height: 100,
+                                    width: 100,
                                   ),
                                 ),
                               );
@@ -155,16 +154,22 @@ class _CommunityGroup extends State<CommunityGroup> {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(40),
                                         child: Image.network(
-                                          '${data[index]['image']}',
-                                          width: 80,
-                                          height: 80,
+                                          data[index]['image'] != null &&
+                                                  data[index]['image']
+                                                      .isNotEmpty
+                                              ? data[index]['image']
+                                              : 'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
+                                          height: 100,
+                                          width: 100,
                                         ),
                                       ),
                                       Expanded(
                                         child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              '${data[index]['category']}',
+                                              data[index]['name'],
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   color: AppColors.primaryColor,
@@ -174,13 +179,12 @@ class _CommunityGroup extends State<CommunityGroup> {
                                               height: 5,
                                             ),
                                             Text(
-                                              '${data[index]['title']}',
+                                              data[index]['description'],
                                               style: TextStyle(fontSize: 10),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Spacer(),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor:

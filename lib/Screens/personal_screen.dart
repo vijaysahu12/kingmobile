@@ -56,7 +56,7 @@ class _PersonalInformation extends State<PersonalInformation> {
                       ),
                       CircleAvatar(
                         backgroundImage: AssetImage(
-                          'images/seshi.jpg',
+                          'images/person_logo.png',
                         ),
                         radius: 25,
                         backgroundColor: AppColors.lightShadow,
@@ -68,14 +68,14 @@ class _PersonalInformation extends State<PersonalInformation> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Seshadri Kaku',
+                            'User Name',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 fontFamily: 'poppins'),
                           ),
                           Text(
-                            'kakuseshadri033@gmail.com',
+                            'UserEmail@gmail.com',
                             style: TextStyle(
                                 fontSize: 12,
                                 color: AppColors.grey,

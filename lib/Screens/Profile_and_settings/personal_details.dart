@@ -113,11 +113,11 @@ class _PersonalDetails extends State<PersonalDetails> {
                           ),
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Seshadri Kaku',
+                            hintText: 'Name',
                             hintStyle: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.dark),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -152,11 +152,11 @@ class _PersonalDetails extends State<PersonalDetails> {
                           ),
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: '20-05-2002',
+                            hintText: 'Date of Birth',
                             hintStyle: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.dark),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -283,11 +283,11 @@ class _PersonalDetails extends State<PersonalDetails> {
                           ),
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: '(+91) 630-937-3318',
+                            hintText: 'Mobile',
                             hintStyle: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.dark),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -322,11 +322,11 @@ class _PersonalDetails extends State<PersonalDetails> {
                           ),
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'kakuseshadri033@gmail.com',
+                            hintText: 'Email Id',
                             hintStyle: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.dark),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),

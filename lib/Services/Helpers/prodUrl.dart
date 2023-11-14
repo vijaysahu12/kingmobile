@@ -1,6 +1,6 @@
 class ApiConstants {
   static String baseUrl = 'http://mobile.kingresearch.co.in/api/';
-  static String login = "Account/login";
+  static String login = baseUrl + "Account/login";
   static String getProducts = baseUrl + 'Product/GetProducts/course';
   static String usersEndpoint = '/users';
 }

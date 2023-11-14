@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:device_info/device_info.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/Login_Info/otp_verificationScreen.dart';
+import 'package:kraapp/Screens/all_screens.dart';
+import 'package:kraapp/Services/Helpers/httpRequest.dart';
+import 'package:kraapp/Services/Helpers/prodUrl.dart';
+import 'package:kraapp/Services/Helpers/sharedPref.dart';
 
 import 'package:kraapp/app_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,10 +22,16 @@ class GetMobileOtp extends StatefulWidget {
 
 class _GetMobileOtp extends State<GetMobileOtp> {
   TextEditingController phoneNumberController = TextEditingController();
+  HttpRequestHelper _httpHelper = HttpRequestHelper();
 
   Future<void> signInWithMobile(BuildContext context) async {
-    String phoneNumber = "+91" + phoneNumberController.text;
+    //this.signInWithOtp();
+    this.signInWithoutMobileOtp();
+  }
+
+  signInWithOtp() async {
     String? imei = await getImei();
+    String phoneNumber = "+91" + phoneNumberController.text;
 
     if (imei != null) {
       print('IMEI: $imei');
@@ -54,6 +66,74 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         print(' $verificationId');
       },
     );
+  }
+
+  signInWithoutMobileOtp() async {
+    if (true) {
+      print("login button is clicked");
+      if (true) {
+        String _emailOrMobile = "+91" + phoneNumberController.text;
+        String _password = '123456';
+
+        // if (_emailOrMobile.isEmpty || _password.isEmpty) {
+        //   setState(() {
+        //     _useremailError = _emailOrMobile.isEmpty;
+        //     _userPassword = _password.isEmpty;
+        //   });
+        //   return;
+        // }
+        _httpHelper.checkInternetConnection(context);
+
+        final apiUrl = ApiConstants.baseUrl +
+            ApiConstants.login +
+            '?userName=$_emailOrMobile&password=$_password';
+
+        // final response = await http.get(Uri.parse(apiUrl));
+        final response = await _httpHelper.getWithOutToken(apiUrl);
+
+        if (response.statusCode == 200) {
+          SharedPref _sharedPref = SharedPref();
+          Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+          if (jsonResponse.containsKey('statusCode') &&
+              jsonResponse['statusCode'] == 200) {
+            _sharedPref.save("KingUserId", jsonResponse['data']["publicKey"]);
+            _sharedPref.save("KingUserToken", jsonResponse['data']["token"]);
+            _sharedPref.save(
+                "KingUserProfileImage", jsonResponse['data']["image"]);
+
+            print(jsonResponse['data']);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+          } else {
+            String errorMessage = jsonResponse['message'];
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Login Failed'),
+                  content: Text(errorMessage),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        } else {
+          print('API Request Failed with status code: ${response.statusCode}');
+        }
+      }
+    }
   }
 
   Future<String?> getImei() async {

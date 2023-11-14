@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
-import 'package:kraapp/Screens/login_and_register/login_screen.dart';
+//import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
 import 'package:kraapp/Services/Helpers/sharedPref.dart';
 
@@ -45,7 +46,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: isLoggedIn ? HomeScreen() : LoginScreen(),
+        body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
       ),
     );
   }
