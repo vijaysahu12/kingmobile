@@ -1,8 +1,18 @@
 import 'package:dio/dio.dart';
+import 'package:kraapp/Helpers/ApiUrls.dart';
+import 'package:kraapp/Helpers/sharedPref.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-
+  final SharedPref _session = new SharedPref();
+  // Constructor to initialize Dio with common configurations
+  ApiService() {
+    final YOUR_ACCESS_TOKEN = _session.read(SessionConstants.Token);
+    _dio.options.headers = {
+      'Content-Type': 'application/json', // Add your headers here
+      'Authorization': 'Bearer ' + YOUR_ACCESS_TOKEN,
+    };
+  }
   Future<ApiResponse<T>> get<T>(
       String url, T Function(dynamic) fromJsonT) async {
     try {
