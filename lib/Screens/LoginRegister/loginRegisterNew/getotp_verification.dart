@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreen.dart';
 import 'package:kraapp/Screens/all_screens.dart';
+import 'package:kraapp/Services/AccountService.dart';
 import '../../../Helpers/httpRequest.dart';
 import '../../../Helpers/ApiUrls.dart';
 import '../../../Helpers/sharedPref.dart';
@@ -25,6 +26,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController countryCodeController = TextEditingController();
   HttpRequestHelper _httpHelper = HttpRequestHelper();
   SharedPref _sharedPref = SharedPref();
 
@@ -34,6 +36,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   }
 
   String selectedGender = '';
+  AccountService _accountService = new AccountService();
 
   void handleRadioValueChange(String? value) async {
     setState(() {
@@ -43,6 +46,30 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   }
 
   signInWithOtp() async {
+    final response = _accountService.login(
+        phoneNumberController.text, countryCodeController.text);
+
+    if (response) {
+      //ToDo: Pop OTP Screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OtpVerificationScreen(
+            verificationId: 'verificationId',
+            resendToken: 1,
+          ),
+        ),
+      );
+    } else {
+      //ToDo: Try Again invalid mobile number
+    }
+  }
+
+  verifyMobileOtp() {
+    //ToDO: if verification confirmed then go to profile update screen else stay there with try again message
+  }
+
+  signInWithOtpOld() async {
     String? imei = await getImei();
     String phoneNumber = "+91" + phoneNumberController.text;
 
