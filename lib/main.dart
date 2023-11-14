@@ -1,13 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
+import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/getotp_verification.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
 //import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
-import 'package:kraapp/Services/Helpers/sharedPref.dart';
-
-import '../firebase_options.dart';
+import 'Helpers/sharedPref.dart';
+import 'Screens/Common/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

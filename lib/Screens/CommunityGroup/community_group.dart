@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:kraapp/app_color.dart';
-import 'package:kraapp/Services/Helpers/prodUrl.dart';
+import '../../Helpers/ApiUrls.dart';
+import '../Constants/app_color.dart';
 
 class CommunityGroup extends StatefulWidget {
   const CommunityGroup({super.key});
@@ -14,7 +14,7 @@ class CommunityGroup extends StatefulWidget {
 
 class _CommunityGroup extends State<CommunityGroup> {
   bool isCommunitySelected = true;
-  String apiUrl = ApiConstants.getProducts;
+  String apiUrl = ApiUrlConstants.getProducts;
 
   Future<List<Map<String, dynamic>>> fetchData() async {
     final response = await http.get(Uri.parse(apiUrl));

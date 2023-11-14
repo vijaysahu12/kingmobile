@@ -1,8 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:kraapp/app_color.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../Constants/app_color.dart';
 
 class Personal extends StatefulWidget {
   const Personal({super.key});

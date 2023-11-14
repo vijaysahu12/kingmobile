@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:kraapp/Services/Helpers/prodUrl.dart';
+import 'package:kraapp/Helpers/ApiUrls.dart';
 import 'dart:convert';
-
-import 'package:kraapp/app_color.dart';
+import '../Constants/app_color.dart';
 
 class TradingScreen extends StatefulWidget {
   const TradingScreen({Key? key});
@@ -25,7 +23,7 @@ class _TradingScreenState extends State<TradingScreen> {
   }
 
   Future<List<Map<String, dynamic>>> fetchData() async {
-    final response = await http.get(Uri.parse(ApiConstants.getProducts));
+    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
 

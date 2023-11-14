@@ -6,8 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
-import 'package:kraapp/app_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../Constants/app_color.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String verificationId;

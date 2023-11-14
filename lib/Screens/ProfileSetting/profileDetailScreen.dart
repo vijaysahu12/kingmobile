@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/getotp_verification.dart';
 
 // import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
-import 'package:kraapp/Screens/Profile_and_settings/notifications.dart';
-import 'package:kraapp/Screens/Profile_and_settings/personal_details.dart';
-import 'package:kraapp/Screens/Profile_and_settings/settings.dart';
-import 'package:kraapp/Screens/login_and_register/login_screen.dart';
+import 'package:kraapp/Screens/ProfileSetting/notifications.dart';
+import 'package:kraapp/Screens/ProfileSetting/personal_details.dart';
+import 'package:kraapp/Screens/ProfileSetting/settings.dart';
+//import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
-import 'package:kraapp/Services/Helpers/sharedPref.dart';
 // import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
-import 'package:kraapp/app_color.dart';
+import 'package:kraapp/Screens/Constants/app_color.dart';
 
 import 'package:sliding_switch/sliding_switch.dart';
+
+import '../../Helpers/sharedPref.dart';
 
 class PersonalInformation extends StatefulWidget {
   const PersonalInformation({super.key});
@@ -22,6 +24,25 @@ class PersonalInformation extends StatefulWidget {
 
 class _PersonalInformation extends State<PersonalInformation> {
   SharedPref _sharedPref = SharedPref();
+
+  String _userName = '';
+  String _userEmail = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    String fullName = await _sharedPref.read("KingUserProfileName") ?? '';
+    String email = await _sharedPref.read("KingUserProfileEmail") ?? '';
+
+    setState(() {
+      _userName = fullName.replaceAll('"', '');
+      _userEmail = email.replaceAll('"', '');
+    });
+  }
 
   bool isSwtitched = false;
   @override
@@ -68,14 +89,16 @@ class _PersonalInformation extends State<PersonalInformation> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'User Name',
+                            _userName.isNotEmpty ? _userName : 'User Name',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 fontFamily: 'poppins'),
                           ),
                           Text(
-                            'UserEmail@gmail.com',
+                            _userEmail.isNotEmpty
+                                ? _userEmail
+                                : 'UserEmail@gmail.com',
                             style: TextStyle(
                                 fontSize: 12,
                                 color: AppColors.grey,
@@ -227,10 +250,10 @@ class _PersonalInformation extends State<PersonalInformation> {
             ),
             GestureDetector(
               onTap: () {
-                _sharedPref.remove("KingUserId");
+                _sharedPref.remove("KingUserToken");
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    MaterialPageRoute(builder: (context) => GetMobileOtp()),
                     (route) => false);
               },
               child: Container(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kraapp/app_color.dart';
 import 'package:sliding_switch/sliding_switch.dart';
+
+import '../Constants/app_color.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

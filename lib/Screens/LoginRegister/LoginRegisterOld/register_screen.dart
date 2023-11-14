@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kraapp/Screens/login_and_register/login_screen.dart';
-import 'package:kraapp/app_color.dart';
-import 'package:kraapp/Screens/login_and_register/verification_screen.dart';
+import 'package:kraapp/Screens/LoginRegister/LoginRegisterOld/login_screen.dart';
+
+import 'package:kraapp/Screens/LoginRegister/LoginRegisterOld/verification_screen.dart';
+
+import '../../Constants/app_color.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

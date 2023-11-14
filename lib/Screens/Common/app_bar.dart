@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kraapp/app_color.dart';
+import '../Constants/app_color.dart';
 
 AppBar buildAppBar(BuildContext context, int currentIndex) {
   if (currentIndex == 3) {
@@ -13,8 +13,7 @@ AppBar buildAppBar(BuildContext context, int currentIndex) {
       title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png'),
+            backgroundImage: AssetImage('images/person_logo.png'),
             radius: 20,
           ),
           SizedBox(

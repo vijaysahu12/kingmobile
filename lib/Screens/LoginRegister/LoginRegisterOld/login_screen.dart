@@ -4,13 +4,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/all_screens.dart';
-import 'package:kraapp/Services/Helpers/httpRequest.dart';
-import 'package:kraapp/Services/Helpers/sharedPref.dart';
+import 'package:kraapp/Helpers/httpRequest.dart';
+import 'package:kraapp/Helpers/sharedPref.dart';
 
-import 'package:kraapp/app_color.dart';
 //import 'package:kraapp/Screens/login_and_register/register_screen.dart';
 
-import 'package:kraapp/Services/Helpers/prodUrl.dart';
+import 'package:kraapp/Helpers/ApiUrls.dart';
+
+import '../../Constants/app_color.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -43,8 +44,8 @@ class _LoginScreen extends State<LoginScreen> {
         }
         _httpHelper.checkInternetConnection(context);
 
-        final apiUrl = ApiConstants.baseUrl +
-            ApiConstants.login +
+        final apiUrl = ApiUrlConstants.baseUrl +
+            ApiUrlConstants.login +
             '?userName=$_emailOrMobile&password=$_password';
 
         // final response = await http.get(Uri.parse(apiUrl));

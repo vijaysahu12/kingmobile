@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kraapp/app_color.dart';
 import 'package:kraapp/main.dart';
+
+import '../../Constants/app_color.dart';
 
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({super.key});

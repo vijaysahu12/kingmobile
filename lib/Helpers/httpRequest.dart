@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:kraapp/Services/Helpers/sharedPref.dart';
-import 'package:kraapp/app_color.dart';
+import 'package:kraapp/Helpers/sharedPref.dart';
+import 'package:kraapp/Screens/Constants/app_color.dart';
 
 class HttpRequestHelper {
   SharedPref _sharedPref = SharedPref();
@@ -48,7 +48,7 @@ class HttpRequestHelper {
     );
   }
 
-  Future<dynamic> Post(String url) async {
+  Future<dynamic> post(String url) async {
     return await http.get(
       Uri.parse(url),
       headers: {

@@ -4,16 +4,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import 'package:kraapp/Screens/community_group.dart';
-import 'package:kraapp/Screens/home_screen.dart';
-import 'package:kraapp/Screens/personal_screen.dart';
-import 'package:kraapp/Screens/trading_screen.dart';
-import 'package:kraapp/Services/Helpers/httpRequest.dart';
-import 'package:kraapp/Services/Helpers/sharedPref.dart';
-import 'package:kraapp/app_bar.dart';
+import 'package:kraapp/Screens/CommunityGroup/community_group.dart';
+import 'package:kraapp/Screens/Home/home_screen.dart';
+import 'package:kraapp/Screens/ProfileSetting/profileDetailScreen.dart';
+import 'package:kraapp/Screens/Product/trading_screen.dart';
+import 'package:kraapp/Screens/Common/app_bar.dart';
 
-import 'package:kraapp/bottom_navigationbar.dart';
-import 'package:kraapp/Services/Helpers/prodUrl.dart';
+import 'package:kraapp/Screens/Common/bottom_navigationbar.dart';
+
+import '../Helpers/httpRequest.dart';
+import '../Helpers/ApiUrls.dart';
+import '../Helpers/sharedPref.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Future<List> GetProducts() async {
-    final apiUrl = ApiConstants.baseUrl + ApiConstants.getProducts;
+    final apiUrl = ApiUrlConstants.baseUrl + ApiUrlConstants.getProducts;
     final response = await _httpHelper.get(apiUrl);
 
     SharedPref _sharedPref = new SharedPref();
