@@ -5,7 +5,7 @@ class SharedPref {
   read(String key) async {
     final prefs = await SharedPreferences.getInstance();
     var result = prefs.getString(key);
-    return (result == null ? '' : result.toString());
+    return result;
   }
 
   save(String key, value) async {

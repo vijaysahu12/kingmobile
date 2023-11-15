@@ -1,7 +1,7 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import '../Constants/app_color.dart';
 
@@ -15,7 +15,6 @@ class Personal extends StatefulWidget {
 class _Personal extends State<Personal> {
   String selectedButton = 'NSE';
   String selectedMarketButton = 'Gainers';
-  // String activeButton = 'Gainers';
 
   String apiUrl = 'https://fakestoreapi.com/products';
   List<Map<String, dynamic>> information = [];

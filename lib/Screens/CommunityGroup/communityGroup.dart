@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../Helpers/ApiUrls.dart';
+import '../../Models/Response/CommunityGroupResponse.dart';
 import '../Constants/app_color.dart';
 
 class CommunityGroup extends StatefulWidget {
@@ -14,14 +15,20 @@ class CommunityGroup extends StatefulWidget {
 
 class _CommunityGroup extends State<CommunityGroup> {
   bool isCommunitySelected = true;
-  String apiUrl = ApiUrlConstants.getProducts;
 
-  Future<List<Map<String, dynamic>>> fetchData() async {
-    final response = await http.get(Uri.parse(apiUrl));
-
+  Future<List<CommunityGroupResponse>?> fetchData() async {
+    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return List<Map<String, dynamic>>.from(data);
+      List<CommunityGroupResponse>? list = null;
+      // ignore: unnecessary_null_comparison
+      if (response != null) {
+        final List parsedList = json.decode(response.body);
+        list = parsedList
+            .map((val) => CommunityGroupResponse.fromJson(val))
+            .toList();
+        print(list);
+      }
+      return list;
     } else {
       throw Exception('Failed to load data');
     }
@@ -90,7 +97,7 @@ class _CommunityGroup extends State<CommunityGroup> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Map<String, dynamic>>>(
+            child: FutureBuilder<List<CommunityGroupResponse>?>(
               future: fetchData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -100,7 +107,7 @@ class _CommunityGroup extends State<CommunityGroup> {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  List<Map<String, dynamic>> data = snapshot.data!;
+                  List<CommunityGroupResponse> data = snapshot.data!;
 
                   return Column(
                     children: [
@@ -121,10 +128,11 @@ class _CommunityGroup extends State<CommunityGroup> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Image.network(
-                                    data[index]['image'] != null &&
-                                            data[index]['image'].isNotEmpty
-                                        ? data[index]['image']
-                                        : 'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
+                                    // data[index]['image'] != null &&
+                                    //         data[index]['image'].isNotEmpty
+                                    //     ? data[index]['image']
+                                    //     :
+                                    'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
                                     height: 100,
                                     width: 100,
                                   ),
@@ -154,11 +162,12 @@ class _CommunityGroup extends State<CommunityGroup> {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(40),
                                         child: Image.network(
-                                          data[index]['image'] != null &&
-                                                  data[index]['image']
-                                                      .isNotEmpty
-                                              ? data[index]['image']
-                                              : 'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
+                                          // data[index]['image'] != null &&
+                                          //         data[index]['image']
+                                          //             .isNotEmpty
+                                          //     ? data[index]['image']
+                                          //     :
+                                          'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
                                           height: 100,
                                           width: 100,
                                         ),
@@ -169,7 +178,8 @@ class _CommunityGroup extends State<CommunityGroup> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              data[index]['name'],
+                                              // data[index]['name'],
+                                              data[index].name,
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   color: AppColors.primaryColor,
@@ -179,7 +189,8 @@ class _CommunityGroup extends State<CommunityGroup> {
                                               height: 5,
                                             ),
                                             Text(
-                                              data[index]['description'],
+                                              // data[index]['description'],
+                                              data[index].description,
                                               style: TextStyle(fontSize: 10),
                                             ),
                                           ],

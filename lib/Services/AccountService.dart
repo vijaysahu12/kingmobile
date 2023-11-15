@@ -9,6 +9,7 @@ class AccountService {
 
   register() {}
   otpVerification(String mobile, String otp) {}
+
   getPersonalDetails(String Id) async {
     ApiService _apiService = ApiService();
 
@@ -26,6 +27,7 @@ class AccountService {
   }
 
   manageProfileImage() {}
+
   managePersonalDetails() async {}
   logOut() {}
   manageNotifications() {}

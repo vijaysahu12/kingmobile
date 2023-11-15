@@ -8,6 +8,7 @@ class ApiUrlConstants {
 }
 
 class SessionConstants {
-  static String Token = "Token";
-  static String UserKey = "PublicKey";
+  static String Token = "KingUserToken";
+  static String UserKey = "KingUserId";
+  static String UserProfileImage = "KingUserProfileImage";
 }

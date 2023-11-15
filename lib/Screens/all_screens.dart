@@ -4,10 +4,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import 'package:kraapp/Screens/CommunityGroup/community_group.dart';
+import 'package:kraapp/Screens/CommunityGroup/communityGroup.dart';
 import 'package:kraapp/Screens/Home/home_screen.dart';
 import 'package:kraapp/Screens/ProfileSetting/profileDetailScreen.dart';
-import 'package:kraapp/Screens/Product/trading_screen.dart';
+import 'package:kraapp/Screens/Product/productScreen.dart';
 import 'package:kraapp/Screens/Common/app_bar.dart';
 
 import 'package:kraapp/Screens/Common/bottom_navigationbar.dart';

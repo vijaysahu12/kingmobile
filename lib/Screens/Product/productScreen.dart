@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:kraapp/Helpers/ApiUrls.dart';
+import 'package:kraapp/Models/Response/ProductResponseModel.dart';
+import 'package:kraapp/Services/ProductService.dart';
 import 'dart:convert';
 import '../Constants/app_color.dart';
 
@@ -13,13 +15,14 @@ class TradingScreen extends StatefulWidget {
 }
 
 class _TradingScreenState extends State<TradingScreen> {
-  late Future<List<Map<String, dynamic>>> productsFuture;
-  late List<bool> isFavoriteList;
+  late Future<List<ProductResponseModel>?> productsFuture;
 
+  late List<bool> isFavoriteList = [];
+  ProductService _productService = new ProductService();
   @override
   void initState() {
     super.initState();
-    productsFuture = fetchData();
+    productsFuture = fetchDataThree();
   }
 
   Future<List<Map<String, dynamic>>> fetchData() async {
@@ -32,6 +35,42 @@ class _TradingScreenState extends State<TradingScreen> {
     } else {
       throw Exception('Failed to load data');
     }
+  }
+
+  Future<List<ProductResponseModel>?> fetchDataThree() async {
+    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+    if (response.statusCode == 200) {
+      //final List<dynamic> data = json.decode(response.body);
+
+      List<ProductResponseModel>? list = null;
+      // ignore: unnecessary_null_comparison
+      if (response != null) {
+        final List parsedList = json.decode(response.body);
+        list = parsedList
+            .map((val) => ProductResponseModel.fromJson(val))
+            .toList();
+        isFavoriteList = List.generate(list.length, (index) => false);
+        print(list);
+      }
+      return list;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<List<ProductResponseModel>?> fetchDataNew() async {
+    var res = await _productService.getProductDetails();
+    return res;
+    //final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+
+    // if (response.statusCode == 200) {
+    //   final List<dynamic> data = json.decode(response.body);
+
+    //   isFavoriteList = List.generate(data.length, (index) => false);
+    //   return List<Map<String, dynamic>>.from(data);
+    // } else {
+    //   throw Exception('Failed to load data');
+    // }
   }
 
   @override
@@ -57,7 +96,7 @@ class _TradingScreenState extends State<TradingScreen> {
                   ],
                 ),
               ),
-              FutureBuilder<List<Map<String, dynamic>>>(
+              FutureBuilder<List<ProductResponseModel>?>(
                 future: productsFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -71,7 +110,7 @@ class _TradingScreenState extends State<TradingScreen> {
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    List<Map<String, dynamic>> data = snapshot.data!;
+                    List<ProductResponseModel> data = snapshot.data!;
 
                     return Container(
                       padding: EdgeInsets.only(bottom: 35),
@@ -107,11 +146,12 @@ class _TradingScreenState extends State<TradingScreen> {
                                               width: 0.2),
                                         ),
                                         child: Image.network(
-                                          data[index]['image'] != null &&
-                                                  data[index]['image']
-                                                      .isNotEmpty
-                                              ? data[index]['image']
-                                              : 'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
+                                          // data[index].image != null &&
+                                          //         data[index].image.isNotEmpty
+                                          //     ? data[index]['image']
+                                          //     :
+                                          //
+                                          'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
                                           height: 100,
                                           width: 100,
                                         ),
@@ -133,7 +173,7 @@ class _TradingScreenState extends State<TradingScreen> {
                                                       Container(
                                                         width: double.infinity,
                                                         child: Text(
-                                                          data[index]['name'],
+                                                          data[index].name,
                                                           style: TextStyle(
                                                             color: AppColors
                                                                 .primaryColor,
@@ -172,7 +212,7 @@ class _TradingScreenState extends State<TradingScreen> {
                                               children: [
                                                 Expanded(
                                                   child: Text(
-                                                    data[index]['description'],
+                                                    data[index].description,
                                                     style: TextStyle(
                                                       fontSize: 12,
                                                       color: AppColors.grey,
@@ -195,7 +235,7 @@ class _TradingScreenState extends State<TradingScreen> {
                                                       initialRating:
                                                           double.parse(
                                                               data[index]
-                                                                      ['rating']
+                                                                  .raiting
                                                                   .toString()),
                                                       itemBuilder:
                                                           (context, _) => Icon(
@@ -281,7 +321,7 @@ class _TradingScreenState extends State<TradingScreen> {
                                                                                   width: 10,
                                                                                 ),
                                                                                 Text(
-                                                                                  data[index]['name'],
+                                                                                  data[index].name,
                                                                                   style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.bold, color: AppColors.primaryColor),
                                                                                 ),
                                                                                 SizedBox(
@@ -301,7 +341,7 @@ class _TradingScreenState extends State<TradingScreen> {
                                                                                 ),
                                                                                 Flexible(
                                                                                   child: Text(
-                                                                                    data[index]['description'],
+                                                                                    data[index].description,
                                                                                     style: TextStyle(fontSize: 14, fontFamily: 'poppins', fontWeight: FontWeight.w600, color: AppColors.grey),
                                                                                   ),
                                                                                 ),
@@ -321,7 +361,7 @@ class _TradingScreenState extends State<TradingScreen> {
                                                                                   width: 10,
                                                                                 ),
                                                                                 RatingBar.builder(
-                                                                                  initialRating: double.parse(data[index]['rating'].toString()),
+                                                                                  initialRating: double.parse(data[index].raiting.toString()),
                                                                                   itemBuilder: (context, _) => Icon(
                                                                                     Icons.star,
                                                                                     color: Colors.amber,
@@ -332,7 +372,7 @@ class _TradingScreenState extends State<TradingScreen> {
                                                                                 ),
                                                                                 Spacer(),
                                                                                 Text(
-                                                                                  ' ${data[index]['price'].toString()} Rs',
+                                                                                  ' ${data[index].price.toString()} Rs',
                                                                                   style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.bold, color: AppColors.dark),
                                                                                 ),
                                                                                 SizedBox(

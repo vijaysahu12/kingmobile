@@ -29,6 +29,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   TextEditingController countryCodeController = TextEditingController();
   HttpRequestHelper _httpHelper = HttpRequestHelper();
   SharedPref _sharedPref = SharedPref();
+  AccountService _accountService = new AccountService();
 
   Future<void> signInWithMobile(BuildContext context) async {
     //this.signInWithOtp();
@@ -36,13 +37,30 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   }
 
   String selectedGender = '';
-  AccountService _accountService = new AccountService();
+  void handleRadioValueChange(String? value) {
+    if (value != null) {
+      setState(() {
+        selectedGender = value;
+        _sharedPref.save("KingUserProfileGender", selectedGender);
+      });
+    }
+  }
 
-  void handleRadioValueChange(String? value) async {
-    setState(() {
-      selectedGender = value!;
-    });
-    await _sharedPref.save("selectedGender", value);
+  Future<String?> getImei() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        return 'Device Type is Android  and AndroidID: ${androidInfo.androidId}';
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        return 'Device Type is IOS & IosId ${iosInfo.identifierForVendor}';
+      }
+    } catch (e) {
+      print('Error getting IMEI: $e');
+      return null;
+    }
+    return null;
   }
 
   signInWithOtp() async {
@@ -136,10 +154,12 @@ class _GetMobileOtp extends State<GetMobileOtp> {
 
           if (jsonResponse.containsKey('statusCode') &&
               jsonResponse['statusCode'] == 200) {
-            _sharedPref.save("KingUserId", jsonResponse['data']["publicKey"]);
-            _sharedPref.save("KingUserToken", jsonResponse['data']["token"]);
             _sharedPref.save(
-                "KingUserProfileImage", jsonResponse['data']["image"]);
+                SessionConstants.UserKey, jsonResponse['data']["publicKey"]);
+            _sharedPref.save(
+                SessionConstants.Token, jsonResponse['data']["token"]);
+            _sharedPref.save(SessionConstants.UserProfileImage,
+                jsonResponse['data']["image"]);
 
             print(jsonResponse['data']);
             showDialog(
@@ -586,24 +606,6 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         }
       }
     }
-  }
-
-  Future<String?> getImei() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
-    try {
-      if (Platform.isAndroid) {
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        return 'Device Type is Android  and AndroidID: ${androidInfo.androidId}';
-      } else if (Platform.isIOS) {
-        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        return 'Device Type is IOS & IosId ${iosInfo.identifierForVendor}';
-      }
-    } catch (e) {
-      print('Error getting IMEI: $e');
-      return null;
-    }
-    return null;
   }
 
   @override

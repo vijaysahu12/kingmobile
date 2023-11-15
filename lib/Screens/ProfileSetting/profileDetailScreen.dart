@@ -3,7 +3,7 @@ import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/getotp_verificatio
 
 // import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
 import 'package:kraapp/Screens/ProfileSetting/notifications.dart';
-import 'package:kraapp/Screens/ProfileSetting/personal_details.dart';
+import 'package:kraapp/Screens/ProfileSetting/personalDetails.dart';
 import 'package:kraapp/Screens/ProfileSetting/settings.dart';
 //import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
