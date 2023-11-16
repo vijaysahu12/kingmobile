@@ -1,6 +1,12 @@
+import 'package:flutter/material.dart';
+
 import '../Helpers/dio.dart';
+import '../Helpers/sharedPref.dart';
 import '../Models/Response/profileDetailsResponseModel.dart';
 import '../Helpers/ApiUrls.dart';
+import '../Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+
+SharedPref _sharedPref = SharedPref();
 
 class AccountService {
   login(String mobile, String countryCode) {
@@ -8,6 +14,7 @@ class AccountService {
   }
 
   register() {}
+
   otpVerification(String mobile, String otp) {}
 
   getPersonalDetails(String Id) async {
@@ -29,7 +36,15 @@ class AccountService {
   manageProfileImage() {}
 
   managePersonalDetails() async {}
-  logOut() {}
+
+  logOut(context) {
+    _sharedPref.remove("KingUserToken");
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => GetMobileOtp()),
+        (route) => false);
+  }
+
   manageNotifications() {}
 
   void handleSignInWithEmailPassword() async {

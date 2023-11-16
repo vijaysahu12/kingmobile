@@ -32,12 +32,10 @@ class _Personal extends State<Personal> {
     final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
     if (response.statusCode == 200) {
       List<HomeResponse>? list = null;
-      // ignore: unnecessary_null_comparison
-      if (response != null) {
-        final List parsedList = json.decode(response.body);
-        list = parsedList.map((val) => HomeResponse.fromJson(val)).toList();
-        print(list);
-      }
+
+      final List parsedList = json.decode(response.body);
+      list = parsedList.map((val) => HomeResponse.fromJson(val)).toList();
+      print(list);
       return list;
     } else {
       throw Exception('Failed to load data');

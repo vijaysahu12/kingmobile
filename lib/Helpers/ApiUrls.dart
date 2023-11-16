@@ -5,6 +5,8 @@ class ApiUrlConstants {
   static String usersEndpoint = '/users';
   static String getPersonalDetails = '/getPersonalDetails';
   static String managePersonalDetails = "";
+  static String otpLogin = baseUrl + "Account/otpLogin";
+  static String otpLoginVerfication = baseUrl + "Account/otpLoginVerfication";
 }
 
 class SessionConstants {

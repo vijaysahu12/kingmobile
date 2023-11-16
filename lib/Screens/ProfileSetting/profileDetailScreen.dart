@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/getotp_verification.dart';
 
 // import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
 import 'package:kraapp/Screens/ProfileSetting/notifications.dart';
@@ -10,6 +9,7 @@ import 'package:kraapp/Screens/ProfileSetting/settings.dart';
 // import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
+import 'package:kraapp/Services/AccountService.dart';
 
 import 'package:sliding_switch/sliding_switch.dart';
 
@@ -249,13 +249,13 @@ class _PersonalInformation extends State<PersonalInformation> {
               height: 10,
             ),
             GestureDetector(
-              onTap: () {
-                _sharedPref.remove("KingUserToken");
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => GetMobileOtp()),
-                    (route) => false);
-              },
+              onTap: () => AccountService().logOut(context),
+              // _sharedPref.remove("KingUserToken");
+              // Navigator.pushAndRemoveUntil(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => GetMobileOtp()),
+              //     (route) => false);
+
               child: Container(
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
