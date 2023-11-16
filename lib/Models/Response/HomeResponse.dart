@@ -1,16 +1,16 @@
 class HomeResponse {
   String id;
-  String rating;
+  double price;
 
   HomeResponse({
     required this.id,
-    required this.rating,
+    required this.price,
   });
 
   factory HomeResponse.fromJson(Map<String, dynamic> json) {
     return HomeResponse(
       id: json['id'] ?? '',
-      rating: json['rating'] ?? '',
+      price: json['price'] ?? '',
     );
   }
 }

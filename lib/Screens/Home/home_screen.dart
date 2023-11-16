@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:kraapp/Models/Response/HomeResponse.dart';
 
+import '../../Helpers/ApiUrls.dart';
 import '../Constants/app_color.dart';
 
 class Personal extends StatefulWidget {
@@ -16,8 +18,8 @@ class _Personal extends State<Personal> {
   String selectedButton = 'NSE';
   String selectedMarketButton = 'Gainers';
 
-  String apiUrl = 'https://fakestoreapi.com/products';
-  List<Map<String, dynamic>> information = [];
+  // String apiUrl = 'https://fakestoreapi.com/products';
+  //List<Map<String, dynamic>> information = [];
 
   @override
   void initState() {
@@ -26,12 +28,17 @@ class _Personal extends State<Personal> {
     fetchData();
   }
 
-  Future<void> fetchData() async {
-    final response = await http.get(Uri.parse(apiUrl));
-
+  Future<List<HomeResponse>?> fetchData() async {
+    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      information = List<Map<String, dynamic>>.from(data);
+      List<HomeResponse>? list = null;
+      // ignore: unnecessary_null_comparison
+      if (response != null) {
+        final List parsedList = json.decode(response.body);
+        list = parsedList.map((val) => HomeResponse.fromJson(val)).toList();
+        print(list);
+      }
+      return list;
     } else {
       throw Exception('Failed to load data');
     }
@@ -412,12 +419,13 @@ class _Personal extends State<Personal> {
           SizedBox(
             height: 10,
           ),
-          FutureBuilder<void>(
+          FutureBuilder<List<HomeResponse>?>(
             future: fetchData(),
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
+                List<HomeResponse> data = snapshot.data!;
                 return Column(
                   children: [
                     Padding(
@@ -601,12 +609,12 @@ class _Personal extends State<Personal> {
                                     Spacer(),
                                   ],
                                 ),
-                                if (information.isNotEmpty)
+                                if (data.isNotEmpty)
                                   Column(
                                     children: [
                                       if (selectedMarketButton == 'Gainers')
                                         Column(
-                                          children: information.map((product) {
+                                          children: data.map((product) {
                                             return Container(
                                               decoration: BoxDecoration(
                                                   border: Border(
@@ -636,7 +644,9 @@ class _Personal extends State<Personal> {
                                                         ),
                                                         Spacer(),
                                                         Text(
-                                                          product['price']
+                                                          // product['price']
+                                                          //     .toString(),
+                                                          product.price
                                                               .toString(),
                                                           style: TextStyle(
                                                             fontSize: 10,
@@ -670,8 +680,10 @@ class _Personal extends State<Personal> {
                                                         ),
                                                         Spacer(),
                                                         Text(
-                                                          product['rating']
-                                                                  ['count']
+                                                          // product['rating']
+                                                          //         ['count']
+                                                          //     .toString(),
+                                                          product.price
                                                               .toString(),
                                                           style: TextStyle(
                                                             color:
@@ -696,7 +708,7 @@ class _Personal extends State<Personal> {
                                         )
                                       else if (selectedMarketButton == 'Losers')
                                         Column(
-                                          children: information.map((product) {
+                                          children: data.map((product) {
                                             return Container(
                                               decoration: BoxDecoration(
                                                   border: Border(
@@ -725,7 +737,9 @@ class _Personal extends State<Personal> {
                                                         ),
                                                         Spacer(),
                                                         Text(
-                                                          product['price']
+                                                          // product['price']
+                                                          //     .toString(),
+                                                          product.price
                                                               .toString(),
                                                           style: TextStyle(
                                                             fontSize: 10,
@@ -759,8 +773,10 @@ class _Personal extends State<Personal> {
                                                         ),
                                                         Spacer(),
                                                         Text(
-                                                          product['rating']
-                                                                  ['count']
+                                                          // product['rating']
+                                                          //         ['count']
+                                                          //     .toString(),
+                                                          product.price
                                                               .toString(),
                                                           style: TextStyle(
                                                             color:
@@ -786,7 +802,7 @@ class _Personal extends State<Personal> {
                                       else if (selectedMarketButton ==
                                           '52W High')
                                         Column(
-                                          children: information.map((product) {
+                                          children: data.map((product) {
                                             return Container(
                                               decoration: BoxDecoration(
                                                   border: Border(
@@ -815,7 +831,9 @@ class _Personal extends State<Personal> {
                                                         ),
                                                         Spacer(),
                                                         Text(
-                                                          product['price']
+                                                          // product['price']
+                                                          //     .toString(),
+                                                          product.price
                                                               .toString(),
                                                           style: TextStyle(
                                                             fontSize: 10,
@@ -849,8 +867,10 @@ class _Personal extends State<Personal> {
                                                         ),
                                                         Spacer(),
                                                         Text(
-                                                          product['rating']
-                                                                  ['count']
+                                                          // product['rating']
+                                                          //         ['count']
+                                                          //     .toString(),
+                                                          product.price
                                                               .toString(),
                                                           style: TextStyle(
                                                             color:
@@ -876,7 +896,7 @@ class _Personal extends State<Personal> {
                                       else if (selectedMarketButton ==
                                           '52W Low')
                                         Column(
-                                          children: information.map((product) {
+                                          children: data.map((product) {
                                             return Container(
                                               decoration: BoxDecoration(
                                                   border: Border(
@@ -905,7 +925,9 @@ class _Personal extends State<Personal> {
                                                         ),
                                                         Spacer(),
                                                         Text(
-                                                          product['price']
+                                                          // product['price']
+                                                          //     .toString(),
+                                                          product.price
                                                               .toString(),
                                                           style: TextStyle(
                                                             fontSize: 10,
@@ -939,8 +961,10 @@ class _Personal extends State<Personal> {
                                                         ),
                                                         Spacer(),
                                                         Text(
-                                                          product['rating']
-                                                                  ['count']
+                                                          // product['rating']
+                                                          //         ['count']
+                                                          //     .toString(),
+                                                          product.price
                                                               .toString(),
                                                           style: TextStyle(
                                                             color:
