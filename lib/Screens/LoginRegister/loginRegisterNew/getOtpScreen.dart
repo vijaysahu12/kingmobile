@@ -109,7 +109,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
 
   signInWithOtpOld() async {
     String? imei = await getImei();
-    String phoneNumber = "+91" + phoneNumberController.text;
+    String phoneNumber = "91" + phoneNumberController.text;
 
     if (imei != null) {
       print('IMEI: $imei');

@@ -28,13 +28,17 @@ class _Personal extends State<Personal> {
     fetchData();
   }
 
-  Future<List<HomeResponse>?> fetchData() async {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<List<HomeResponse>> fetchData() async {
     final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
     if (response.statusCode == 200) {
-      List<HomeResponse>? list = null;
-
       final List parsedList = json.decode(response.body);
-      list = parsedList.map((val) => HomeResponse.fromJson(val)).toList();
+      List<HomeResponse> list =
+          parsedList.map((val) => HomeResponse.fromJson(val)).toList();
       print(list);
       return list;
     } else {
@@ -422,7 +426,7 @@ class _Personal extends State<Personal> {
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
-              } else {
+              } else if (snapshot.hasData && snapshot.data != null) {
                 List<HomeResponse> data = snapshot.data!;
                 return Column(
                   children: [
@@ -995,6 +999,8 @@ class _Personal extends State<Personal> {
                     )
                   ],
                 );
+              } else {
+                return Text('No data available');
               }
             },
           ),

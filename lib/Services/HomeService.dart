@@ -12,7 +12,8 @@ class HomeService {
     final dynamic result = await _apiService.get(ApiUrlConstants.getProducts);
     if (result != null) {
       final List parsedList = json.decode(result);
-      list = parsedList.map((val) => HomeResponse.fromJson(val)).toList();
+      list = parsedList.map((val) => HomeResponse.fromJson(val))
+          as List<HomeResponse>;
       print(list);
     }
     return list;

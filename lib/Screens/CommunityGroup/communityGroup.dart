@@ -34,6 +34,17 @@ class _CommunityGroup extends State<CommunityGroup> {
     }
   }
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchData();
+  // }
+
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(

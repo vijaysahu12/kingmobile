@@ -21,7 +21,7 @@ class _PersonalDetails extends State<PersonalDetails> {
 
   final _formKey = GlobalKey<FormState>();
   SharedPref _sharedPref = SharedPref();
-  String selectedGender = '';
+  String? selectedGender;
   File? _image;
 
   @override
@@ -30,7 +30,7 @@ class _PersonalDetails extends State<PersonalDetails> {
     _loadUserData();
   }
 
-  void _loadUserData() async {
+  Future<void> _loadUserData() async {
     _userNameController.text =
         (await _sharedPref.read("KingUserProfileName") ?? '')
             .replaceAll('"', '');
@@ -40,13 +40,19 @@ class _PersonalDetails extends State<PersonalDetails> {
     _userMobileController.text =
         (await _sharedPref.read("KingUserProfileMobile") ?? '')
             .replaceAll('"', '');
-    selectedGender = await _sharedPref.read("SelectedGender") ?? '';
+    setState(() async {
+      selectedGender = (await _sharedPref.read("KingUserProfileGender") ?? '')
+          .replaceAll('"', '');
+    });
   }
 
   void handleRadioValueChange(String? value) {
-    setState(() {
-      selectedGender = value!;
-    });
+    if (value != null) {
+      setState(() {
+        selectedGender = value;
+        _sharedPref.save("KingUserProfileGender", selectedGender);
+      });
+    }
   }
 
   Future<void> _pickImage() async {
