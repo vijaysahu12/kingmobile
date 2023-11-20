@@ -1,5 +1,3 @@
-// import 'package:carousel_slider/carousel_slider.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -7,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/CommunityGroup/communityGroup.dart';
 
 import 'package:kraapp/Screens/ProfileSetting/profileDetailScreen.dart';
-import 'package:kraapp/Screens/Product/productScreen.dart';
+
 import 'package:kraapp/Screens/Common/app_bar.dart';
 
 import 'package:kraapp/Screens/Common/bottom_navigationbar.dart';
@@ -15,8 +13,9 @@ import 'package:kraapp/Screens/Common/bottom_navigationbar.dart';
 import '../Helpers/httpRequest.dart';
 import '../Helpers/ApiUrls.dart';
 import '../Helpers/sharedPref.dart';
+
 import 'Home/home_screen.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'Product/productScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

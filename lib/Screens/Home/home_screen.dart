@@ -18,9 +18,6 @@ class _Personal extends State<Personal> {
   String selectedButton = 'NSE';
   String selectedMarketButton = 'Gainers';
 
-  // String apiUrl = 'https://fakestoreapi.com/products';
-  //List<Map<String, dynamic>> information = [];
-
   @override
   void initState() {
     print("Home Screen");

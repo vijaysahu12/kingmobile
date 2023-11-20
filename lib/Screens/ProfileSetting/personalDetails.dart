@@ -19,10 +19,19 @@ class _PersonalDetails extends State<PersonalDetails> {
   final TextEditingController _userEmailController = TextEditingController();
   final TextEditingController _userMobileController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = new GlobalKey<FormState>();
   SharedPref _sharedPref = SharedPref();
   String? selectedGender;
   File? _image;
+
+  handleRadioValueChange(String? value) {
+    if (value != null) {
+      setState(() {
+        selectedGender = value;
+        _sharedPref.save("KingUserProfileGender", selectedGender);
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -30,7 +39,7 @@ class _PersonalDetails extends State<PersonalDetails> {
     _loadUserData();
   }
 
-  Future<void> _loadUserData() async {
+  _loadUserData() async {
     _userNameController.text =
         (await _sharedPref.read("KingUserProfileName") ?? '')
             .replaceAll('"', '');
@@ -40,17 +49,13 @@ class _PersonalDetails extends State<PersonalDetails> {
     _userMobileController.text =
         (await _sharedPref.read("KingUserProfileMobile") ?? '')
             .replaceAll('"', '');
-    setState(() async {
-      selectedGender = (await _sharedPref.read("KingUserProfileGender") ?? '')
-          .replaceAll('"', '');
-    });
-  }
 
-  void handleRadioValueChange(String? value) {
-    if (value != null) {
+    String? savedGender =
+        (await _sharedPref.read("KingUserProfileGender") ?? '')
+            .replaceAll('"', '');
+    if (savedGender != null) {
       setState(() {
-        selectedGender = value;
-        _sharedPref.save("KingUserProfileGender", selectedGender);
+        selectedGender = savedGender;
       });
     }
   }
@@ -65,6 +70,25 @@ class _PersonalDetails extends State<PersonalDetails> {
       }
     });
   }
+  //  Future<void> _pickImageCamera() async {
+  //   final ImagePicker _picker = ImagePicker();
+  //   final XFile? pickedImage =
+  //       await _picker.pickImage(source: ImageSource.camera);
+  //   setState(() {
+  //     if (pickedImage != null) {
+  //       _image = File(pickedImage.path);
+  //     }
+  //   });
+  // }
+
+  // Future<void> _selectDOB() async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(1950),
+  //     lastDate: DateTime.now(),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -378,6 +402,14 @@ class _PersonalDetails extends State<PersonalDetails> {
                         child: Container(
                           child: ElevatedButton(
                             onPressed: () {
+                              String fullName = _userNameController.text;
+                              String email = _userEmailController.text;
+                              String mobile = _userMobileController.text;
+
+                              _sharedPref.save("KingUserProfileName", fullName);
+                              _sharedPref.save("KingUserProfileEmail", email);
+                              _sharedPref.save("KingUserProfileMobile", mobile);
+
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(

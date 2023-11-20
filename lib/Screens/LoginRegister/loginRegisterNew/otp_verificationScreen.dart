@@ -28,7 +28,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
 
   String _mobileNumber = '';
 
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = new GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
@@ -361,10 +361,8 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                               value: 'Male',
                                               groupValue: selectedGender,
                                               onChanged: (value) {
-                                                setState(() {
-                                                  selectedGender =
-                                                      value as String;
-                                                });
+                                                selectedGender =
+                                                    value as String;
                                               },
                                               activeColor:
                                                   AppColors.primaryColor,
@@ -400,10 +398,8 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                               value: 'Female',
                                               groupValue: selectedGender,
                                               onChanged: (value) {
-                                                setState(() {
-                                                  selectedGender =
-                                                      value as String;
-                                                });
+                                                selectedGender =
+                                                    value as String;
                                               },
                                               activeColor:
                                                   AppColors.primaryColor,
