@@ -359,10 +359,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                             ),
                                             Radio(
                                               value: 'Male',
-                                              groupValue: 'gender',
+                                              groupValue: selectedGender,
                                               onChanged: (value) {
                                                 setState(() {
-                                                  selectedGender = value;
+                                                  selectedGender =
+                                                      value as String;
                                                 });
                                               },
                                               activeColor:
@@ -397,10 +398,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                             ),
                                             Radio(
                                               value: 'Female',
-                                              groupValue: "gender",
+                                              groupValue: selectedGender,
                                               onChanged: (value) {
                                                 setState(() {
-                                                  selectedGender = value;
+                                                  selectedGender =
+                                                      value as String;
                                                 });
                                               },
                                               activeColor:

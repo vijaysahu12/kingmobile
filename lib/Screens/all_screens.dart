@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:kraapp/Screens/CommunityGroup/communityGroup.dart';
-import 'package:kraapp/Screens/Home/home_screen.dart';
+
 import 'package:kraapp/Screens/ProfileSetting/profileDetailScreen.dart';
 import 'package:kraapp/Screens/Product/productScreen.dart';
 import 'package:kraapp/Screens/Common/app_bar.dart';
@@ -15,6 +15,7 @@ import 'package:kraapp/Screens/Common/bottom_navigationbar.dart';
 import '../Helpers/httpRequest.dart';
 import '../Helpers/ApiUrls.dart';
 import '../Helpers/sharedPref.dart';
+import 'Home/home_screen.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,13 +28,22 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreen extends State<HomeScreen> {
   HttpRequestHelper _httpHelper = HttpRequestHelper();
   int _currentIndex = 0;
+  final _pagesView = [
+    Personal(),
+    TradingScreen(),
+    CommunityGroup(),
+    PersonalInformation()
+  ];
+  final _pageController = PageController();
 
-  void _onTabTapped(int index) {
-    _httpHelper.checkInternetConnection(context);
-    setState(() {
-      _currentIndex = index;
-    });
-  }
+  // void _onTabTapped(int index) {
+  //   _httpHelper.checkInternetConnection(context);
+  //   setState(() {
+  //     _currentIndex = index;
+  //     _pageController.animateToPage(_currentIndex,
+  //         duration: const Duration(milliseconds: 200), curve: Curves.linear);
+  //   });
+  // }
 
   Future<List> GetProducts() async {
     final apiUrl = ApiUrlConstants.baseUrl + ApiUrlConstants.getProducts;
@@ -87,18 +97,27 @@ class _HomeScreen extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context, _currentIndex),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          Personal(),
-          TradingScreen(),
-          CommunityGroup(),
-          PersonalInformation(),
-        ],
+      body: PageView(
+        // ignore: sort_child_properties_last
+        children: _pagesView,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        controller: _pageController,
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,
-        onTabTapped: _onTabTapped,
+        onTabTapped: (index) {
+          _httpHelper.checkInternetConnection(context);
+          setState(() {
+            _currentIndex = index;
+            _pageController.animateToPage(_currentIndex,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.linear);
+          });
+        },
       ),
     );
   }

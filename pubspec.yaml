@@ -61,6 +61,7 @@ dependencies:
   unique_identifier: ^0.3.0
   dio: ^5.3.3
   connectivity_plus: ^5.0.1
+  flutter_swiper_view: ^1.1.8
   
 
 
