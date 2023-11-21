@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 import '../../Helpers/sharedPref.dart';
 import '../Constants/app_color.dart';
@@ -18,11 +22,66 @@ class _PersonalDetails extends State<PersonalDetails> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _userEmailController = TextEditingController();
   final TextEditingController _userMobileController = TextEditingController();
+  final TextEditingController _userCityController = TextEditingController();
+  final TextEditingController _userDateOfBirthController =
+      TextEditingController();
 
   final _formKey = new GlobalKey<FormState>();
   SharedPref _sharedPref = SharedPref();
   String? selectedGender;
   File? _image;
+  DateTime selectedDate = DateTime.now();
+
+  Future<void> _selectedDate() async {
+    // DateTime? picked = await showDatePicker(
+    //     context: context,
+    //     initialDate: DateTime.now(),
+    //     firstDate: DateTime(1950),
+    //     lastDate: DateTime.now());
+    // if (picked != null) {
+    //   String formattedDate = DateFormat("dd-MM-yyyy").format(picked);
+    //   setState(() {
+    //     _userDateOfBirthController.text = formattedDate;
+    //   });
+    // }
+    DateTime? picked = await showCupertinoModalPopup<DateTime>(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            margin: EdgeInsets.all(20),
+            padding: EdgeInsets.symmetric(vertical: 5),
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: AppColors.lightShadow,
+            ),
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.date,
+              initialDateTime: selectedDate,
+              onDateTimeChanged: (DateTime newDate) {
+                setState(() {
+                  selectedDate = newDate;
+                  _userDateOfBirthController.text =
+                      DateFormat('dd-MMM-yyyy').format(selectedDate);
+                  print(selectedDate);
+                });
+              },
+              minimumYear: 1930,
+              //maximumYear: 2023,
+            ),
+          ),
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+        // _userDateOfBirthController.text =
+        //     DateFormat('dd-MM-yyyy').format(selectedDate);
+      });
+    }
+  }
 
   handleRadioValueChange(String? value) {
     if (value != null) {
@@ -48,6 +107,12 @@ class _PersonalDetails extends State<PersonalDetails> {
             .replaceAll('"', '');
     _userMobileController.text =
         (await _sharedPref.read("KingUserProfileMobile") ?? '')
+            .replaceAll('"', '');
+    _userCityController.text =
+        (await _sharedPref.read("KingUserProfileCity") ?? '')
+            .replaceAll('"', '');
+    _userDateOfBirthController.text =
+        (await _sharedPref.read("KingUserProfileDateOfBirth") ?? '')
             .replaceAll('"', '');
 
     String? savedGender =
@@ -204,6 +269,11 @@ class _PersonalDetails extends State<PersonalDetails> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextField(
+                            readOnly: true,
+                            controller: _userDateOfBirthController,
+                            onTap: () {
+                              _selectedDate();
+                            },
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -317,39 +387,95 @@ class _PersonalDetails extends State<PersonalDetails> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Mobile Number *',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.cyan,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: AppColors.lightShadow,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: TextField(
-                            controller: _userMobileController,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.dark,
-                            ),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Mobile',
-                              hintStyle: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        bottom: 4), // Adjust margin for space
+                                    child: Text(
+                                      'Mobile Number *',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.cyan,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 3, horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.lightShadow,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: TextField(
+                                      readOnly: true,
+                                      controller: _userMobileController,
+                                      keyboardType: TextInputType.phone,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.dark,
+                                      ),
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: 'Mobile Number ',
+                                        hintStyle: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 4),
+                                    child: Text(
+                                      'City',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.cyan,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 3, horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.lightShadow,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: TextField(
+                                      controller: _userCityController,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.dark,
+                                      ),
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: 'City',
+                                        hintStyle: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -402,15 +528,25 @@ class _PersonalDetails extends State<PersonalDetails> {
                         child: Container(
                           child: ElevatedButton(
                             onPressed: () {
-                              String fullName = _userNameController.text;
-                              String email = _userEmailController.text;
-                              String mobile = _userMobileController.text;
+                              setState(() {
+                                String fullName = _userNameController.text;
+                                String email = _userEmailController.text;
+                                String mobile = _userMobileController.text;
+                                String city = _userCityController.text;
+                                String dateOfBirth =
+                                    _userDateOfBirthController.text;
 
-                              _sharedPref.save("KingUserProfileName", fullName);
-                              _sharedPref.save("KingUserProfileEmail", email);
-                              _sharedPref.save("KingUserProfileMobile", mobile);
+                                _sharedPref.save(
+                                    "KingUserProfileName", fullName);
+                                _sharedPref.save("KingUserProfileEmail", email);
+                                _sharedPref.save(
+                                    "KingUserProfileMobile", mobile);
+                                _sharedPref.save("KingUserProfileCity", city);
+                                _sharedPref.save(
+                                    "KingUserProfileDateOfBirth", dateOfBirth);
 
-                              Navigator.pop(context);
+                                Navigator.pop(context);
+                              });
                             },
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(

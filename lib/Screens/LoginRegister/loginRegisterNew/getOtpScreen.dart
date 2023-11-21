@@ -87,6 +87,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
           jsonResponse['statusCode'] == 200) {
         _sharedPref.save("UserProfileMobile", _emailOrMobile);
         _sharedPref.save("UserProfileMobileOTP", jsonResponse['message']);
+        print(response.body);
 
         Navigator.pushReplacement(
           context,
