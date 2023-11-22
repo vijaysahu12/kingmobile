@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
+import 'package:kraapp/Screens/Common/refreshtwo.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
 import '../../../Helpers/sharedPref.dart';
@@ -518,131 +519,134 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-          child: Padding(
-        padding: EdgeInsets.only(
-          top: 400,
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(6, (index) {
-                  return Container(
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.lightShadow,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: TextField(
-                      controller: _otpControllers[index],
-                      textAlign: TextAlign.center,
-                      onChanged: (value) => _otpChanged(index, value),
-                      keyboardType: TextInputType.number,
-                      maxLength: 1,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        counterText: '',
+      body: RefreshHelper.buildRefreshIndicator(
+        onRefresh: RefreshHelper.defaultOnRefresh,
+        child: SingleChildScrollView(
+            child: Padding(
+          padding: EdgeInsets.only(
+            top: 400,
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(6, (index) {
+                    return Container(
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.lightShadow,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                  );
-                }),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          print("Verify button pressed");
-
-                          signInWithOtp(
-                              context,
-                              _otpControllers
-                                  .map((controller) => controller.text)
-                                  .join());
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          backgroundColor: AppColors.primaryColor,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 100),
-                          elevation: 30,
-                        ),
-                        child: Text(
-                          'Verify',
-                          style: TextStyle(
-                              color: AppColors.lightShadow,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'poppins'),
+                      child: TextField(
+                        controller: _otpControllers[index],
+                        textAlign: TextAlign.center,
+                        onChanged: (value) => _otpChanged(index, value),
+                        keyboardType: TextInputType.number,
+                        maxLength: 1,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          counterText: '',
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Row(
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Row(
                 children: [
-                  Container(
-                    child: Text(
-                      'Not you?.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'poppins',
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.dark,
-                        fontSize: 12,
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            print("Verify button pressed");
+
+                            signInWithOtp(
+                                context,
+                                _otpControllers
+                                    .map((controller) => controller.text)
+                                    .join());
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            backgroundColor: AppColors.primaryColor,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 100),
+                            elevation: 30,
+                          ),
+                          child: Text(
+                            'Verify',
+                            style: TextStyle(
+                                color: AppColors.lightShadow,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'poppins'),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Switch Account',
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'poppins',
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primaryColor),
-                    ),
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'Resend Code',
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'poppins',
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primaryColor),
                     ),
                   ),
                 ],
               ),
-            )
-          ],
-        ),
-      )),
+              SizedBox(
+                height: 25,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  children: [
+                    Container(
+                      child: Text(
+                        'Not you?.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'poppins',
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.dark,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Switch Account',
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontFamily: 'poppins',
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primaryColor),
+                      ),
+                    ),
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        'Resend Code',
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontFamily: 'poppins',
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        )),
+      ),
     );
   }
 }

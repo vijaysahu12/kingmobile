@@ -6,7 +6,7 @@ import 'package:kraapp/Screens/CommunityGroup/communityGroup.dart';
 
 import 'package:kraapp/Screens/ProfileSetting/profileDetailScreen.dart';
 
-import 'package:kraapp/Screens/Common/app_bar.dart';
+// import 'package:kraapp/Screens/Common/app_bar.dart';
 
 import 'package:kraapp/Screens/Common/bottom_navigationbar.dart';
 
@@ -14,6 +14,7 @@ import '../Helpers/httpRequest.dart';
 import '../Helpers/ApiUrls.dart';
 import '../Helpers/sharedPref.dart';
 
+import 'Common/app_bar.dart';
 import 'Home/home_screen.dart';
 import 'Product/productScreen.dart';
 
@@ -95,7 +96,8 @@ class _HomeScreen extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, _currentIndex),
+      //appBar: buildAppBar(context, _currentIndex),
+      appBar: AppBarBuilder.buildAppBar(context, _currentIndex),
       body: PageView(
         // ignore: sort_child_properties_last
         children: _pagesView,

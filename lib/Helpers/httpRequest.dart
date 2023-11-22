@@ -11,6 +11,12 @@ import 'package:kraapp/Screens/Constants/app_color.dart';
 class HttpRequestHelper {
   SharedPref _sharedPref = SharedPref();
 
+  Future<void> refreshData() async {
+    await Future.delayed(
+      Duration(seconds: 3),
+    );
+  }
+
   Future<void> checkInternetConnection(BuildContext context) async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {

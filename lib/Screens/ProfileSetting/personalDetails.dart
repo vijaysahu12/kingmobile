@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 // import 'package:intl/intl.dart';
 
 import '../../Helpers/sharedPref.dart';
+
+import '../Common/refreshtwo.dart';
 import '../Constants/app_color.dart';
 
 class PersonalDetails extends StatefulWidget {
@@ -158,7 +160,7 @@ class _PersonalDetails extends State<PersonalDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppColors.purple,
         leading: IconButton(
@@ -170,414 +172,422 @@ class _PersonalDetails extends State<PersonalDetails> {
           },
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: _pickImage,
-              child: _image != null
-                  ? CircleAvatar(
-                      backgroundImage: FileImage(_image!),
-                      radius: 25,
-                      backgroundColor: AppColors.lightShadow,
-                    )
-                  : CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage(
-                        'images/person_logo.png',
-                      ),
-                      backgroundColor: AppColors.light,
-                    ),
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Personal Details',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'poppins',
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Name of Card',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.cyan,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: AppColors.lightShadow,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: TextField(
-                            controller: _userNameController,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.dark,
-                            ),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Name',
-                              hintStyle: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Date of Birth',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.cyan,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: AppColors.lightShadow,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: TextField(
-                            readOnly: true,
-                            controller: _userDateOfBirthController,
-                            onTap: () {
-                              _selectedDate();
-                            },
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.dark,
-                            ),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'DD/MM/YYYY',
-                              hintStyle: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Gender',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.cyan,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.lightShadow,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 3, horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      'Male',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: 'poppins',
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Radio(
-                                      value: 'Male',
-                                      groupValue: selectedGender,
-                                      onChanged: handleRadioValueChange,
-                                      activeColor: AppColors.primaryColor,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 3, horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color: AppColors.lightShadow,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      'Female',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: 'poppins',
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Radio(
-                                      value: 'Female',
-                                      groupValue: selectedGender,
-                                      onChanged: handleRadioValueChange,
-                                      activeColor: AppColors.primaryColor,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Contact Details',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'poppins',
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        bottom: 4), // Adjust margin for space
-                                    child: Text(
-                                      'Mobile Number *',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.cyan,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 3, horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.lightShadow,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: TextField(
-                                      readOnly: true,
-                                      controller: _userMobileController,
-                                      keyboardType: TextInputType.phone,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.dark,
-                                      ),
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'Mobile Number ',
-                                        hintStyle: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 4),
-                                    child: Text(
-                                      'City',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.cyan,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 3, horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.lightShadow,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: TextField(
-                                      controller: _userCityController,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.dark,
-                                      ),
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'City',
-                                        hintStyle: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Email ID *',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.cyan,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: AppColors.lightShadow,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: TextField(
-                            controller: _userEmailController,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.dark,
-                            ),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Email Id',
-                              hintStyle: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                String fullName = _userNameController.text;
-                                String email = _userEmailController.text;
-                                String mobile = _userMobileController.text;
-                                String city = _userCityController.text;
-                                String dateOfBirth =
-                                    _userDateOfBirthController.text;
-
-                                _sharedPref.save(
-                                    "KingUserProfileName", fullName);
-                                _sharedPref.save("KingUserProfileEmail", email);
-                                _sharedPref.save(
-                                    "KingUserProfileMobile", mobile);
-                                _sharedPref.save("KingUserProfileCity", city);
-                                _sharedPref.save(
-                                    "KingUserProfileDateOfBirth", dateOfBirth);
-
-                                Navigator.pop(context);
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              backgroundColor: AppColors.primaryColor,
-                              padding: EdgeInsets.symmetric(
-                                vertical: 20,
-                                horizontal: 100,
-                              ),
-                              elevation:
-                                  20, // Set elevation to 0 to prevent double shadows
-                            ),
-                            child: Text(
-                              'Update',
-                              style: TextStyle(
-                                color: AppColors.lightShadow,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'poppins',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+      body: RefreshHelper.buildRefreshIndicator(
+        onRefresh: RefreshHelper.defaultOnRefresh,
+        child: SingleChildScrollView(
+          // physics: AlwaysScrollableScrollPhysics(),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 10,
                 ),
-              ),
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: _image != null
+                      ? CircleAvatar(
+                          backgroundImage: FileImage(_image!),
+                          radius: 25,
+                          backgroundColor: AppColors.lightShadow,
+                        )
+                      : CircleAvatar(
+                          radius: 25,
+                          backgroundImage: AssetImage(
+                            'images/person_logo.png',
+                          ),
+                          backgroundColor: AppColors.light,
+                        ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height / 1.25,
+                  padding: EdgeInsets.all(30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Personal Details',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'poppins',
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Name of Card',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.cyan,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: AppColors.lightShadow,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextField(
+                              controller: _userNameController,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.dark,
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Name',
+                                hintStyle: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Date of Birth',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.cyan,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: AppColors.lightShadow,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextField(
+                              readOnly: true,
+                              controller: _userDateOfBirthController,
+                              onTap: () {
+                                _selectedDate();
+                              },
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.dark,
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'DD/MM/YYYY',
+                                hintStyle: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Gender',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.cyan,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lightShadow,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 3, horizontal: 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        'Male',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: 'poppins',
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Radio(
+                                        value: 'Male',
+                                        groupValue: selectedGender,
+                                        onChanged: handleRadioValueChange,
+                                        activeColor: AppColors.primaryColor,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 3, horizontal: 10),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lightShadow,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        'Female',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: 'poppins',
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Radio(
+                                        value: 'Female',
+                                        groupValue: selectedGender,
+                                        onChanged: handleRadioValueChange,
+                                        activeColor: AppColors.primaryColor,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Contact Details',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'poppins',
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: 4), // Adjust margin for space
+                                      child: Text(
+                                        'Mobile Number *',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.cyan,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 3, horizontal: 10),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.lightShadow,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: TextField(
+                                        readOnly: true,
+                                        controller: _userMobileController,
+                                        keyboardType: TextInputType.phone,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.dark,
+                                        ),
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'Mobile Number ',
+                                          hintStyle: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: 4),
+                                      child: Text(
+                                        'City',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.cyan,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 3, horizontal: 10),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.lightShadow,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: TextField(
+                                        controller: _userCityController,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.dark,
+                                        ),
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'City',
+                                          hintStyle: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Email ID *',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.cyan,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 3, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: AppColors.lightShadow,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextField(
+                              controller: _userEmailController,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.dark,
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Email Id',
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  String fullName = _userNameController.text;
+                                  String email = _userEmailController.text;
+                                  String mobile = _userMobileController.text;
+                                  String city = _userCityController.text;
+                                  String dateOfBirth =
+                                      _userDateOfBirthController.text;
+
+                                  _sharedPref.save(
+                                      "KingUserProfileName", fullName);
+                                  _sharedPref.save(
+                                      "KingUserProfileEmail", email);
+                                  _sharedPref.save(
+                                      "KingUserProfileMobile", mobile);
+                                  _sharedPref.save("KingUserProfileCity", city);
+                                  _sharedPref.save("KingUserProfileDateOfBirth",
+                                      dateOfBirth);
+
+                                  setState(() {
+                                    Navigator.pop(context);
+                                  });
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                backgroundColor: AppColors.primaryColor,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 20,
+                                  horizontal: 100,
+                                ),
+                                elevation:
+                                    20, // Set elevation to 0 to prevent double shadows
+                              ),
+                              child: Text(
+                                'Update',
+                                style: TextStyle(
+                                  color: AppColors.lightShadow,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'poppins',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

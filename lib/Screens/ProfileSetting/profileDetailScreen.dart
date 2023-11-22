@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 
-// import 'package:kraapp/Screens/Login_Info/getotp_verification.dart';
 import 'package:kraapp/Screens/ProfileSetting/notifications.dart';
 import 'package:kraapp/Screens/ProfileSetting/personalDetails.dart';
 import 'package:kraapp/Screens/ProfileSetting/settings.dart';
-//import 'package:kraapp/Screens/login_and_register/login_screen.dart';
-
-// import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:kraapp/Services/AccountService.dart';
 
-// import 'package:sliding_switch/sliding_switch.dart';
-
 import '../../Helpers/sharedPref.dart';
+import '../Common/refreshtwo.dart';
+// import '../Common/refresh.dart';
 
 class PersonalInformation extends StatefulWidget {
   const PersonalInformation({super.key});
@@ -24,7 +20,7 @@ class PersonalInformation extends StatefulWidget {
 
 class _PersonalInformation extends State<PersonalInformation> {
   SharedPref _sharedPref = SharedPref();
-
+  bool isSwtitched = false;
   String _userName = '';
   String _userEmail = '';
 
@@ -44,12 +40,11 @@ class _PersonalInformation extends State<PersonalInformation> {
     });
   }
 
-  bool isSwtitched = false;
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      return Padding(
+    return RefreshHelper.buildRefreshIndicator(
+      onRefresh: RefreshHelper.defaultOnRefresh,
+      child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
@@ -365,7 +360,7 @@ class _PersonalInformation extends State<PersonalInformation> {
             )
           ],
         ),
-      );
-    });
+      ),
+    );
   }
 }
