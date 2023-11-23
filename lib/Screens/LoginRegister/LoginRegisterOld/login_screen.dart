@@ -42,7 +42,7 @@ class _LoginScreen extends State<LoginScreen> {
           });
           return;
         }
-        _httpHelper.checkInternetConnection(context);
+        HttpRequestHelper.checkInternetConnection(context);
 
         final apiUrl = ApiUrlConstants.baseUrl +
             ApiUrlConstants.login +

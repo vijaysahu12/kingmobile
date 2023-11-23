@@ -6,11 +6,10 @@ import 'package:kraapp/Screens/CommunityGroup/communityGroup.dart';
 
 import 'package:kraapp/Screens/ProfileSetting/profileDetailScreen.dart';
 
-// import 'package:kraapp/Screens/Common/app_bar.dart';
+import '../../Helpers/httpRequest.dart';
 
 import 'package:kraapp/Screens/Common/bottom_navigationbar.dart';
 
-import '../Helpers/httpRequest.dart';
 import '../Helpers/ApiUrls.dart';
 import '../Helpers/sharedPref.dart';
 
@@ -111,7 +110,8 @@ class _HomeScreen extends State<HomeScreen> {
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,
         onTabTapped: (index) {
-          _httpHelper.checkInternetConnection(context);
+          HttpRequestHelper.checkInternetConnection(context);
+          // bool isConnected = HttpRequestHelper.checkInternetConnection(context) as bool;
           setState(() {
             _currentIndex = index;
             _pageController.animateToPage(_currentIndex,

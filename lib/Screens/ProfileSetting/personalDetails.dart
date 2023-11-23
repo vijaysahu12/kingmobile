@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 // import 'package:intl/intl.dart';
 // import 'package:intl/intl.dart';
 
+import '../../Helpers/httpRequest.dart';
 import '../../Helpers/sharedPref.dart';
 
 import '../Common/refreshtwo.dart';
@@ -27,13 +28,14 @@ class _PersonalDetails extends State<PersonalDetails> {
   final TextEditingController _userCityController = TextEditingController();
   final TextEditingController _userDateOfBirthController =
       TextEditingController();
+  //HttpRequestHelper _httpHelper = HttpRequestHelper();
 
   final _formKey = new GlobalKey<FormState>();
   SharedPref _sharedPref = SharedPref();
   String? selectedGender;
   File? _image;
   DateTime selectedDate = DateTime.now();
-
+  // bool isConnected =_httpHelper.checkInternetConnection(context);
   Future<void> _selectedDate() async {
     // DateTime? picked = await showDatePicker(
     //     context: context,
@@ -552,8 +554,12 @@ class _PersonalDetails extends State<PersonalDetails> {
                                   _sharedPref.save("KingUserProfileDateOfBirth",
                                       dateOfBirth);
 
-                                  setState(() {
-                                    Navigator.pop(context);
+                                  setState(() async {
+                                    bool isConnected = await HttpRequestHelper
+                                        .checkInternetConnection(context);
+                                    if (isConnected) {
+                                      Navigator.pop(context);
+                                    }
                                   });
                                 });
                               },

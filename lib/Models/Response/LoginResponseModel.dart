@@ -1,16 +1,16 @@
-class HomeResponse {
+class LoginResponse {
   String id;
   String message;
   String statusCode;
 
-  HomeResponse({
+  LoginResponse({
     required this.id,
     required this.message,
     required this.statusCode,
   });
 
-  factory HomeResponse.fromJson(Map<String, dynamic> json) {
-    return HomeResponse(
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    return LoginResponse(
       id: json['id'] ?? '',
       message: json['message'] ?? '',
       statusCode: json['statusCode'] ?? '',

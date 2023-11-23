@@ -73,11 +73,12 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   signInWithOtp() async {
     //final response = _accountService.login( phoneNumberController.text, countryCodeController.text);
     String _emailOrMobile = phoneNumberController.text;
-    String _countryCode = '91';
-    _httpHelper.checkInternetConnection(context);
+    //String _countryCode = '91';
+    String _country = selectedCountry.phoneCode;
+    HttpRequestHelper.checkInternetConnection(context);
 
     final apiUrl = ApiUrlConstants.otpLogin +
-        '?mobileNumber=$_emailOrMobile&countryCode=$_countryCode';
+        '?mobileNumber=$_emailOrMobile&countryCode=$_country';
     // final response = await http.get(Uri.parse(apiUrl));
     final response = await _httpHelper.getWithOutToken(apiUrl);
     if (response.statusCode == 200) {
@@ -162,7 +163,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         //   });
         //   return;
         // }
-        _httpHelper.checkInternetConnection(context);
+        HttpRequestHelper.checkInternetConnection(context);
 
         final apiUrl = ApiUrlConstants.login +
             '?userName=$_emailOrMobile&password=$_password';
@@ -231,36 +232,37 @@ class _GetMobileOtp extends State<GetMobileOtp> {
                         controller: phoneNumberController,
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Enter mobile number',
-                            labelStyle: TextStyle(
-                                fontSize: 20,
-                                color: AppColors.grey,
-                                fontWeight: FontWeight.w600),
-                            prefixIcon: Container(
-                              padding: const EdgeInsets.all(8),
-                              child: InkWell(
-                                onTap: () {
-                                  showCountryPicker(
-                                      countryListTheme: CountryListThemeData(
-                                        bottomSheetHeight: 400,
-                                      ),
-                                      context: context,
-                                      onSelect: (value) {
-                                        setState(() {
-                                          selectedCountry = value;
-                                        });
+                          border: InputBorder.none,
+                          hintText: 'Enter mobile number',
+                          labelStyle: TextStyle(
+                              fontSize: 20,
+                              color: AppColors.grey,
+                              fontWeight: FontWeight.w600),
+                          prefixIcon: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: InkWell(
+                              onTap: () {
+                                showCountryPicker(
+                                    countryListTheme: CountryListThemeData(
+                                      bottomSheetHeight: 400,
+                                    ),
+                                    context: context,
+                                    onSelect: (value) {
+                                      setState(() {
+                                        selectedCountry = value;
                                       });
-                                },
-                                child: Text(
-                                  "${selectedCountry.flagEmoji}  +${selectedCountry.phoneCode}",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: AppColors.dark,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                    });
+                              },
+                              child: Text(
+                                "${selectedCountry.flagEmoji}  +${selectedCountry.phoneCode}",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: AppColors.dark,
+                                    fontWeight: FontWeight.bold),
                               ),
-                            )),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(

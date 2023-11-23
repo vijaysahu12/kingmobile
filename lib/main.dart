@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:kraapp/Helpers/ApiUrls.dart';
+// import 'package:kraapp/Helpers/ApiUrls.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
@@ -34,9 +34,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   void checkLoginStatus() async {
-    String userId = await _sharedPref.read(SessionConstants.UserKey);
+    String Token = await _sharedPref.read("KingUserToken");
     setState(() {
-      isLoggedIn = userId.isNotEmpty;
+      isLoggedIn = Token.isNotEmpty;
     });
   }
 

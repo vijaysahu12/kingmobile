@@ -8,6 +8,7 @@ import 'package:kraapp/Screens/Common/refreshtwo.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
 import '../../../Helpers/sharedPref.dart';
+import '../../../Models/Response/OtpVerficationResponse.dart';
 import '../../Constants/app_color.dart';
 import 'package:http/http.dart' as http;
 
@@ -60,6 +61,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
     String mobile = await _sharedPref.read("UserProfileMobile");
     setState(() {
       _mobileNumber = mobile.replaceAll('"', '');
+      _mobileController.text = mobile.replaceAll('"', '');
     });
   }
 
@@ -70,9 +72,24 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
           '?mobileNumber=$_mobileNumber&otp=$_enteredOTP';
       final response = await http.post(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
-        final responseBody = json.decode(response.body);
-        var statusCode = responseBody['statusCode'];
-        if (statusCode == 200) {
+        print(response);
+        final Map<String, dynamic> responseBody = json.decode(response.body);
+        final OtpVerificationResponse vv =
+            OtpVerificationResponse.fromJson(responseBody);
+
+        print(vv);
+
+        _sharedPref.save(SessionConstants.UserKey, vv.data.publicKey);
+        _sharedPref.save(SessionConstants.Token, vv.data.token);
+        _sharedPref.save(
+            SessionConstants.UserProfileImage, vv.data.profileImage);
+        _sharedPref.save(SessionConstants.UserName, vv.data.name);
+
+        print(vv.data.publicKey);
+        print(vv.data.token);
+        print(vv.data.name);
+        print(vv.data.profileImage);
+        if (vv.statusCode == 200) {
           String? selectedGender;
           showDialog(
             context: context,
@@ -236,6 +253,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                   ),
                                   child: TextFormField(
                                     controller: _mobileController,
+                                    readOnly: true,
                                     keyboardType: TextInputType.phone,
                                     style: TextStyle(
                                       fontSize: 12,
@@ -485,7 +503,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
               );
             },
           );
-          print('Message from the response: $statusCode');
+          // print('Message from the response: $statusCode');
         } else {
           showDialog(
               context: context,

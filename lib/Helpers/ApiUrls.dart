@@ -13,6 +13,7 @@ class SessionConstants {
   static String Token = "KingUserToken";
   static String UserKey = "KingUserId";
   static String UserProfileImage = "KingUserProfileImage";
+  static String UserName = "KingUserName";
 }
 // class SessionConstants {
 //   static String mobile = "mobileNumber";

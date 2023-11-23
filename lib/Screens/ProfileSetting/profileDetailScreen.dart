@@ -6,6 +6,7 @@ import 'package:kraapp/Screens/ProfileSetting/settings.dart';
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:kraapp/Services/AccountService.dart';
+import 'package:sliding_switch/sliding_switch.dart';
 
 import '../../Helpers/sharedPref.dart';
 import '../Common/refreshtwo.dart';
@@ -33,7 +34,6 @@ class _PersonalInformation extends State<PersonalInformation> {
   void _loadUserData() async {
     String fullName = await _sharedPref.read("KingUserProfileName") ?? '';
     String email = await _sharedPref.read("KingUserProfileEmail") ?? '';
-
     setState(() {
       _userName = fullName.replaceAll('"', '');
       _userEmail = email.replaceAll('"', '');
@@ -317,25 +317,25 @@ class _PersonalInformation extends State<PersonalInformation> {
                                 color: AppColors.primaryColor, width: 1)),
                         child: Row(
                           children: [
-                            // SlidingSwitch(
-                            //   value: false,
-                            //   onChanged: (bool value) {
-                            //     setState(() {
-                            //       isSwtitched = value;
-                            //     });
-                            //   },
-                            //   onTap: () {},
-                            //   onDoubleTap: () {},
-                            //   onSwipe: () {},
-                            //   height: 25,
-                            //   width: 50,
-                            //   animationDuration: Duration(milliseconds: 200),
-                            //   textOn: '',
-                            //   textOff: '',
-                            //   buttonColor: isSwtitched
-                            //       ? AppColors.primaryColor
-                            //       : AppColors.cyan,
-                            // )
+                            SlidingSwitch(
+                              value: false,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  isSwtitched = value;
+                                });
+                              },
+                              onTap: () {},
+                              onDoubleTap: () {},
+                              onSwipe: () {},
+                              height: 25,
+                              width: 50,
+                              animationDuration: Duration(milliseconds: 200),
+                              textOn: '',
+                              textOff: '',
+                              buttonColor: isSwtitched
+                                  ? AppColors.primaryColor
+                                  : AppColors.cyan,
+                            )
                           ],
                         ),
                       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../Helpers/dio.dart';
+import '../Helpers/httpRequest.dart';
 import '../Helpers/sharedPref.dart';
 import '../Models/Response/profileDetailsResponseModel.dart';
 import '../Helpers/ApiUrls.dart';
@@ -37,12 +38,15 @@ class AccountService {
 
   managePersonalDetails() async {}
 
-  logOut(context) {
-    _sharedPref.remove("KingUserToken");
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => GetMobileOtp()),
-        (route) => false);
+  logOut(context) async {
+    bool isConnected = await HttpRequestHelper.checkInternetConnection(context);
+    if (isConnected) {
+      _sharedPref.remove("KingUserToken");
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => GetMobileOtp()),
+          (route) => false);
+    }
   }
 
   manageNotifications() {}
