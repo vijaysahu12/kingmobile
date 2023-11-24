@@ -59,9 +59,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
 
   void _userData() async {
     String mobile = await _sharedPref.read("UserProfileMobile");
+    String email = await _sharedPref.read("KingUserName");
     setState(() {
       _mobileNumber = mobile.replaceAll('"', '');
       _mobileController.text = mobile.replaceAll('"', '');
+      _nameController.text = email.replaceAll('"', '');
     });
   }
 
@@ -440,10 +442,10 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                 Container(
                                   child: ElevatedButton(
                                     onPressed: () async {
-                                      String fullName = _nameController.text;
-                                      String email = _emailController.text;
-                                      String mobile = _mobileController.text;
-                                      String city = _cityController.text;
+                                      String? fullName = _nameController.text;
+                                      String? email = _emailController.text;
+                                      String? mobile = _mobileController.text;
+                                      String? city = _cityController.text;
                                       if (_formKey.currentState!.validate()) {
                                         _sharedPref.save(
                                             "KingUserProfileName", fullName);

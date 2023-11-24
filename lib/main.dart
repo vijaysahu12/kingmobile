@@ -1,10 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// import 'package:kraapp/Helpers/ApiUrls.dart';
+
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'package:kraapp/Screens/all_screens.dart';
-
-//import 'package:kraapp/Screens/login_and_register/login_screen.dart';
 
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'dart:convert';
 
 import '../../Helpers/ApiUrls.dart';
@@ -32,6 +33,44 @@ class _TradingScreen extends State<TradingScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  //success
+  void paymentSuccessResponse(PaymentSuccessResponse response) {
+    showAlertDialog(
+        context, "Payment Successful", "Payment ID: ${response.paymentId}");
+  }
+
+  void paymentFailureResponse(PaymentFailureResponse response) {
+    showAlertDialog(context, "Payment Failed",
+        "code : ${response.code}\n Description :${response.message}");
+  }
+
+  void handleExternalWalletSelected(ExternalWalletResponse response) {
+    showAlertDialog(
+        context, "External Wallet Selected", "${response.walletName}");
+  }
+
+  void showAlertDialog(BuildContext context, String title, String message) {
+    Widget continueButton = ElevatedButton(
+      child: const Text("Continue"),
+      onPressed: () {},
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   Future<List<Map<String, dynamic>>> fetchData() async {
@@ -515,6 +554,29 @@ class _TradingScreen extends State<TradingScreen> {
                                                                                           ),
                                                                                           onPressed: () {
                                                                                             setState(() {
+                                                                                              Razorpay razorpay = Razorpay();
+                                                                                              var options = {
+                                                                                                'key': 'rzp_test_8x2It6dJUckx0i',
+                                                                                                'amount': '${(data[index].price * 100).toString()}', //RS 1 (100paisa=1)
+                                                                                                'name': '${data[index].name}',
+                                                                                                'description': '${data[index].description}',
+                                                                                                'retry': {
+                                                                                                  'enabled': true,
+                                                                                                  'max_count': 1
+                                                                                                },
+                                                                                                'send_sms_hash': true,
+                                                                                                'prefill': {
+                                                                                                  'contact': '6309373318',
+                                                                                                  'email': 'kakuseshadri033@gmail.com'
+                                                                                                },
+                                                                                                'external': {
+                                                                                                  'wallets': ['paytm']
+                                                                                                }
+                                                                                              };
+                                                                                              razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, paymentSuccessResponse);
+                                                                                              razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, paymentFailureResponse);
+                                                                                              razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
+                                                                                              razorpay.open(options);
                                                                                               Navigator.pop(context);
                                                                                             });
                                                                                           },

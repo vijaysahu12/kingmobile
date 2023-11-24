@@ -33,10 +33,10 @@ class Data {
 
   factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
-      publicKey: json['publicKey'],
-      name: json['name'],
-      profileImage: json['profileImage'],
-      token: json['token'],
+      publicKey: json['publicKey'] ?? '',
+      name: json['name'] ?? '',
+      profileImage: json['profileImage'] ?? '',
+      token: json['token'] ?? '',
     );
   }
 }
