@@ -248,6 +248,9 @@ class _CommunityGroupState extends State<CommunityGroup> {
                                         onPressed: () {},
                                         child: Text(
                                           ' Join ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.light),
                                         ),
                                       ),
                                     ],

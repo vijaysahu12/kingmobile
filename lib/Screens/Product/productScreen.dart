@@ -8,6 +8,7 @@ import '../../Helpers/ApiUrls.dart';
 import '../../Models/Response/ProductResponseModel.dart';
 import '../Common/refreshtwo.dart';
 import '../Constants/app_color.dart';
+import 'readMoreScreen.dart';
 
 class TradingScreen extends StatefulWidget {
   const TradingScreen({Key? key}) : super(key: key);
@@ -412,8 +413,8 @@ class _TradingScreen extends State<TradingScreen> {
                                                         ],
                                                       ),
                                                       Spacer(),
-                                                      ElevatedButton(
-                                                        style: ElevatedButton
+                                                      TextButton(
+                                                        style: TextButton
                                                             .styleFrom(
                                                           shape:
                                                               RoundedRectangleBorder(
@@ -422,186 +423,218 @@ class _TradingScreen extends State<TradingScreen> {
                                                                     .circular(
                                                                         25),
                                                           ),
-                                                          backgroundColor:
-                                                              AppColors
-                                                                  .primaryColor,
+                                                          // backgroundColor:
+                                                          //     AppColors
+                                                          //         .primaryColor,
                                                         ),
                                                         onPressed: () {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child:
-                                                                    WillPopScope(
-                                                                  onWillPop:
-                                                                      () async {
-                                                                    return true;
-                                                                  },
-                                                                  child:
-                                                                      SingleChildScrollView(
-                                                                    child:
-                                                                        Center(
-                                                                      child:
-                                                                          Container(
-                                                                        margin: EdgeInsets.only(
-                                                                            top:
-                                                                                200.0),
-                                                                        height:
-                                                                            300,
-                                                                        child:
-                                                                            Dialog(
-                                                                          backgroundColor:
-                                                                              AppColors.lightShadow,
-                                                                          shape:
-                                                                              RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(15.0),
-                                                                          ),
-                                                                          child:
-                                                                              Container(
-                                                                            padding:
-                                                                                const EdgeInsets.all(8),
-                                                                            decoration:
-                                                                                BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
-                                                                            child:
-                                                                                Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.all(8.0),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                      Text(
-                                                                                        data[index].name,
-                                                                                        style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.bold, color: AppColors.primaryColor),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.all(8.0),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                      Flexible(
-                                                                                        child: Text(
-                                                                                          data[index].description,
-                                                                                          style: TextStyle(fontSize: 14, fontFamily: 'poppins', fontWeight: FontWeight.w600, color: AppColors.grey),
-                                                                                        ),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.all(8.0),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                      RatingBar.builder(
-                                                                                        initialRating: double.parse(data[index].raiting.toString()),
-                                                                                        itemBuilder: (context, _) => Icon(
-                                                                                          Icons.star,
-                                                                                          color: Colors.amber,
-                                                                                        ),
-                                                                                        ignoreGestures: true,
-                                                                                        itemSize: 18,
-                                                                                        onRatingUpdate: (double value) {},
-                                                                                      ),
-                                                                                      Spacer(),
-                                                                                      Text(
-                                                                                        ' ${data[index].price.toString()} Rs',
-                                                                                        style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.bold, color: AppColors.dark),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.all(8.0),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                      Expanded(
-                                                                                        child: ElevatedButton(
-                                                                                          style: ElevatedButton.styleFrom(
-                                                                                            shape: RoundedRectangleBorder(
-                                                                                              borderRadius: BorderRadius.circular(25),
-                                                                                            ),
-                                                                                            backgroundColor: AppColors.primaryColor,
-                                                                                          ),
-                                                                                          onPressed: () {
-                                                                                            setState(() {
-                                                                                              Razorpay razorpay = Razorpay();
-                                                                                              var options = {
-                                                                                                'key': 'rzp_test_8x2It6dJUckx0i',
-                                                                                                'amount': '${(data[index].price * 100).toString()}', //RS 1 (100paisa=1)
-                                                                                                'name': '${data[index].name}',
-                                                                                                'description': '${data[index].description}',
-                                                                                                'retry': {
-                                                                                                  'enabled': true,
-                                                                                                  'max_count': 1
-                                                                                                },
-                                                                                                'send_sms_hash': true,
-                                                                                                'prefill': {
-                                                                                                  'contact': '6309373318',
-                                                                                                  'email': 'kakuseshadri033@gmail.com'
-                                                                                                },
-                                                                                                'external': {
-                                                                                                  'wallets': ['paytm']
-                                                                                                }
-                                                                                              };
-                                                                                              razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, paymentSuccessResponse);
-                                                                                              razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, paymentFailureResponse);
-                                                                                              razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
-                                                                                              razorpay.open(options);
-                                                                                              Navigator.pop(context);
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text("Continue"),
-                                                                                        ),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                )
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                          );
+                                                          String productName =
+                                                              data[index].name;
+                                                          String
+                                                              productDescription =
+                                                              data[index]
+                                                                  .description;
+                                                          String productRating =
+                                                              data[index]
+                                                                  .raiting;
+                                                          double productPrice =
+                                                              data[index].price;
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => ProductDetailsScreen(
+                                                                    productName,
+                                                                    productDescription,
+                                                                    productRating,
+                                                                    productPrice),
+                                                              ));
+
+                                                          // showDialog(
+                                                          //   context: context,
+                                                          //   builder:
+                                                          //       (BuildContext
+                                                          //           context) {
+                                                          //     return GestureDetector(
+                                                          //       onTap: () {
+                                                          //         Navigator.pop(
+                                                          //             context);
+                                                          //       },
+                                                          //       child:
+                                                          //           WillPopScope(
+                                                          //         onWillPop:
+                                                          //             () async {
+                                                          //           return true;
+                                                          //         },
+                                                          //         child:
+                                                          //             SingleChildScrollView(
+                                                          //           child:
+                                                          //               Center(
+                                                          //             child:
+                                                          //                 Container(
+                                                          //               margin: EdgeInsets.only(
+                                                          //                   top:
+                                                          //                       200.0),
+                                                          //               height:
+                                                          //                   350,
+                                                          //               child:
+                                                          //                   Dialog(
+                                                          //                 backgroundColor:
+                                                          //                     AppColors.lightShadow,
+                                                          //                 shape:
+                                                          //                     RoundedRectangleBorder(
+                                                          //                   borderRadius:
+                                                          //                       BorderRadius.circular(15.0),
+                                                          //                 ),
+                                                          //                 child:
+                                                          //                     Container(
+                                                          //                   padding:
+                                                          //                       const EdgeInsets.all(8),
+                                                          //                   decoration:
+                                                          //                       BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
+                                                          //                   child:
+                                                          //                       Column(
+                                                          //                     crossAxisAlignment: CrossAxisAlignment.start,
+                                                          //                     children: [
+                                                          //                       Padding(
+                                                          //                         padding: const EdgeInsets.all(8.0),
+                                                          //                         child: Row(
+                                                          //                           children: [
+                                                          //                             SizedBox(
+                                                          //                               width: 10,
+                                                          //                             ),
+                                                          //                             Text(
+                                                          //                               data[index].name,
+                                                          //                               style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.bold, color: AppColors.primaryColor),
+                                                          //                             ),
+                                                          //                             SizedBox(
+                                                          //                               width: 10,
+                                                          //                             ),
+                                                          //                           ],
+                                                          //                         ),
+                                                          //                       ),
+                                                          //                       Padding(
+                                                          //                         padding: const EdgeInsets.all(8.0),
+                                                          //                         child: Row(
+                                                          //                           children: [
+                                                          //                             SizedBox(
+                                                          //                               width: 10,
+                                                          //                             ),
+                                                          //                             Flexible(
+                                                          //                               child: Text(
+                                                          //                                 data[index].description,
+                                                          //                                 style: TextStyle(fontSize: 14, fontFamily: 'poppins', fontWeight: FontWeight.w600, color: AppColors.grey),
+                                                          //                               ),
+                                                          //                             ),
+                                                          //                             SizedBox(
+                                                          //                               width: 10,
+                                                          //                             ),
+                                                          //                           ],
+                                                          //                         ),
+                                                          //                       ),
+                                                          //                       Padding(
+                                                          //                         padding: const EdgeInsets.all(8.0),
+                                                          //                         child: Row(
+                                                          //                           children: [
+                                                          //                             SizedBox(
+                                                          //                               width: 10,
+                                                          //                             ),
+                                                          //                             RatingBar.builder(
+                                                          //                               initialRating: double.parse(data[index].raiting.toString()),
+                                                          //                               itemBuilder: (context, _) => Icon(
+                                                          //                                 Icons.star,
+                                                          //                                 color: Colors.amber,
+                                                          //                               ),
+                                                          //                               ignoreGestures: true,
+                                                          //                               itemSize: 18,
+                                                          //                               onRatingUpdate: (double value) {},
+                                                          //                             ),
+                                                          //                             Spacer(),
+                                                          //                             Text(
+                                                          //                               ' ${data[index].price.toString()} Rs',
+                                                          //                               style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.bold, color: AppColors.dark),
+                                                          //                             ),
+                                                          //                             SizedBox(
+                                                          //                               width: 10,
+                                                          //                             ),
+                                                          //                           ],
+                                                          //                         ),
+                                                          //                       ),
+                                                          //                       Padding(
+                                                          //                         padding: const EdgeInsets.all(8.0),
+                                                          //                         child: Row(
+                                                          //                           children: [
+                                                          //                             SizedBox(
+                                                          //                               width: 10,
+                                                          //                             ),
+                                                          //                             Expanded(
+                                                          //                               child: ElevatedButton(
+                                                          //                                 style: ElevatedButton.styleFrom(
+                                                          //                                   shape: RoundedRectangleBorder(
+                                                          //                                     borderRadius: BorderRadius.circular(25),
+                                                          //                                   ),
+                                                          //                                   backgroundColor: AppColors.primaryColor,
+                                                          //                                 ),
+                                                          //                                 onPressed: () {
+                                                          //                                   // setState(() {
+                                                          //                                   //   Razorpay razorpay = Razorpay();
+                                                          //                                   //   var options = {
+                                                          //                                   //     'key': 'rzp_test_8x2It6dJUckx0i',
+                                                          //                                   //     'amount': '${(data[index].price * 100).toString()}', //RS 1 (100paisa=1)
+                                                          //                                   //     'name': '${data[index].name}',
+                                                          //                                   //     'description': '${data[index].description}',
+                                                          //                                   //     'retry': {
+                                                          //                                   //       'enabled': true,
+                                                          //                                   //       'max_count': 1
+                                                          //                                   //     },
+                                                          //                                   //     'send_sms_hash': true,
+                                                          //                                   //     'prefill': {
+                                                          //                                   //       'contact': '6309373318',
+                                                          //                                   //       'email': 'kakuseshadri033@gmail.com'
+                                                          //                                   //     },
+                                                          //                                   //     'external': {
+                                                          //                                   //       'wallets': ['paytm']
+                                                          //                                   //     }
+                                                          //                                   //   };
+                                                          //                                   //   razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, paymentSuccessResponse);
+                                                          //                                   //   razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, paymentFailureResponse);
+                                                          //                                   //   razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
+                                                          //                                   //   razorpay.open(options);
+                                                          //                                   //   Navigator.pop(context);
+                                                          //                                   // });
+                                                          //                                 },
+                                                          //                                 child: Text(
+                                                          //                                   "Continue",
+                                                          //                                   style: TextStyle(color: AppColors.light, fontWeight: FontWeight.w600),
+                                                          //                                 ),
+                                                          //                               ),
+                                                          //                             ),
+                                                          //                             SizedBox(
+                                                          //                               width: 10,
+                                                          //                             ),
+                                                          //                           ],
+                                                          //                         ),
+                                                          //                       )
+                                                          //                     ],
+                                                          //                   ),
+                                                          //                 ),
+                                                          //               ),
+                                                          //             ),
+                                                          //           ),
+                                                          //         ),
+                                                          //       ),
+                                                          //     );
+                                                          //   },
+                                                          // );
                                                         },
-                                                        child: Text('Buy'),
+                                                        child: Text(
+                                                          'Read More...',
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .primaryColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
                                                       ),
                                                       SizedBox(
                                                         width: 10,
