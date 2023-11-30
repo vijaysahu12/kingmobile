@@ -111,6 +111,7 @@ class _TradingScreen extends State<TradingScreen> {
             .map((val) => ProductResponseModel.fromJson(val))
             .toList();
         isFavoriteList = List.generate(list.length, (index) => false);
+
         print(list);
       }
       return list;

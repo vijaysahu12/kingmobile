@@ -11,22 +11,22 @@ class OtpVerificationResponse {
 
   factory OtpVerificationResponse.fromJson(Map<String, dynamic> json) {
     return OtpVerificationResponse(
-      statusCode: json['statusCode'],
-      message: json['message'],
-      data: Data.fromJson(json['data']),
+      statusCode: json['statusCode'] ?? '',
+      message: json['message'] ?? '',
+      data: Data.fromJson(json['data'] ?? {}),
     );
   }
 }
 
 class Data {
   final String publicKey;
-  final String name;
+  // final String name;
   final String profileImage;
   final String token;
 
   Data({
     required this.publicKey,
-    required this.name,
+    // required this.name,
     required this.profileImage,
     required this.token,
   });
@@ -34,7 +34,7 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
       publicKey: json['publicKey'] ?? '',
-      name: json['name'] ?? '',
+      //  name: json['name'] ?? '',
       profileImage: json['profileImage'] ?? '',
       token: json['token'] ?? '',
     );

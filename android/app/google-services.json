@@ -1,13 +1,33 @@
 {
   "project_info": {
-    "project_number": "87513680665",
-    "project_id": "mobileauthv3-c6f14",
-    "storage_bucket": "mobileauthv3-c6f14.appspot.com"
+    "project_number": "103055315510",
+    "firebase_url": "https://fir-testingone-e3d83-default-rtdb.firebaseio.com",
+    "project_id": "fir-testingone-e3d83",
+    "storage_bucket": "fir-testingone-e3d83.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:87513680665:android:d98b6ce2ade3e1621a1388",
+        "mobilesdk_app_id": "1:103055315510:android:df532f41c40e7d1eb63e97",
+        "android_client_info": {
+          "package_name": "com.example.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCOP4X5-BLtSp7aWddJ6qfNno8HqkFCf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103055315510:android:0f43b305b9160e6cb63e97",
         "android_client_info": {
           "package_name": "com.example.kraapp"
         }
@@ -15,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBnT2fq94P5oxAr6-mHcsx-cYq1-KkYsiQ"
+          "current_key": "AIzaSyDCOP4X5-BLtSp7aWddJ6qfNno8HqkFCf8"
         }
       ],
       "services": {

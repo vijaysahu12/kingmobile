@@ -33,32 +33,31 @@ class _GetMobileOtp extends State<GetMobileOtp> {
       e164Key: "");
 
   TextEditingController phoneNumberController = TextEditingController();
+
   TextEditingController countryCodeController = TextEditingController();
   HttpRequestHelper _httpHelper = HttpRequestHelper();
-  // SharedPref _sharedPref = SharedPref();
-  // AccountService _accountService = new AccountService();
 
   Future<void> signInWithMobile(BuildContext context) async {
-    signInWithOtp();
-    //signInWithoutMobileOtp();
+    String? imei = await getImei();
+    String? deviceType = await getDeviceType();
+    if (imei != null) {
+      print('IMEI: $imei');
+    } else {
+      print('Failed to get IMEI');
+    }
+    if (deviceType != null) {
+      await signInWithOtpOld(selectedCountry.phoneCode, deviceType);
+    } else {
+      print('Failed to get device type');
+    }
   }
-
-  // String selectedGender = '';
-  // void handleRadioValueChange(String? value) {
-  //   if (value != null) {
-  //     setState(() {
-  //       selectedGender = value;
-  //       _sharedPref.save("KingUserProfileGender", selectedGender);
-  //     });
-  //   }
-  // }
 
   Future<String?> getImei() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     try {
       if (Platform.isAndroid) {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        return 'Device Type is Android  and AndroidID: ${androidInfo.androidId}';
+        return 'Device Type is Android  and AndroidID: ${androidInfo.device}';
       } else if (Platform.isIOS) {
         IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
         return 'Device Type is IOS & IosId ${iosInfo.identifierForVendor}';
@@ -70,55 +69,9 @@ class _GetMobileOtp extends State<GetMobileOtp> {
     return null;
   }
 
-  signInWithOtp() async {
-    //final response = _accountService.login( phoneNumberController.text, countryCodeController.text);
-    String _emailOrMobile = phoneNumberController.text;
-    //String _countryCode = '91';
-    String _country = selectedCountry.phoneCode;
-    HttpRequestHelper.checkInternetConnection(context);
-
-    final apiUrl = ApiUrlConstants.otpLogin +
-        '?mobileNumber=$_emailOrMobile&countryCode=$_country';
-    // final response = await http.get(Uri.parse(apiUrl));
-    final response = await _httpHelper.getWithOutToken(apiUrl);
-    if (response.statusCode == 200) {
-      SharedPref _sharedPref = SharedPref();
-      Map<String, dynamic> jsonResponse = json.decode(response.body);
-      if (jsonResponse.containsKey('statusCode') &&
-          jsonResponse['statusCode'] == 200) {
-        _sharedPref.save("UserProfileMobile", _emailOrMobile);
-        _sharedPref.save("UserProfileMobileOTP", jsonResponse['message']);
-        print(response.body);
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OtpVerificationScreen(
-                // verificationId: 'verificationId',
-                // resendToken: 1,
-                ),
-          ),
-        );
-      } else {
-        //ToDo: Try Again invalid mobile number
-      }
-    }
-  }
-
-  verifyMobileOtp() {
-    //ToDO: if verification confirmed then go to profile update screen else stay there with try again message
-  }
-
-  signInWithOtpOld() async {
-    String? imei = await getImei();
-    String phoneNumber = "91" + phoneNumberController.text;
-
-    if (imei != null) {
-      print('IMEI: $imei');
-    } else {
-      print('Failed to get IMEI');
-    }
-
+  signInWithOtpOld(String countryPhoneCode, String deviceType) async {
+    String phoneNumber = "+91" + phoneNumberController.text;
+    //String deviceType = getDeviceType() as String;
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential cred) async {
@@ -136,9 +89,12 @@ class _GetMobileOtp extends State<GetMobileOtp> {
           context,
           MaterialPageRoute(
             builder: (context) => OtpVerificationScreen(
-                // verificationId: verificationId,
-                // resendToken: resendToken,
-                ),
+              verificationId: verificationId,
+              resendToken: resendToken,
+              mobileNumber: phoneNumberController.text,
+              countryCode: selectedCountry.phoneCode,
+              deviceType: deviceType,
+            ),
           ),
         );
       },
@@ -147,6 +103,39 @@ class _GetMobileOtp extends State<GetMobileOtp> {
       },
     );
   }
+
+  // signInWithOtp() async {
+  //   //final response = _accountService.login( phoneNumberController.text, countryCodeController.text);
+  //   String _emailOrMobile = phoneNumberController.text;
+  //   //String _countryCode = '91';
+  //   String _country = selectedCountry.phoneCode;
+  //   HttpRequestHelper.checkInternetConnection(context);
+  //   final apiUrl = ApiUrlConstants.otpLogin +
+  //       '?mobileNumber=$_emailOrMobile&countryCode=$_country';
+  //   // final response = await http.get(Uri.parse(apiUrl));
+  //   final response = await _httpHelper.getWithOutToken(apiUrl);
+  //   if (response.statusCode == 200) {
+  //     SharedPref _sharedPref = SharedPref();
+  //     Map<String, dynamic> jsonResponse = json.decode(response.body);
+  //     if (jsonResponse.containsKey('statusCode') &&
+  //         jsonResponse['statusCode'] == 200) {
+  //       _sharedPref.save("UserProfileMobile", _emailOrMobile);
+  //       _sharedPref.save("UserProfileMobileOTP", jsonResponse['message']);
+  //       print(response.body);
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => OtpVerificationScreen(
+  //             verificationId: 'verificationId',
+  //             resendToken: 1,
+  //           ),
+  //         ),
+  //       );
+  //     } else {
+  //       //ToDo: Try Again invalid mobile number
+  //     }
+  //   }
+  // }
 
   signInWithoutMobileOtp() async {
     if (true) {
@@ -209,6 +198,17 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         }
       }
     }
+  }
+
+  Future<String?> getDeviceType() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return '${androidInfo}';
+    } else if (Platform.isIOS) {
+      return 'iOS';
+    }
+    return null;
   }
 
   @override

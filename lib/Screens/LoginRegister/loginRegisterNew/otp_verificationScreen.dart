@@ -1,5 +1,7 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 
+// import 'dart:convert';
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -8,16 +10,24 @@ import 'package:kraapp/Screens/Common/refreshtwo.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
 import '../../../Helpers/sharedPref.dart';
+// import '../../../Models/Response/OtpVerficationResponse.dart';
 import '../../../Models/Response/OtpVerficationResponse.dart';
 import '../../Constants/app_color.dart';
 import 'package:http/http.dart' as http;
 
 class OtpVerificationScreen extends StatefulWidget {
-  // final String verificationId;
-  // final int? resendToken;
-  // const OtpVerificationScreen(
-  //     {required this.verificationId, required this.resendToken, super.key});
-  const OtpVerificationScreen({super.key});
+  final String verificationId;
+  final int? resendToken;
+  final String mobileNumber;
+  final String deviceType;
+  final String countryCode;
+  const OtpVerificationScreen(
+      {required this.verificationId,
+      required this.resendToken,
+      required this.mobileNumber,
+      required this.deviceType,
+      required this.countryCode,
+      super.key});
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreen();
@@ -26,9 +36,8 @@ class OtpVerificationScreen extends StatefulWidget {
 class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   List<TextEditingController> _otpControllers =
       List.generate(6, (index) => TextEditingController());
+  // ignore: unused_field
   String _enteredOTP = '';
-
-  String _mobileNumber = '';
 
   final _formKey = new GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
@@ -40,38 +49,44 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
 
   void _otpChanged(int index, String value) {
     if (value.isNotEmpty) {
-      if (index < 5) {
-        FocusScope.of(context).nextFocus();
-      } else {
+      if (index < 6) {
         setState(() {
           _enteredOTP =
               _otpControllers.map((controller) => controller.text).join();
         });
+        if (index < 5) {
+          FocusScope.of(context).nextFocus();
+        } else {}
       }
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _userData();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _userData();
+  // }
 
-  void _userData() async {
-    String mobile = await _sharedPref.read("UserProfileMobile");
-    String email = await _sharedPref.read("KingUserName");
-    setState(() {
-      _mobileNumber = mobile.replaceAll('"', '');
-      _mobileController.text = mobile.replaceAll('"', '');
-      _nameController.text = email.replaceAll('"', '');
-    });
-  }
+  // void _userData() async {
+  //   String mobile = await _sharedPref.read("UserProfileMobile");
+  //   String name = await _sharedPref.read("KingUserName");
+  //   setState(() {
+  //     _mobileNumber = mobile.replaceAll('"', '');
+  //     _mobileController.text = mobile.replaceAll('"', '');
+  //     _nameController.text = name.replaceAll('"', '');
+  //   });
+  // }
 
   void signInWithOtp(BuildContext context, String otp) async {
     print("signInWithOtp function called");
     try {
+      String deviceType = widget.deviceType;
+      String countryCode = widget.countryCode;
+      int? firebaseToken = widget.resendToken;
+
       final apiUrl = ApiUrlConstants.otpLoginVerfication +
-          '?mobileNumber=$_mobileNumber&otp=$_enteredOTP';
+          '?mobileNumber=${widget.mobileNumber}&FirebaseFcmToken=$firebaseToken&deviceType=$deviceType&countryCode=$countryCode';
+
       final response = await http.post(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
         print(response);
@@ -85,13 +100,13 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
         _sharedPref.save(SessionConstants.Token, vv.data.token);
         _sharedPref.save(
             SessionConstants.UserProfileImage, vv.data.profileImage);
-        _sharedPref.save(SessionConstants.UserName, vv.data.name);
+        //  _sharedPref.save(SessionConstants.UserName, vv.data.name);
 
         print(vv.data.publicKey);
         print(vv.data.token);
-        print(vv.data.name);
+        //  print(vv.data.name);
         print(vv.data.profileImage);
-        if (vv.statusCode == 200) {
+        if (response.statusCode == 200) {
           String? selectedGender;
           showDialog(
             context: context,
@@ -255,7 +270,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                   ),
                                   child: TextFormField(
                                     controller: _mobileController,
-                                    readOnly: true,
+                                    // readOnly: true,
                                     keyboardType: TextInputType.phone,
                                     style: TextStyle(
                                       fontSize: 12,
