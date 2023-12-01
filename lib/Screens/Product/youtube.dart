@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubePlayerScreen extends StatelessWidget {
@@ -12,7 +13,22 @@ class YoutubePlayerScreen extends StatelessWidget {
     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     return Scaffold(
       appBar: AppBar(
-        title: Text("King Research Acdamey"),
+        backgroundColor: AppColors.purple,
+        title: Text(
+          "King Research Acdamey",
+          style: TextStyle(
+              fontFamily: "poppins",
+              fontWeight: FontWeight.w600,
+              color: AppColors.lightShadow),
+        ),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: AppColors.lightShadow,
+            )),
       ),
       body: ListView.builder(
         itemCount: videoUrls.length,

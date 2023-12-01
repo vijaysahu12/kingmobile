@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Models/Response/HomeResponse.dart';
+import 'package:kraapp/Screens/Common/shimmerScreen.dart';
+
 // import 'package:kraapp/Screens/Common/refresh.dart';
 
 import '../../Helpers/ApiUrls.dart';
@@ -60,10 +62,8 @@ class _Personal extends State<Personal> {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       return RefreshHelper.buildRefreshIndicator(
-        // onRefresh: RefreshHelper.defaultOnRefresh,
         onRefresh: RefreshHelper.defaultOnRefresh,
         child: SingleChildScrollView(
-          //physics: AlwaysScrollableScrollPhysics(),
           child: Column(children: [
             Padding(
               padding:
@@ -148,8 +148,8 @@ class _Personal extends State<Personal> {
                     color: AppColors.dark
                         .withOpacity(0.2), // Color and opacity of the shadow
                     spreadRadius: 2, // Spread radius of the shadow
-                    blurRadius: 2, // Blur radius of the shadow
-                    offset: Offset(0, 3), // Offset of the shadow
+                    blurRadius: 2,
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
@@ -429,9 +429,8 @@ class _Personal extends State<Personal> {
             FutureBuilder<List<HomeResponse>?>(
               future: fetchData(),
               builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  // return Text('Error hhhh: ${snapshot.error}');
-                  return Text('Please wait...');
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return ShimmerListViewForHome(itemCount: 1);
                 } else if (snapshot.hasData && snapshot.data != null) {
                   List<HomeResponse> data = snapshot.data!;
                   return Column(
@@ -1028,7 +1027,7 @@ class _Personal extends State<Personal> {
                     ],
                   );
                 } else {
-                  return Text('refresh');
+                  return ShimmerListViewForHome(itemCount: 1);
                 }
               },
             ),

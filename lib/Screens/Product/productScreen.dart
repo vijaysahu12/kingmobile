@@ -7,6 +7,7 @@ import 'dart:convert';
 import '../../Helpers/ApiUrls.dart';
 import '../../Models/Response/ProductResponseModel.dart';
 import '../Common/refreshtwo.dart';
+import '../Common/shimmerScreen.dart';
 import '../Constants/app_color.dart';
 import 'readMoreScreen.dart';
 
@@ -89,10 +90,8 @@ class _TradingScreen extends State<TradingScreen> {
   //   var res = await _productService.getProductDetails();
   //   return res;
   //   //final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
-
   //   // if (response.statusCode == 200) {
   //   //   final List<dynamic> data = json.decode(response.body);
-
   //   //   isFavoriteList = List.generate(data.length, (index) => false);
   //   //   return List<Map<String, dynamic>>.from(data);
   //   // } else {
@@ -100,21 +99,47 @@ class _TradingScreen extends State<TradingScreen> {
   //   // }
   // }
 
+  // Future<List<ProductResponseModel>?> fetchDataThree() async {
+  //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+  //   if (response.statusCode == 200) {
+  //     List<ProductResponseModel>? list = null;
+  //     // ignore: unnecessary_null_comparison
+  //     if (response != null) {
+  //       final List parsedList = json.decode(response.body);
+  //       list = parsedList
+  //           .map((val) => ProductResponseModel.fromJson(val))
+  //           .toList();
+  //       isFavoriteList = List.generate(list.length, (index) => false);
+  //       print(list);
+  //     }
+  //     return list;
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //   }
+  // }
+
   Future<List<ProductResponseModel>?> fetchDataThree() async {
-    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+    final response = await http.post(
+      Uri.parse(ApiUrlConstants.getProducts),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{}),
+    );
+
     if (response.statusCode == 200) {
-      List<ProductResponseModel>? list = null;
-      // ignore: unnecessary_null_comparison
-      if (response != null) {
-        final List parsedList = json.decode(response.body);
-        list = parsedList
+      Map<String, dynamic> parsedResponse = json.decode(response.body);
+      if (parsedResponse.containsKey('data') &&
+          parsedResponse['data'] is List) {
+        List<ProductResponseModel>? list = (parsedResponse['data'] as List)
             .map((val) => ProductResponseModel.fromJson(val))
             .toList();
         isFavoriteList = List.generate(list.length, (index) => false);
-
         print(list);
+        return list;
+      } else {
+        throw Exception('Failed to load data');
       }
-      return list;
     } else {
       throw Exception('Failed to load data');
     }
@@ -204,19 +229,11 @@ class _TradingScreen extends State<TradingScreen> {
                       future: productsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Column(
-                            children: [
-                              Center(
-                                child: Text('Please wait...'),
-                              ),
-                            ],
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                                ConnectionState.waiting ||
+                            snapshot.hasError) {
+                          return ShimmerListView(itemCount: 5);
                         } else {
                           List<ProductResponseModel> data = snapshot.data!;
-
                           return ListView.builder(
                             itemCount: data.length,
                             itemBuilder: (context, index) {
@@ -251,16 +268,9 @@ class _TradingScreen extends State<TradingScreen> {
                       future: productsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Column(
-                            children: [
-                              Center(
-                                child: Text('Please wait...'),
-                              ),
-                            ],
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                                ConnectionState.waiting ||
+                            snapshot.hasError) {
+                          return ShimmerListViewForListofItems(itemCount: 7);
                         } else {
                           List<ProductResponseModel> data = snapshot.data!;
                           return Container(
@@ -440,7 +450,7 @@ class _TradingScreen extends State<TradingScreen> {
                                                                   .raiting;
                                                           double productPrice =
                                                               data[index].price;
-                                                          Navigator.push(
+                                                          Navigator.pushReplacement(
                                                               context,
                                                               MaterialPageRoute(
                                                                 builder: (context) => ProductDetailsScreen(
@@ -449,183 +459,6 @@ class _TradingScreen extends State<TradingScreen> {
                                                                     productRating,
                                                                     productPrice),
                                                               ));
-
-                                                          // showDialog(
-                                                          //   context: context,
-                                                          //   builder:
-                                                          //       (BuildContext
-                                                          //           context) {
-                                                          //     return GestureDetector(
-                                                          //       onTap: () {
-                                                          //         Navigator.pop(
-                                                          //             context);
-                                                          //       },
-                                                          //       child:
-                                                          //           WillPopScope(
-                                                          //         onWillPop:
-                                                          //             () async {
-                                                          //           return true;
-                                                          //         },
-                                                          //         child:
-                                                          //             SingleChildScrollView(
-                                                          //           child:
-                                                          //               Center(
-                                                          //             child:
-                                                          //                 Container(
-                                                          //               margin: EdgeInsets.only(
-                                                          //                   top:
-                                                          //                       200.0),
-                                                          //               height:
-                                                          //                   350,
-                                                          //               child:
-                                                          //                   Dialog(
-                                                          //                 backgroundColor:
-                                                          //                     AppColors.lightShadow,
-                                                          //                 shape:
-                                                          //                     RoundedRectangleBorder(
-                                                          //                   borderRadius:
-                                                          //                       BorderRadius.circular(15.0),
-                                                          //                 ),
-                                                          //                 child:
-                                                          //                     Container(
-                                                          //                   padding:
-                                                          //                       const EdgeInsets.all(8),
-                                                          //                   decoration:
-                                                          //                       BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
-                                                          //                   child:
-                                                          //                       Column(
-                                                          //                     crossAxisAlignment: CrossAxisAlignment.start,
-                                                          //                     children: [
-                                                          //                       Padding(
-                                                          //                         padding: const EdgeInsets.all(8.0),
-                                                          //                         child: Row(
-                                                          //                           children: [
-                                                          //                             SizedBox(
-                                                          //                               width: 10,
-                                                          //                             ),
-                                                          //                             Text(
-                                                          //                               data[index].name,
-                                                          //                               style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.bold, color: AppColors.primaryColor),
-                                                          //                             ),
-                                                          //                             SizedBox(
-                                                          //                               width: 10,
-                                                          //                             ),
-                                                          //                           ],
-                                                          //                         ),
-                                                          //                       ),
-                                                          //                       Padding(
-                                                          //                         padding: const EdgeInsets.all(8.0),
-                                                          //                         child: Row(
-                                                          //                           children: [
-                                                          //                             SizedBox(
-                                                          //                               width: 10,
-                                                          //                             ),
-                                                          //                             Flexible(
-                                                          //                               child: Text(
-                                                          //                                 data[index].description,
-                                                          //                                 style: TextStyle(fontSize: 14, fontFamily: 'poppins', fontWeight: FontWeight.w600, color: AppColors.grey),
-                                                          //                               ),
-                                                          //                             ),
-                                                          //                             SizedBox(
-                                                          //                               width: 10,
-                                                          //                             ),
-                                                          //                           ],
-                                                          //                         ),
-                                                          //                       ),
-                                                          //                       Padding(
-                                                          //                         padding: const EdgeInsets.all(8.0),
-                                                          //                         child: Row(
-                                                          //                           children: [
-                                                          //                             SizedBox(
-                                                          //                               width: 10,
-                                                          //                             ),
-                                                          //                             RatingBar.builder(
-                                                          //                               initialRating: double.parse(data[index].raiting.toString()),
-                                                          //                               itemBuilder: (context, _) => Icon(
-                                                          //                                 Icons.star,
-                                                          //                                 color: Colors.amber,
-                                                          //                               ),
-                                                          //                               ignoreGestures: true,
-                                                          //                               itemSize: 18,
-                                                          //                               onRatingUpdate: (double value) {},
-                                                          //                             ),
-                                                          //                             Spacer(),
-                                                          //                             Text(
-                                                          //                               ' ${data[index].price.toString()} Rs',
-                                                          //                               style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.bold, color: AppColors.dark),
-                                                          //                             ),
-                                                          //                             SizedBox(
-                                                          //                               width: 10,
-                                                          //                             ),
-                                                          //                           ],
-                                                          //                         ),
-                                                          //                       ),
-                                                          //                       Padding(
-                                                          //                         padding: const EdgeInsets.all(8.0),
-                                                          //                         child: Row(
-                                                          //                           children: [
-                                                          //                             SizedBox(
-                                                          //                               width: 10,
-                                                          //                             ),
-                                                          //                             Expanded(
-                                                          //                               child: ElevatedButton(
-                                                          //                                 style: ElevatedButton.styleFrom(
-                                                          //                                   shape: RoundedRectangleBorder(
-                                                          //                                     borderRadius: BorderRadius.circular(25),
-                                                          //                                   ),
-                                                          //                                   backgroundColor: AppColors.primaryColor,
-                                                          //                                 ),
-                                                          //                                 onPressed: () {
-                                                          //                                   // setState(() {
-                                                          //                                   //   Razorpay razorpay = Razorpay();
-                                                          //                                   //   var options = {
-                                                          //                                   //     'key': 'rzp_test_8x2It6dJUckx0i',
-                                                          //                                   //     'amount': '${(data[index].price * 100).toString()}', //RS 1 (100paisa=1)
-                                                          //                                   //     'name': '${data[index].name}',
-                                                          //                                   //     'description': '${data[index].description}',
-                                                          //                                   //     'retry': {
-                                                          //                                   //       'enabled': true,
-                                                          //                                   //       'max_count': 1
-                                                          //                                   //     },
-                                                          //                                   //     'send_sms_hash': true,
-                                                          //                                   //     'prefill': {
-                                                          //                                   //       'contact': '6309373318',
-                                                          //                                   //       'email': 'kakuseshadri033@gmail.com'
-                                                          //                                   //     },
-                                                          //                                   //     'external': {
-                                                          //                                   //       'wallets': ['paytm']
-                                                          //                                   //     }
-                                                          //                                   //   };
-                                                          //                                   //   razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, paymentSuccessResponse);
-                                                          //                                   //   razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, paymentFailureResponse);
-                                                          //                                   //   razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
-                                                          //                                   //   razorpay.open(options);
-                                                          //                                   //   Navigator.pop(context);
-                                                          //                                   // });
-                                                          //                                 },
-                                                          //                                 child: Text(
-                                                          //                                   "Continue",
-                                                          //                                   style: TextStyle(color: AppColors.light, fontWeight: FontWeight.w600),
-                                                          //                                 ),
-                                                          //                               ),
-                                                          //                             ),
-                                                          //                             SizedBox(
-                                                          //                               width: 10,
-                                                          //                             ),
-                                                          //                           ],
-                                                          //                         ),
-                                                          //                       )
-                                                          //                     ],
-                                                          //                   ),
-                                                          //                 ),
-                                                          //               ),
-                                                          //             ),
-                                                          //           ),
-                                                          //         ),
-                                                          //       ),
-                                                          //     );
-                                                          //   },
-                                                          // );
                                                         },
                                                         child: Text(
                                                           'Read More...',

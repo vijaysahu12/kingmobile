@@ -21,33 +21,32 @@ class AppBarBuilder {
             title: FutureBuilder<String>(
               future: loadUserName(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else {
-                  String _userName = snapshot.data ?? 'User Name';
-                  return Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage('images/person_logo.png'),
-                        radius: 20,
+                String _userName = snapshot.data ?? '';
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage('images/person_logo.png'),
+                      radius: 20,
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      _userName,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.lightShadow,
                       ),
-                      SizedBox(width: 10),
-                      Text(
-                        _userName,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.lightShadow,
-                        ),
+                    ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.notifications,
+                        color: AppColors.lightShadow,
                       ),
-                      Spacer(),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.notifications),
-                      ),
-                    ],
-                  );
-                }
+                    ),
+                  ],
+                );
               },
             ),
             automaticallyImplyLeading: false,

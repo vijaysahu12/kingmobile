@@ -61,21 +61,21 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
     }
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _userData();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _userData();
+  }
 
-  // void _userData() async {
-  //   String mobile = await _sharedPref.read("UserProfileMobile");
-  //   String name = await _sharedPref.read("KingUserName");
-  //   setState(() {
-  //     _mobileNumber = mobile.replaceAll('"', '');
-  //     _mobileController.text = mobile.replaceAll('"', '');
-  //     _nameController.text = name.replaceAll('"', '');
-  //   });
-  // }
+  void _userData() async {
+    String mobile = await _sharedPref.read("UserProfileMobile");
+    // String name = await _sharedPref.read("KingUserName");
+    setState(() {
+      // _mobileNumber = mobile.replaceAll('"', '');
+      _mobileController.text = mobile.replaceAll('"', '');
+      // _nameController.text = name.replaceAll('"', '');
+    });
+  }
 
   void signInWithOtp(BuildContext context, String otp) async {
     print("signInWithOtp function called");

@@ -36,8 +36,10 @@ class _GetMobileOtp extends State<GetMobileOtp> {
 
   TextEditingController countryCodeController = TextEditingController();
   HttpRequestHelper _httpHelper = HttpRequestHelper();
+  SharedPref _sharedPref = SharedPref();
 
   Future<void> signInWithMobile(BuildContext context) async {
+    _sharedPref.save("UserProfileMobile", phoneNumberController.text);
     String? imei = await getImei();
     String? deviceType = await getDeviceType();
     if (imei != null) {
@@ -70,7 +72,8 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   }
 
   signInWithOtpOld(String countryPhoneCode, String deviceType) async {
-    String phoneNumber = "+91" + phoneNumberController.text;
+    String phoneNumber = "+" + countryPhoneCode + phoneNumberController.text;
+    print(phoneNumber);
     //String deviceType = getDeviceType() as String;
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
@@ -82,6 +85,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         print('verificationFailed---> ${ex}');
       },
       codeSent: (String verificationId, int? resendToken) async {
+        print(resendToken);
         print("code sent");
         print('codeSent $verificationId');
 

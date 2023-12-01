@@ -168,6 +168,7 @@ class _PersonalDetails extends State<PersonalDetails> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_outlined,
+            color: AppColors.lightShadow,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -202,7 +203,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                         ),
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height / 1.25,
+                  height: MediaQuery.of(context).size.height / 1.20,
                   padding: EdgeInsets.all(30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -21,6 +21,7 @@ class _SettingsScreen extends State<SettingsScreen> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_outlined,
+            color: AppColors.lightShadow,
           ),
           onPressed: () {
             Navigator.pop(context);

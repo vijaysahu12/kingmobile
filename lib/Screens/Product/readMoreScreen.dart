@@ -4,7 +4,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-import '../../practice.dart';
+import '../../Helpers/sharedPref.dart';
+import 'youtube.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productName;
@@ -25,18 +26,9 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   var isPaid = false;
+  SharedPref _sharedPref = SharedPref();
 
   List<String> myVideoUrls = [
-    'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
-    'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
-    'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
-    'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
-    'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
-    'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
-    'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
-    'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
-    'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
-    'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
     'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
     'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
   ];
@@ -88,13 +80,41 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
+  String _userName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    String fullName = await _sharedPref.read("KingUserProfileName") ?? '';
+
+    setState(() {
+      _userName = fullName.replaceAll('"', '');
+    });
+  }
+
+  void _navigateBack() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.purple,
+        leading: IconButton(
+            onPressed: _navigateBack,
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: AppColors.lightShadow,
+            )),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(
-          top: 40.0,
-          bottom: 20.0,
+          top: 20.0,
           left: 15,
           right: 15,
         ),
@@ -117,36 +137,44 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                           ),
                           SizedBox(
-                            width: 20,
+                            width: 150,
                           ),
                           Icon(Icons.favorite_border_rounded)
                         ],
                       ),
                       Row(
                         children: [
-                          Text(
-                            // productName,
-                            "Category",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.grey,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Column(
+                            children: [
+                              Text(
+                                // productName,
+                                "Category",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.grey,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(
-                            width: 150,
+                            width: 170,
                           ),
-                          RatingBar.builder(
-                            initialRating:
-                                double.parse(widget.productRating.toString()),
-                            itemBuilder: (context, _) => Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                            ),
-                            ignoreGestures: true,
-                            itemSize: 25,
-                            onRatingUpdate: (double value) {},
-                          ),
+                          Column(
+                            children: [
+                              RatingBar.builder(
+                                initialRating: double.parse(
+                                    widget.productRating.toString()),
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                                ignoreGestures: true,
+                                itemSize: 25,
+                                onRatingUpdate: (double value) {},
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     ],
@@ -157,12 +185,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 height: 15,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     child: Image.network(
                       'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
                       height: 150,
-                      width: 350,
+                      width: 300,
                     ),
                     decoration: BoxDecoration(
                         border: Border.all(color: AppColors.grey, width: 0.5),
@@ -170,10 +200,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   )
                 ],
               ),
-              // Divider(
-              //   color: AppColors.grey,
-              //   thickness: 2.0,
-              // ),
               SizedBox(
                 height: 15,
               ),
@@ -261,7 +287,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 color: AppColors.grey,
                 thickness: 3.0,
               ),
-
               Row(
                 children: [
                   Column(
@@ -282,7 +307,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Row(
                         children: [
                           Text(
-                            "Facing any difficulties, Vijay Sahu?",
+                            "Facing any difficulties,${_userName}?",
                             style: TextStyle(
                                 fontSize: 14,
                                 fontFamily: "poppins",
@@ -316,7 +341,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   )
                 ],
               ),
-
               Divider(
                 color: AppColors.grey,
                 thickness: 3.0,

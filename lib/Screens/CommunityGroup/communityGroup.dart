@@ -6,6 +6,7 @@ import '../../Helpers/ApiUrls.dart';
 import '../../Models/Response/CommunityGroupResponse.dart';
 
 import '../Common/refreshtwo.dart';
+import '../Common/shimmerScreen.dart';
 import '../Constants/app_color.dart';
 
 class CommunityGroup extends StatefulWidget {
@@ -133,12 +134,9 @@ class _CommunityGroupState extends State<CommunityGroup> {
                       future: fetchData(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Column(
-                            children: [Center(child: Text('Wait a moment...'))],
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                                ConnectionState.waiting ||
+                            snapshot.hasError) {
+                          return ShimmerListView(itemCount: 5);
                         } else {
                           List<CommunityGroupResponse> data = snapshot.data!;
 
@@ -176,12 +174,9 @@ class _CommunityGroupState extends State<CommunityGroup> {
                       future: fetchData(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Column(
-                            children: [Center(child: Text('Wait a moment...'))],
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                                ConnectionState.waiting ||
+                            snapshot.hasError) {
+                          return ShimmerListViewForListofItems(itemCount: 7);
                         } else {
                           List<CommunityGroupResponse> data = snapshot.data!;
                           return ListView.builder(

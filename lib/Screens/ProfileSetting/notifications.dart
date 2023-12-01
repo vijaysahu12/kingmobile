@@ -46,6 +46,7 @@ class _NotificationsScreen extends State<NotificationsScreen> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_outlined,
+            color: AppColors.lightShadow,
           ),
           onPressed: () {
             Navigator.pop(context);
