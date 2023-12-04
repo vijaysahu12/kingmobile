@@ -37,6 +37,10 @@ class _TradingScreen extends State<TradingScreen> {
     super.dispose();
   }
 
+  Future<void> refreshData() async {
+    await fetchDataThree();
+  }
+
   //success
   void paymentSuccessResponse(PaymentSuccessResponse response) {
     showAlertDialog(
@@ -99,51 +103,50 @@ class _TradingScreen extends State<TradingScreen> {
   //   // }
   // }
 
-  // Future<List<ProductResponseModel>?> fetchDataThree() async {
-  //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
-  //   if (response.statusCode == 200) {
-  //     List<ProductResponseModel>? list = null;
-  //     // ignore: unnecessary_null_comparison
-  //     if (response != null) {
-  //       final List parsedList = json.decode(response.body);
-  //       list = parsedList
-  //           .map((val) => ProductResponseModel.fromJson(val))
-  //           .toList();
-  //       isFavoriteList = List.generate(list.length, (index) => false);
-  //       print(list);
-  //     }
-  //     return list;
-  //   } else {
-  //     throw Exception('Failed to load data');
-  //   }
-  // }
-
   Future<List<ProductResponseModel>?> fetchDataThree() async {
-    final response = await http.post(
-      Uri.parse(ApiUrlConstants.getProducts),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{}),
-    );
-
+    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
     if (response.statusCode == 200) {
-      Map<String, dynamic> parsedResponse = json.decode(response.body);
-      if (parsedResponse.containsKey('data') &&
-          parsedResponse['data'] is List) {
-        List<ProductResponseModel>? list = (parsedResponse['data'] as List)
+      List<ProductResponseModel>? list;
+      final dynamic parsedData = json.decode(response.body);
+      if (parsedData['data'] is List) {
+        List<dynamic> parsedList = parsedData['data'];
+        list = parsedList
             .map((val) => ProductResponseModel.fromJson(val))
             .toList();
         isFavoriteList = List.generate(list.length, (index) => false);
         print(list);
-        return list;
-      } else {
-        throw Exception('Failed to load data');
       }
+      return list;
     } else {
       throw Exception('Failed to load data');
     }
   }
+
+  // Future<List<ProductResponseModel>?> fetchDataThree() async {
+  //   final response = await http.post(
+  //     Uri.parse(ApiUrlConstants.getProducts),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(<String, dynamic>{}),
+  //   );
+  //   if (response.statusCode == 200) {
+  //     Map<String, dynamic> parsedResponse = json.decode(response.body);
+  //     if (parsedResponse.containsKey('data') &&
+  //         parsedResponse['data'] is List) {
+  //       List<ProductResponseModel>? list = (parsedResponse['data'] as List)
+  //           .map((val) => ProductResponseModel.fromJson(val))
+  //           .toList();
+  //       isFavoriteList = List.generate(list.length, (index) => false);
+  //       print(list);
+  //       return list;
+  //     } else {
+  //       throw Exception('Failed to load data');
+  //     }
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -450,14 +453,19 @@ class _TradingScreen extends State<TradingScreen> {
                                                                   .raiting;
                                                           double productPrice =
                                                               data[index].price;
-                                                          Navigator.pushReplacement(
+                                                          String
+                                                              productCategory =
+                                                              data[index]
+                                                                  .category;
+                                                          Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
                                                                 builder: (context) => ProductDetailsScreen(
                                                                     productName,
                                                                     productDescription,
                                                                     productRating,
-                                                                    productPrice),
+                                                                    productPrice,
+                                                                    productCategory),
                                                               ));
                                                         },
                                                         child: Text(

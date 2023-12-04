@@ -12,12 +12,14 @@ class ProductDetailsScreen extends StatefulWidget {
   final String productDescription;
   final String productRating;
   final double productPrice;
+  final String productCategory;
 
   const ProductDetailsScreen(
     this.productName,
     this.productDescription,
     this.productRating,
     this.productPrice,
+    this.productCategory,
   );
 
   @override
@@ -96,9 +98,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     });
   }
 
-  void _navigateBack() {
-    Navigator.of(context).pop();
-  }
+  // void _navigateBack() {
+  //   Navigator.of(context).pop();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +108,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.purple,
         leading: IconButton(
-            onPressed: _navigateBack,
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: AppColors.lightShadow,
@@ -124,61 +128,55 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               Row(
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            widget.productName,
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 150,
-                          ),
-                          Icon(Icons.favorite_border_rounded)
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                // productName,
-                                "Category",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.grey,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 170,
-                          ),
-                          Column(
-                            children: [
-                              RatingBar.builder(
-                                initialRating: double.parse(
-                                    widget.productRating.toString()),
-                                itemBuilder: (context, _) => Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                ),
-                                ignoreGestures: true,
-                                itemSize: 25,
-                                onRatingUpdate: (double value) {},
-                              ),
-                            ],
-                          )
-                        ],
+                      Text(
+                        widget.productName,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
+                  Spacer(),
+                  Column(
+                    children: [
+                      Icon(Icons.favorite_border_rounded),
+                    ],
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        widget.productCategory,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.grey,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Column(
+                    children: [
+                      RatingBar.builder(
+                        initialRating:
+                            double.parse(widget.productRating.toString()),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        ignoreGestures: true,
+                        itemSize: 25,
+                        onRatingUpdate: (double value) {},
+                      ),
+                    ],
+                  )
                 ],
               ),
               SizedBox(
@@ -291,8 +289,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 children: [
                   Column(
                     children: [
-                      Image.network(
-                        "https://th.bing.com/th/id/OIP.eeLDU71Mp-6xvipaupP3hQHaHX?w=199&h=198&c=7&r=0&o=5&pid=1.7",
+                      Image.asset(
+                        "images/cloudQuestion.jpg",
                         height: 50,
                         width: 50,
                       )
@@ -309,7 +307,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           Text(
                             "Facing any difficulties,${_userName}?",
                             style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 13,
                                 fontFamily: "poppins",
                                 fontWeight: FontWeight.w600),
                           )
@@ -327,7 +325,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w600,
-                                fontSize: 13,
+                                fontSize: 12,
                                 color: Colors.blue,
                               ),
                             ),

@@ -234,6 +234,11 @@ class _GetMobileOtp extends State<GetMobileOtp> {
                     Expanded(
                       child: TextFormField(
                         controller: phoneNumberController,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: AppColors.dark,
+                          fontWeight: FontWeight.bold,
+                        ),
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -243,7 +248,8 @@ class _GetMobileOtp extends State<GetMobileOtp> {
                               color: AppColors.grey,
                               fontWeight: FontWeight.w600),
                           prefixIcon: Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 14.5, horizontal: 8),
                             child: InkWell(
                               onTap: () {
                                 showCountryPicker(

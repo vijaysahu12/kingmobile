@@ -19,11 +19,12 @@ class CommunityGroup extends StatefulWidget {
 class _CommunityGroupState extends State<CommunityGroup> {
   late PageController _pageController;
   bool isCommunitySelected = true;
-
+  late Future<List<CommunityGroupResponse>?> dataFuture;
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    dataFuture = fetchData();
   }
 
   @override
@@ -36,9 +37,9 @@ class _CommunityGroupState extends State<CommunityGroup> {
     final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
     if (response.statusCode == 200) {
       List<CommunityGroupResponse>? list;
-      // ignore: unnecessary_null_comparison
-      if (response != null) {
-        final List parsedList = json.decode(response.body);
+      final dynamic parsedData = json.decode(response.body);
+      if (parsedData['data'] is List) {
+        List<dynamic> parsedList = parsedData['data'];
         list = parsedList
             .map((val) => CommunityGroupResponse.fromJson(val))
             .toList();
@@ -55,7 +56,11 @@ class _CommunityGroupState extends State<CommunityGroup> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return RefreshHelper.buildRefreshIndicator(
-          onRefresh: RefreshHelper.defaultOnRefresh,
+          onRefresh: () async {
+            setState(() {
+              dataFuture = fetchData();
+            });
+          },
           child: Column(
             children: [
               Container(
@@ -131,7 +136,7 @@ class _CommunityGroupState extends State<CommunityGroup> {
                   },
                   children: [
                     FutureBuilder<List<CommunityGroupResponse>?>(
-                      future: fetchData(),
+                      future: dataFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                                 ConnectionState.waiting ||
@@ -171,7 +176,7 @@ class _CommunityGroupState extends State<CommunityGroup> {
                       },
                     ),
                     FutureBuilder<List<CommunityGroupResponse>?>(
-                      future: fetchData(),
+                      future: dataFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                                 ConnectionState.waiting ||

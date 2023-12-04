@@ -124,19 +124,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/fb_icon.png
-    - images/google_icon.png
-    # - images/KRA_logo.png
-    - images/otp_logo.png
-    - images/done.png
-    - images/verification_logo.jpg
     - images/cr_1.jpg
     - images/cr_2.jpg
     - images/cr_3.jpg
-    - images/done_logo.jpg
-    - images/done_lo.png
-    - images/community_logo.png
-    - images/seshi.jpg
+    - images/cloudQuestion.jpg
     - images/logo_tm.png
     - images/person_logo.png
 

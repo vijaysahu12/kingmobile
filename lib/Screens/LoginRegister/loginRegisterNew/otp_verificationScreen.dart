@@ -270,7 +270,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                   ),
                                   child: TextFormField(
                                     controller: _mobileController,
-                                    // readOnly: true,
+                                    readOnly: true,
                                     keyboardType: TextInputType.phone,
                                     style: TextStyle(
                                       fontSize: 12,
@@ -479,12 +479,13 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                         print(mobile);
                                         print(city);
                                         print(selectedGender);
-                                        Navigator.push(
+                                        Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   HomeScreen(),
-                                            ));
+                                            ),
+                                            (routte) => false);
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

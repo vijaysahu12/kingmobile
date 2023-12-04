@@ -28,10 +28,10 @@ class _PersonalInformation extends State<PersonalInformation> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadData();
   }
 
-  void _loadUserData() async {
+  Future<void> _loadData() async {
     String fullName = await _sharedPref.read("KingUserProfileName") ?? '';
     String email = await _sharedPref.read("KingUserProfileEmail") ?? '';
     setState(() {
@@ -40,10 +40,14 @@ class _PersonalInformation extends State<PersonalInformation> {
     });
   }
 
+  Future<void> _refreshUserData() async {
+    await _loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshHelper.buildRefreshIndicator(
-      onRefresh: RefreshHelper.defaultOnRefresh,
+      onRefresh: _refreshUserData,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

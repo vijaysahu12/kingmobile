@@ -1,22 +1,15 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-// import 'package:intl/intl.dart';
-// import 'package:intl/intl.dart';
-
 import '../../Helpers/httpRequest.dart';
 import '../../Helpers/sharedPref.dart';
-
 import '../Common/refreshtwo.dart';
 import '../Constants/app_color.dart';
 
 class PersonalDetails extends StatefulWidget {
   const PersonalDetails({super.key});
-
   @override
   State<PersonalDetails> createState() => _PersonalDetails();
 }
@@ -81,8 +74,6 @@ class _PersonalDetails extends State<PersonalDetails> {
     if (picked != null) {
       setState(() {
         selectedDate = picked;
-        // _userDateOfBirthController.text =
-        //     DateFormat('dd-MM-yyyy').format(selectedDate);
       });
     }
   }
@@ -102,7 +93,7 @@ class _PersonalDetails extends State<PersonalDetails> {
     _loadUserData();
   }
 
-  _loadUserData() async {
+  Future<void> _loadUserData() async {
     _userNameController.text =
         (await _sharedPref.read("KingUserProfileName") ?? '')
             .replaceAll('"', '');
@@ -129,6 +120,10 @@ class _PersonalDetails extends State<PersonalDetails> {
     }
   }
 
+  Future<void> refreshData() async {
+    await _loadUserData();
+  }
+
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedImage =
@@ -139,6 +134,7 @@ class _PersonalDetails extends State<PersonalDetails> {
       }
     });
   }
+
   //  Future<void> _pickImageCamera() async {
   //   final ImagePicker _picker = ImagePicker();
   //   final XFile? pickedImage =
@@ -176,9 +172,8 @@ class _PersonalDetails extends State<PersonalDetails> {
         ),
       ),
       body: RefreshHelper.buildRefreshIndicator(
-        onRefresh: RefreshHelper.defaultOnRefresh,
+        onRefresh: refreshData,
         child: SingleChildScrollView(
-          // physics: AlwaysScrollableScrollPhysics(),
           child: Form(
             key: _formKey,
             child: Column(
@@ -573,8 +568,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                                   vertical: 20,
                                   horizontal: 100,
                                 ),
-                                elevation:
-                                    20, // Set elevation to 0 to prevent double shadows
+                                elevation: 20,
                               ),
                               child: Text(
                                 'Update',

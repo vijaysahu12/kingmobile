@@ -1,6 +1,6 @@
 class HomeResponse {
-  String id;
-  double price;
+  String? id;
+  double? price;
 
   HomeResponse({
     required this.id,

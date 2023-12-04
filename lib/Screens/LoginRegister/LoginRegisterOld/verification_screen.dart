@@ -40,7 +40,7 @@ class _VerificationScreen extends State<VerificationScreen> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50.0),
                         child: Image.asset(
-                          'images/done_logo.jpg',
+                          '',
                           width: 70,
                           height: 70,
                           fit: BoxFit.cover,

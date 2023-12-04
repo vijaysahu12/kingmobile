@@ -2,6 +2,7 @@
 class ProductResponseModel {
   String id;
   String name;
+  String category;
   String description;
   String raiting;
   bool liked;
@@ -10,6 +11,7 @@ class ProductResponseModel {
   ProductResponseModel(
       {required this.id,
       required this.name,
+      required this.category,
       required this.description,
       required this.raiting,
       required this.liked,
@@ -20,6 +22,7 @@ class ProductResponseModel {
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       liked: json['liked'],
+      category: json['category'] ?? '',
       description: json['description'],
       raiting: json['rating'],
       //favourite: json['favourite'],

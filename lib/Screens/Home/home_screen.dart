@@ -35,17 +35,37 @@ class _Personal extends State<Personal> {
     super.dispose();
   }
 
-  Future<List<HomeResponse>> fetchData() async {
+  // Future<List<HomeResponse>> fetchData() async {
+  //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+  //   if (response.statusCode == 200) {
+  //     final List parsedList = json.decode(response.body);
+  //     List<HomeResponse> list =
+  //         parsedList.map((val) => HomeResponse.fromJson(val)).toList();
+  //     print(list);
+  //     return list;
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //   }
+  // }
+
+  Future<List<HomeResponse>?> fetchData() async {
     final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
     if (response.statusCode == 200) {
-      final List parsedList = json.decode(response.body);
-      List<HomeResponse> list =
-          parsedList.map((val) => HomeResponse.fromJson(val)).toList();
-      print(list);
+      List<HomeResponse>? list;
+      final dynamic parsedData = json.decode(response.body);
+      if (parsedData['data'] is List) {
+        List<dynamic> parsedList = parsedData['data'];
+        list = parsedList.map((val) => HomeResponse.fromJson(val)).toList();
+        print(list);
+      }
       return list;
     } else {
       throw Exception('Failed to load data');
     }
+  }
+
+  Future<void> refreshData() async {
+    await fetchData();
   }
 
   int _currentIndex = 0;
@@ -62,7 +82,7 @@ class _Personal extends State<Personal> {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       return RefreshHelper.buildRefreshIndicator(
-        onRefresh: RefreshHelper.defaultOnRefresh,
+        onRefresh: refreshData,
         child: SingleChildScrollView(
           child: Column(children: [
             Padding(
