@@ -22,12 +22,13 @@ class Personal extends StatefulWidget {
 class _Personal extends State<Personal> {
   String selectedButton = 'NSE';
   String selectedMarketButton = 'Gainers';
+  late Future<List<HomeResponse>?> dataFuture;
 
   @override
   void initState() {
     print("Home Screen");
+    dataFuture = fetchData();
     super.initState();
-    fetchData();
   }
 
   @override
@@ -65,7 +66,9 @@ class _Personal extends State<Personal> {
   }
 
   Future<void> refreshData() async {
-    await fetchData();
+    setState(() {
+      dataFuture = fetchData();
+    });
   }
 
   int _currentIndex = 0;
@@ -447,7 +450,7 @@ class _Personal extends State<Personal> {
               height: 10,
             ),
             FutureBuilder<List<HomeResponse>?>(
-              future: fetchData(),
+              future: dataFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ShimmerListViewForHome(itemCount: 1);

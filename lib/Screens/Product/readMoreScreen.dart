@@ -29,13 +29,15 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   var isPaid = false;
   SharedPref _sharedPref = SharedPref();
+  bool isCommunitySelected = true;
+  late PageController _pageController;
 
   List<String> myVideoUrls = [
     'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
     'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
   ];
-
   final String videoUrl = 'https://youtu.be/uR8Gc5htyr0?si=6938x8gYU-qSXgUb';
+
   void openYoutubeVideo(BuildContext context, String videoUrl) {
     Navigator.push(
       context,
@@ -92,15 +94,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   void _loadUserData() async {
     String fullName = await _sharedPref.read("KingUserProfileName") ?? '';
-
     setState(() {
       _userName = fullName.replaceAll('"', '');
     });
   }
-
-  // void _navigateBack() {
-  //   Navigator.of(context).pop();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -118,13 +115,75 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(
-          top: 20.0,
           left: 15,
           right: 15,
         ),
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Container(
+                margin:
+                    EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
+                decoration: BoxDecoration(
+                    color: AppColors.lightShadow,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isCommunitySelected = true;
+                          _pageController.animateToPage(0,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          backgroundColor:
+                              isCommunitySelected ? AppColors.light : null,
+                          padding: EdgeInsets.symmetric(horizontal: 45)),
+                      child: Text(
+                        'Overview',
+                        style: TextStyle(
+                            color: isCommunitySelected
+                                ? AppColors.primaryColor
+                                : AppColors.grey,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isCommunitySelected = false;
+                          _pageController.animateToPage(1,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          backgroundColor:
+                              !isCommunitySelected ? AppColors.light : null,
+                          padding: EdgeInsets.symmetric(horizontal: 45)),
+                      child: Text(
+                        'Content',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: !isCommunitySelected
+                                ? AppColors.primaryColor
+                                : AppColors.grey),
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ),
               Row(
                 children: [
                   Column(
@@ -188,7 +247,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 children: [
                   Container(
                     child: Image.network(
-                      'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
+                      'https://i0.wp.com/lindaraschke.net/wp-content/uploads/forex-banner-1000x350.jpg?fit=1000%2C350&ssl=1',
                       height: 150,
                       width: 300,
                     ),
@@ -277,6 +336,76 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ],
                   )
                 ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                onTap: () {
+                  openYoutubeVideo(context, videoUrl);
+                },
+                child: Row(
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: AppColors.primaryColor),
+                          child: Icon(
+                            Icons.play_arrow_rounded,
+                            size: 30,
+                            color: AppColors.light,
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "6 Learning Material",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: "poppins",
+                                  fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "6  Video lectures",
+                              style: TextStyle(
+                                  color: AppColors.grey,
+                                  fontSize: 12,
+                                  fontFamily: "poppins",
+                                  fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      children: [
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 20,
+                          color: AppColors.dark,
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: 10,
+                    )
+                  ],
+                ),
               ),
               SizedBox(
                 height: 20,

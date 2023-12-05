@@ -28,42 +28,61 @@ class _HomeScreen extends State<HomeScreen> {
     PersonalInformation()
   ];
   final _pageController = PageController();
+  DateTime? _currentBackPressTime;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarBuilder.buildAppBar(context, _currentIndex),
-      body: PageView(
-        children: _pagesView,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        controller: _pageController,
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTabTapped: (index) {
-          HttpRequestHelper.checkInternetConnection(context);
-          setState(() {
-            _currentIndex = index;
-            _pageController.animateToPage(_currentIndex,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.linear);
-          });
-        },
-      ),
-    );
+        appBar: AppBarBuilder.buildAppBar(context, _currentIndex),
+        // ignore: deprecated_member_use
+        body: WillPopScope(
+          onWillPop: () async {
+            if (_currentIndex != 0) {
+              setState(() {
+                _currentIndex = 0;
+                _pageController.animateToPage(
+                  _currentIndex,
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.linear,
+                );
+              });
+              return false;
+            } else {
+              DateTime now = DateTime.now();
+              if (_currentBackPressTime == null ||
+                  now.difference(_currentBackPressTime!) >
+                      Duration(seconds: 1)) {
+                _currentBackPressTime = now;
+                return false;
+              } else {
+                return true;
+              }
+            }
+          },
+          child: PageView(
+            children: _pagesView,
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            controller: _pageController,
+          ),
+        ),
+        bottomNavigationBar: CustomBottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTabTapped: (index) {
+            HttpRequestHelper.checkInternetConnection(context);
+            setState(() {
+              _currentIndex = index;
+              _pageController.animateToPage(_currentIndex,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.linear);
+            });
+          },
+        ));
   }
 }
-
-
-
-
-
-
-
 
 
 

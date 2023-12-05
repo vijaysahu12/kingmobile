@@ -422,7 +422,8 @@ class _PersonalDetails extends State<PersonalDetails> {
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors.dark,
+                                          color: const Color.fromARGB(
+                                              255, 108, 197, 199),
                                         ),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
@@ -506,19 +507,20 @@ class _PersonalDetails extends State<PersonalDetails> {
                             ),
                             child: TextField(
                               controller: _userEmailController,
+                              maxLength: 35,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.dark,
                               ),
                               decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Email Id',
-                                hintStyle: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                                  border: InputBorder.none,
+                                  hintText: 'Email Id',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  counterText: ''),
                             ),
                           ),
                         ],
@@ -531,33 +533,29 @@ class _PersonalDetails extends State<PersonalDetails> {
                           alignment: Alignment.center,
                           child: Container(
                             child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  String fullName = _userNameController.text;
-                                  String email = _userEmailController.text;
-                                  String mobile = _userMobileController.text;
-                                  String city = _userCityController.text;
-                                  String dateOfBirth =
-                                      _userDateOfBirthController.text;
+                              onPressed: () async {
+                                String fullName = _userNameController.text;
+                                String email = _userEmailController.text;
+                                String mobile = _userMobileController.text;
+                                String city = _userCityController.text;
+                                String dateOfBirth =
+                                    _userDateOfBirthController.text;
 
-                                  _sharedPref.save(
-                                      "KingUserProfileName", fullName);
-                                  _sharedPref.save(
-                                      "KingUserProfileEmail", email);
-                                  _sharedPref.save(
-                                      "KingUserProfileMobile", mobile);
-                                  _sharedPref.save("KingUserProfileCity", city);
-                                  _sharedPref.save("KingUserProfileDateOfBirth",
-                                      dateOfBirth);
+                                _sharedPref.save(
+                                    "KingUserProfileName", fullName);
+                                _sharedPref.save("KingUserProfileEmail", email);
+                                _sharedPref.save(
+                                    "KingUserProfileMobile", mobile);
+                                _sharedPref.save("KingUserProfileCity", city);
+                                _sharedPref.save(
+                                    "KingUserProfileDateOfBirth", dateOfBirth);
 
-                                  setState(() async {
-                                    bool isConnected = await HttpRequestHelper
-                                        .checkInternetConnection(context);
-                                    if (isConnected) {
-                                      Navigator.pop(context);
-                                    }
-                                  });
-                                });
+                                bool isConnected = await HttpRequestHelper
+                                    .checkInternetConnection(context);
+                                if (isConnected) {
+                                  Navigator.pop(context,
+                                      {'name': fullName, 'email': email});
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(

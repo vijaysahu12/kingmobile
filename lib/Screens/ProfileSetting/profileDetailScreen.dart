@@ -116,12 +116,25 @@ class _PersonalInformation extends State<PersonalInformation> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PersonalDetails(),
-                  ),
-                );
+                Navigator.of(context)
+                    .push(MaterialPageRoute(
+                  builder: (context) => PersonalDetails(),
+                ))
+                    .then((data) {
+                  if (data != null) {
+                    setState(() {
+                      _userName = data['name'];
+                      _userEmail = data['email'];
+                    });
+                  }
+                });
+
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => PersonalDetails(),
+                //   ),
+                // );
               },
               child: Container(
                 padding: EdgeInsets.all(15),
