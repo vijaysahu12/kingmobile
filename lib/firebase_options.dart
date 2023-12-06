@@ -44,42 +44,42 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDwkMDCzPjmU7S4pkHSNmcBZ4f-5uJsBi4',
-    appId: '1:103055315510:web:13aa0a5bd095be56b63e97',
-    messagingSenderId: '103055315510',
-    projectId: 'fir-testingone-e3d83',
-    authDomain: 'fir-testingone-e3d83.firebaseapp.com',
-    databaseURL: 'https://fir-testingone-e3d83-default-rtdb.firebaseio.com',
-    storageBucket: 'fir-testingone-e3d83.appspot.com',
-    measurementId: 'G-SGGBE565C2',
+    apiKey: 'AIzaSyAxMj1T3o-ufX9GjdiwMQUjbkcWZSgT6i8',
+    appId: '1:87513680665:web:4604b41b7b42c5bb1a1388',
+    messagingSenderId: '87513680665',
+    projectId: 'mobileauthv3-c6f14',
+    authDomain: 'mobileauthv3-c6f14.firebaseapp.com',
+    databaseURL: 'https://mobileauthv3-c6f14-default-rtdb.firebaseio.com',
+    storageBucket: 'mobileauthv3-c6f14.appspot.com',
+    measurementId: 'G-H8TWESFR01',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDCOP4X5-BLtSp7aWddJ6qfNno8HqkFCf8',
-    appId: '1:103055315510:android:0f43b305b9160e6cb63e97',
-    messagingSenderId: '103055315510',
-    projectId: 'fir-testingone-e3d83',
-    databaseURL: 'https://fir-testingone-e3d83-default-rtdb.firebaseio.com',
-    storageBucket: 'fir-testingone-e3d83.appspot.com',
+    apiKey: 'AIzaSyBnT2fq94P5oxAr6-mHcsx-cYq1-KkYsiQ',
+    appId: '1:87513680665:android:d98b6ce2ade3e1621a1388',
+    messagingSenderId: '87513680665',
+    projectId: 'mobileauthv3-c6f14',
+    databaseURL: 'https://mobileauthv3-c6f14-default-rtdb.firebaseio.com',
+    storageBucket: 'mobileauthv3-c6f14.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDMDjn_eeoORxFI0aoRT4MH1gZ8YI3EacI',
-    appId: '1:103055315510:ios:7bf09ef0aba33e9db63e97',
-    messagingSenderId: '103055315510',
-    projectId: 'fir-testingone-e3d83',
-    databaseURL: 'https://fir-testingone-e3d83-default-rtdb.firebaseio.com',
-    storageBucket: 'fir-testingone-e3d83.appspot.com',
+    apiKey: 'AIzaSyB-xEV0xL9nlrEb0Zpw0qo5dsofJdDzUOI',
+    appId: '1:87513680665:ios:cc29c90f92f31bab1a1388',
+    messagingSenderId: '87513680665',
+    projectId: 'mobileauthv3-c6f14',
+    databaseURL: 'https://mobileauthv3-c6f14-default-rtdb.firebaseio.com',
+    storageBucket: 'mobileauthv3-c6f14.appspot.com',
     iosBundleId: 'com.example.kraapp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDMDjn_eeoORxFI0aoRT4MH1gZ8YI3EacI',
-    appId: '1:103055315510:ios:d06d7a242588a181b63e97',
-    messagingSenderId: '103055315510',
-    projectId: 'fir-testingone-e3d83',
-    databaseURL: 'https://fir-testingone-e3d83-default-rtdb.firebaseio.com',
-    storageBucket: 'fir-testingone-e3d83.appspot.com',
+    apiKey: 'AIzaSyB-xEV0xL9nlrEb0Zpw0qo5dsofJdDzUOI',
+    appId: '1:87513680665:ios:1b2827bb24806e1a1a1388',
+    messagingSenderId: '87513680665',
+    projectId: 'mobileauthv3-c6f14',
+    databaseURL: 'https://mobileauthv3-c6f14-default-rtdb.firebaseio.com',
+    storageBucket: 'mobileauthv3-c6f14.appspot.com',
     iosBundleId: 'com.example.kraapp.RunnerTests',
   );
 }

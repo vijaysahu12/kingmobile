@@ -1,6 +1,6 @@
 // Suppose you have a User model
 class ProductResponseModel {
-  String id;
+//  String id;
   String name;
   String category;
   String description;
@@ -9,7 +9,8 @@ class ProductResponseModel {
   double price;
 
   ProductResponseModel(
-      {required this.id,
+      {
+      //required this.id,
       required this.name,
       required this.category,
       required this.description,
@@ -19,7 +20,7 @@ class ProductResponseModel {
 
   factory ProductResponseModel.fromJson(Map<String, dynamic> json) {
     return ProductResponseModel(
-      id: json['id'] ?? '',
+      // id: json['id'] ?? '',
       name: json['name'] ?? '',
       liked: json['liked'],
       category: json['category'] ?? '',

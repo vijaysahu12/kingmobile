@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 
-import 'package:kraapp/Screens/Constants/app_color.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import '../Constants/app_color.dart';
 
-import '../../Helpers/sharedPref.dart';
-
-class ProductDetailsScreen extends StatefulWidget {
+class ProductInformation extends StatefulWidget {
   final String productName;
   final String productDescription;
   final String productRating;
   final double productPrice;
   final String productCategory;
 
-  const ProductDetailsScreen(
+  const ProductInformation(
     this.productName,
     this.productDescription,
     this.productRating,
@@ -24,73 +19,18 @@ class ProductDetailsScreen extends StatefulWidget {
   );
 
   @override
-  _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
+  State<ProductInformation> createState() => _ProductInformation();
 }
 
-class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  var isPaid = false;
-  SharedPref _sharedPref = SharedPref();
-  bool isCommunitySelected = true;
+class _ProductInformation extends State<ProductInformation> {
   late PageController _pageController;
-
-  List<String> myVideoUrls = [
-    'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
-    'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
-  ];
-  final String videoUrl = 'https://youtu.be/uR8Gc5htyr0?si=6938x8gYU-qSXgUb';
-
-  // void openYoutubeVideo(BuildContext context, String videoUrl) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => YoutubePlayerScreen(videoUrls: myVideoUrls),
-  //     ),
-  //   );
-  // }
-
-  void paymentSuccessResponse(PaymentSuccessResponse response) {
-    showAlertDialog(
-        context, "Payment Successful", "Payment ID: ${response.paymentId}");
-  }
-
-  void paymentFailureResponse(PaymentFailureResponse response) {
-    showAlertDialog(context, "Payment Failed",
-        "code : ${response.code}\n Description :${response.message}");
-  }
-
-  void handleExternalWalletSelected(ExternalWalletResponse response) {
-    showAlertDialog(
-        context, "External Wallet Selected", "${response.walletName}");
-  }
-
-  void showAlertDialog(BuildContext context, String title, String message) {
-    Widget continueButton = ElevatedButton(
-      child: const Text("Continue"),
-      onPressed: () {},
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        continueButton,
-      ],
-    );
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  String _userName = '';
+  var isPaid = false;
+  bool isCommunitySelected = true;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
-    _loadUserData();
   }
 
   @override
@@ -99,197 +39,196 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     super.dispose();
   }
 
-  void _loadUserData() async {
-    String fullName = await _sharedPref.read("KingUserProfileName") ?? '';
-    setState(() {
-      _userName = fullName.replaceAll('"', '');
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.purple,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: AppColors.lightShadow,
-            )),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
-              decoration: BoxDecoration(
-                  color: AppColors.lightShadow,
-                  borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isCommunitySelected = true;
-                        _pageController.animateToPage(0,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.ease);
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        backgroundColor:
-                            isCommunitySelected ? AppColors.light : null,
-                        padding: EdgeInsets.symmetric(horizontal: 45)),
-                    child: Text(
-                      'Overview',
-                      style: TextStyle(
-                          color: isCommunitySelected
-                              ? AppColors.primaryColor
-                              : AppColors.grey,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isCommunitySelected = false;
-                        _pageController.animateToPage(1,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.ease);
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        backgroundColor:
-                            !isCommunitySelected ? AppColors.light : null,
-                        padding: EdgeInsets.symmetric(horizontal: 45)),
-                    child: Text(
-                      'Content',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: !isCommunitySelected
-                              ? AppColors.primaryColor
-                              : AppColors.grey),
-                    ),
-                  ),
-                  Spacer(),
-                ],
-              ),
-            ),
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    isCommunitySelected = index == 0;
-                  });
-                },
-                children: [
-                  _buildOverviewContent(),
-                  _buildContent(),
-                ],
-              ),
-            ),
-          ],
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.purple,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: AppColors.lightShadow,
+              )),
         ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: AppColors.purple,
-        child: Container(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: Padding(
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          child: Column(
             children: [
-              Text(
-                "₹ ${widget.productPrice}",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.lightShadow),
-              ),
-              if (isPaid)
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 35),
-                    backgroundColor: AppColors.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+              Container(
+                margin:
+                    EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
+                decoration: BoxDecoration(
+                    color: AppColors.lightShadow,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isCommunitySelected = true;
+                          _pageController.animateToPage(0,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          backgroundColor:
+                              isCommunitySelected ? AppColors.light : null,
+                          padding: EdgeInsets.symmetric(horizontal: 45)),
+                      child: Text(
+                        'Overview',
+                        style: TextStyle(
+                            color: isCommunitySelected
+                                ? AppColors.primaryColor
+                                : AppColors.grey,
+                            fontWeight: FontWeight.w700),
+                      ),
                     ),
-                  ),
-                  onPressed: () {
+                    Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isCommunitySelected = false;
+                          _pageController.animateToPage(1,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          backgroundColor:
+                              !isCommunitySelected ? AppColors.light : null,
+                          padding: EdgeInsets.symmetric(horizontal: 45)),
+                      child: Text(
+                        'Content',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: !isCommunitySelected
+                                ? AppColors.primaryColor
+                                : AppColors.grey),
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) {
                     setState(() {
-                      Razorpay razorpay = Razorpay();
-                      var options = {
-                        'key': 'rzp_test_8x2It6dJUckx0i',
-                        'amount':
-                            '${(widget.productPrice * 100).toString()}', //RS 1 (100paisa=1)
-                        'name': '${widget.productName}',
-                        'description': '${widget.productDescription}',
-                        'retry': {'enabled': true, 'max_count': 1},
-                        'send_sms_hash': true,
-                        'prefill': {
-                          'contact': '6309373318',
-                          'email': 'kakuseshadri033@gmail.com'
-                        },
-                        'external': {
-                          'wallets': ['paytm']
-                        }
-                      };
-                      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
-                          paymentSuccessResponse);
-                      razorpay.on(
-                          Razorpay.EVENT_PAYMENT_ERROR, paymentFailureResponse);
-                      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
-                          handleExternalWalletSelected);
-                      razorpay.open(options);
-                      Navigator.pop(context);
+                      isCommunitySelected = index == 0;
                     });
                   },
-                  child: Text(
-                    "Buy Now",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.lightShadow,
-                    ),
-                  ),
+                  children: [
+                    _buildOverviewContent(),
+                    _buildContent(),
+                  ],
                 ),
-              if (isPaid != true)
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 35),
-                    backgroundColor: AppColors.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  onPressed: () {
-                    // openYoutubeVideo(context, videoUrl);
-                  },
-                  child: Text(
-                    "Open",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.lightShadow,
-                    ),
-                  ),
-                ),
+              ),
             ],
           ),
         ),
-      ),
-    );
+        bottomNavigationBar: BottomAppBar(
+          color: AppColors.purple,
+          child: Container(
+            height: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "₹ ${widget.productPrice}",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.lightShadow),
+                ),
+                if (isPaid)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 15, horizontal: 35),
+                      backgroundColor: AppColors.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        //Razorpay razorpay = Razorpay();
+                        // var options = {
+                        //   'key': 'rzp_test_8x2It6dJUckx0i',
+                        //   'amount':
+                        //       '${(widget.productPrice * 100).toString()}', //RS 1 (100paisa=1)
+                        //   'name': '${widget.productName}',
+                        //   'description': '${widget.productDescription}',
+                        //   'retry': {'enabled': true, 'max_count': 1},
+                        //   'send_sms_hash': true,
+                        //   'prefill': {
+                        //     'contact': '6309373318',
+                        //     'email': 'kakuseshadri033@gmail.com'
+                        //   },
+                        //   'external': {
+                        //     'wallets': ['paytm']
+                        //   }
+                        // };
+                        // razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+                        //     paymentSuccessResponse);
+                        // razorpay.on(
+                        //     Razorpay.EVENT_PAYMENT_ERROR, paymentFailureResponse);
+                        // razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+                        //     handleExternalWalletSelected);
+                        // razorpay.open(options);
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Text(
+                      "Buy Now",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.lightShadow,
+                      ),
+                    ),
+                  ),
+                if (isPaid != true)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 15, horizontal: 35),
+                      backgroundColor: AppColors.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: () {
+                      // openYoutubeVideo(context, videoUrl);
+                    },
+                    child: Text(
+                      "Open",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.lightShadow,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildOverviewContent() {
@@ -548,7 +487,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Row(
                         children: [
                           Text(
-                            "Facing any difficulties,${_userName}?",
+                            "Facing any difficulties,{_userName}?",
                             style: TextStyle(
                                 fontSize: 13,
                                 fontFamily: "poppins",
@@ -667,39 +606,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Widget _buildContent() {
-    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-    return ListView.builder(
-      itemCount: myVideoUrls.length,
-      itemBuilder: (context, index) {
-        return YoutubePlayerBuilder(
-          player: YoutubePlayer(
-            controller: YoutubePlayerController(
-              initialVideoId:
-                  YoutubePlayer.convertUrlToId(myVideoUrls[index]) ?? '',
-              flags: YoutubePlayerFlags(autoPlay: false),
-            ),
-          ),
-          builder: (context, player) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  child: player,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Video ${index + 1}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
-            );
-          },
-        );
-      },
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Row(
+            children: [Text("jdshvbnfdbcbhjbfvhhjb vhbsdvhydvdhsvbhdsvbvf")],
+          )
+        ],
+      ),
     );
   }
 }

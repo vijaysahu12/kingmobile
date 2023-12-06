@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:device_info/device_info.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreen.dart';
@@ -85,9 +86,12 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         print('verificationFailed---> ${ex}');
       },
       codeSent: (String verificationId, int? resendToken) async {
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
         print(resendToken);
         print("code sent");
         print('codeSent $verificationId');
+
+        print('FCM Token: $fcmToken');
 
         Navigator.pushReplacement(
           context,
@@ -95,6 +99,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
             builder: (context) => OtpVerificationScreen(
               verificationId: verificationId,
               resendToken: resendToken,
+              fcmToken: fcmToken,
               mobileNumber: phoneNumberController.text,
               countryCode: selectedCountry.phoneCode,
               deviceType: deviceType,

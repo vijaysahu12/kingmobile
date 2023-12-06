@@ -10,7 +10,8 @@ class YoutubePlayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    FlutterWindowManager.addFlags(FlutterWindowManager
+        .FLAG_SECURE); // stop screenShot option(avoid screenShot option)
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.purple,

@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
 import 'Helpers/sharedPref.dart';
-import 'Screens/Common/firebase_options.dart';
+//import 'Screens/Common/firebase_options.dart';
+import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,8 +52,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        //  body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
-        body: HomeScreen(),
+        body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
+        // body: HomeScreen(),
       ),
     );
   }

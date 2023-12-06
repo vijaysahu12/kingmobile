@@ -1,7 +1,3 @@
-// import 'package:firebase_auth/firebase_auth.dart';
-
-// import 'dart:convert';
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -10,7 +6,6 @@ import 'package:kraapp/Screens/Common/refreshtwo.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
 import '../../../Helpers/sharedPref.dart';
-// import '../../../Models/Response/OtpVerficationResponse.dart';
 import '../../../Models/Response/OtpVerficationResponse.dart';
 import '../../Constants/app_color.dart';
 import 'package:http/http.dart' as http;
@@ -21,13 +16,16 @@ class OtpVerificationScreen extends StatefulWidget {
   final String mobileNumber;
   final String deviceType;
   final String countryCode;
-  const OtpVerificationScreen(
-      {required this.verificationId,
-      required this.resendToken,
-      required this.mobileNumber,
-      required this.deviceType,
-      required this.countryCode,
-      super.key});
+  final String? fcmToken;
+  const OtpVerificationScreen({
+    required this.verificationId,
+    required this.resendToken,
+    required this.mobileNumber,
+    required this.deviceType,
+    required this.countryCode,
+    required this.fcmToken,
+    super.key,
+  });
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreen();
@@ -61,6 +59,15 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
     }
   }
 
+  // FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // void configureFirebaseMessaging() {
+  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //     print("Received a notification: ");
+  //     print(messaging);
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
@@ -77,13 +84,44 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
     });
   }
 
+  Future<void> postUserData() async {
+    final String apiUrl =
+        'http://192.168.29.246:8083/api/Account/ManageUserDetails';
+
+    Map<String, dynamic> userData = {
+      "publicKey": "kjnfdyvbnjhbvdsjhb yhdvb hdvsbhdsbhvdhdv",
+      "fullName": _nameController.text,
+      "emailId": _emailController.text,
+      "mobile": _mobileController.text,
+      "city": _cityController.text,
+      "gender": "Male",
+      "dob": "knhddshb"
+    };
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content_Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(userData),
+      );
+      if (response.statusCode == 200) {
+        print("Data is posted");
+      } else {
+        print('${response.statusCode}');
+      }
+    } catch (e) {
+      print("Exception $e");
+    }
+  }
+
   void signInWithOtp(BuildContext context, String otp) async {
     print("signInWithOtp function called");
     try {
       String deviceType = widget.deviceType;
-      String countryCode = widget.countryCode;
-      int? firebaseToken = widget.resendToken;
 
+      String? firebaseToken = widget.fcmToken;
+      String countryCode = widget.countryCode;
       final apiUrl = ApiUrlConstants.otpLoginVerfication +
           '?mobileNumber=${widget.mobileNumber}&FirebaseFcmToken=$firebaseToken&deviceType=$deviceType&countryCode=$countryCode';
 
@@ -479,6 +517,10 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                         print(mobile);
                                         print(city);
                                         print(selectedGender);
+                                        // configureFirebaseMessaging();
+
+                                        postUserData();
+
                                         Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(
