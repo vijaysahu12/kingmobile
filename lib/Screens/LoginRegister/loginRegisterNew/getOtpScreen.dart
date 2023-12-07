@@ -72,7 +72,11 @@ class _GetMobileOtp extends State<GetMobileOtp> {
     return null;
   }
 
-  signInWithOtpOld(String countryPhoneCode, String deviceType) async {
+  String verificationId = '';
+  signInWithOtpOld(
+    String countryPhoneCode,
+    String deviceType,
+  ) async {
     String phoneNumber = "+" + countryPhoneCode + phoneNumberController.text;
     print(phoneNumber);
     //String deviceType = getDeviceType() as String;
@@ -87,6 +91,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
       },
       codeSent: (String verificationId, int? resendToken) async {
         String? fcmToken = await FirebaseMessaging.instance.getToken();
+        verificationId = verificationId;
         print(resendToken);
         print("code sent");
         print('codeSent $verificationId');

@@ -5,6 +5,7 @@ class RefreshHelper {
   static Widget buildRefreshIndicator({
     required Future<void> Function() onRefresh,
     required Widget child,
+    // double headerHeight = 160.0,
   }) {
     RefreshController _refreshController =
         RefreshController(initialRefresh: false);

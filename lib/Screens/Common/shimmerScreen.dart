@@ -282,3 +282,35 @@ class ShimmerListViewForListofItems extends StatelessWidget {
     );
   }
 }
+
+class ShimmerListViewForYoutubeContent extends StatelessWidget {
+  final int itemCount;
+  const ShimmerListViewForYoutubeContent({required this.itemCount, super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          border: Border.all(color: AppColors.grey, width: 3),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 300,
+                height: 200,
+                color: Colors.grey,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

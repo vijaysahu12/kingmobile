@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import '../../Helpers/httpRequest.dart';
 import '../../Helpers/sharedPref.dart';
 import '../Common/refreshtwo.dart';
 import '../Constants/app_color.dart';
+import 'package:http/http.dart' as http;
 
 class PersonalDetails extends StatefulWidget {
   const PersonalDetails({super.key});
@@ -29,6 +31,7 @@ class _PersonalDetails extends State<PersonalDetails> {
   File? _image;
   DateTime selectedDate = DateTime.now();
   // bool isConnected =_httpHelper.checkInternetConnection(context);
+
   Future<void> _selectedDate() async {
     // DateTime? picked = await showDatePicker(
     //     context: context,
@@ -133,6 +136,47 @@ class _PersonalDetails extends State<PersonalDetails> {
         _image = File(pickedImage.path);
       }
     });
+  }
+
+  Future<void> updateUserData() async {
+    final String apiUrl =
+        'http://192.168.29.246:8083/api/Account/ManageUserDetails';
+
+    Map<String, String> userData = {
+      "fullName": _userNameController.text,
+      "emailId": _userEmailController.text,
+      "mobile": '7288827138',
+      "city": _userCityController.text,
+      "gender": selectedGender.toString(),
+      "dob": _userDateOfBirthController.text,
+    };
+    print(userData);
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(userData),
+        //  body: jsonEncode({
+        // "fullName": _userNameController.text,
+        // "emailId": _userEmailController.text,
+        // "city": _userCityController.text,
+        // "gender": selectedGender.toString(),
+        // // "dob": _userDateOfBirthController.text,
+        // "mobile": "12121212126711",
+        // "dob": "2023-12-07T04:28:22.924Z"
+        // }),
+      );
+
+      if (response.statusCode == 200) {
+        print("Data is updated successfully!");
+      } else {
+        print('Failed to update data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Exception occurred: $e");
+    }
   }
 
   //  Future<void> _pickImageCamera() async {
@@ -553,6 +597,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                                 bool isConnected = await HttpRequestHelper
                                     .checkInternetConnection(context);
                                 if (isConnected) {
+                                  updateUserData();
                                   Navigator.pop(context,
                                       {'name': fullName, 'email': email});
                                 }

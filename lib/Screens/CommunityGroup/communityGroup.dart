@@ -159,12 +159,12 @@ class _CommunityGroupState extends State<CommunityGroup> {
                                 height: 200,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Image.network(
+                                  child: Image.asset(
                                     // data[index]['image'] != null &&
                                     //         data[index]['image'].isNotEmpty
                                     //     ? data[index]['image']
                                     //     :
-                                    'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
+                                    'images/cr_1.jpg',
                                     height: 100,
                                     width: 100,
                                   ),
@@ -202,13 +202,13 @@ class _CommunityGroupState extends State<CommunityGroup> {
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(40),
-                                        child: Image.network(
+                                        child: Image.asset(
                                           // data[index]['image'] != null &&
                                           //         data[index]['image']
                                           //             .isNotEmpty
                                           //     ? data[index]['image']
                                           //     :
-                                          'https://cdn0.iconfinder.com/data/icons/flat-ui-5/64/img-jpg-bmp-picture-gallery-256.png',
+                                          'images/cr_1.jpg',
                                           height: 100,
                                           width: 100,
                                         ),

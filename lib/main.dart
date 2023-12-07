@@ -1,25 +1,24 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
+// import 'com.pusher.pushnotifications.PushNotifications';
 import 'package:kraapp/Screens/all_screens.dart';
 
 import 'Helpers/sharedPref.dart';
-//import 'Screens/Common/firebase_options.dart';
-import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
-import 'firebase_options.dart';
+import 'Screens/Common/firebase_options.dart';
+//import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  await FirebaseAppCheck.instance.activate(
-      webProvider:
-          ReCaptchaV3Provider('6LcnbCUpAAAAAH1zTC4rAg3XJbFA4343ngD31Y-6'),
-      androidProvider: AndroidProvider.playIntegrity,
-      appleProvider: AppleProvider.appAttest);
+  await FirebaseAppCheck.instance.activate();
+  // await FirebaseAppCheck.instance.activate(
+  //     webProvider:
+  //         ReCaptchaV3Provider('6LcnbCUpAAAAAH1zTC4rAg3XJbFA4343ngD31Y-6'),
+  //     androidProvider: AndroidProvider.playIntegrity,
+  //     appleProvider: AppleProvider.appAttest);
 
   runApp(const MyApp());
 }
@@ -52,8 +51,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
-        // body: HomeScreen(),
+        //  body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
+        body: HomeScreen(),
       ),
     );
   }

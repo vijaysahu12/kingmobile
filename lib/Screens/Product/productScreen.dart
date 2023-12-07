@@ -21,6 +21,7 @@ class _TradingScreen extends State<TradingScreen> {
   late PageController _pageController;
   bool isCommunitySelected = true;
   late List<bool> isFavoriteList = [];
+  late List<int> likeCountList = [];
   late Future<List<ProductResponseModel>?> productsFuture;
 
   @override
@@ -34,6 +35,18 @@ class _TradingScreen extends State<TradingScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  void onLikedButtonPressed(int index) {
+    setState(() {
+      if (isFavoriteList[index]) {
+        likeCountList[index]--;
+        isFavoriteList[index] = false;
+      } else {
+        likeCountList[index]++;
+        isFavoriteList[index] = true;
+      }
+    });
   }
 
   Future<void> refreshData() async {
@@ -82,7 +95,6 @@ class _TradingScreen extends State<TradingScreen> {
   //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
   //   if (response.statusCode == 200) {
   //     final List<dynamic> data = json.decode(response.body);
-
   //     isFavoriteList = List.generate(data.length, (index) => false);
   //     return List<Map<String, dynamic>>.from(data);
   //   } else {
@@ -113,6 +125,7 @@ class _TradingScreen extends State<TradingScreen> {
             .map((val) => ProductResponseModel.fromJson(val))
             .toList();
         isFavoriteList = List.generate(list.length, (index) => false);
+        likeCountList = List.generate(list.length, (index) => 0);
         print(list);
       }
       return list;
@@ -246,22 +259,23 @@ class _TradingScreen extends State<TradingScreen> {
                               return Container(
                                 margin: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 2),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: AppColors.grey, width: 0.3)),
                                 width: MediaQuery.of(context).size.width,
                                 height: 200,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Image.network(
-                                    // data[index]['image'] != null &&
-                                    //         data[index]['image'].isNotEmpty
-                                    //     ? data[index]['image']
-                                    //     :
-                                    'https://i0.wp.com/lindaraschke.net/wp-content/uploads/forex-banner-1000x350.jpg?fit=1000%2C350&ssl=1',
-                                    height: 100,
-                                    width: 100,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: AppColors.grey, width: 0.5),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: Image.asset(
+                                      'images/cr_1.jpg',
+                                      height: 130,
+                                      width: 300,
+                                      fit:
+                                          BoxFit.cover, // Adjust this as needed
+                                    ),
                                   ),
                                 ),
                               );
@@ -337,13 +351,13 @@ class _TradingScreen extends State<TradingScreen> {
                                                       color: AppColors.grey,
                                                       width: 0.2),
                                                 ),
-                                                child: Image.network(
+                                                child: Image.asset(
                                                   // data[index].image != null &&
                                                   //         data[index].image.isNotEmpty
                                                   //     ? data[index]['image']
                                                   //     :
                                                   //
-                                                  'https://i0.wp.com/lindaraschke.net/wp-content/uploads/forex-banner-1000x350.jpg?fit=1000%2C350&ssl=1',
+                                                  'images/cr_1.jpg',
                                                   height: 100,
                                                   width: 100,
                                                 ),
@@ -386,23 +400,33 @@ class _TradingScreen extends State<TradingScreen> {
                                                         GestureDetector(
                                                           onTap: () {
                                                             setState(() {
-                                                              isFavoriteList[
-                                                                      index] =
-                                                                  !isFavoriteList[
-                                                                      index];
+                                                              // isFavoriteList[
+                                                              //         index] =
+                                                              //     !isFavoriteList[
+                                                              //         index];
+                                                              onLikedButtonPressed(
+                                                                  index);
                                                             });
                                                           },
-                                                          child: Icon(
-                                                            isFavoriteList[
-                                                                    index]
-                                                                ? Icons.favorite
-                                                                : Icons
-                                                                    .favorite_border,
-                                                            color:
+                                                          child: Column(
+                                                            children: [
+                                                              Icon(
                                                                 isFavoriteList[
                                                                         index]
-                                                                    ? Colors.red
-                                                                    : null,
+                                                                    ? Icons
+                                                                        .favorite
+                                                                    : Icons
+                                                                        .favorite_border,
+                                                                color:
+                                                                    isFavoriteList[
+                                                                            index]
+                                                                        ? Colors
+                                                                            .red
+                                                                        : null,
+                                                              ),
+                                                              Text(
+                                                                  '${likeCountList[index]}')
+                                                            ],
                                                           ),
                                                         ),
                                                         SizedBox(

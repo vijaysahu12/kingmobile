@@ -7,6 +7,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../Helpers/sharedPref.dart';
+import '../Common/shimmerScreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productName;
@@ -360,14 +361,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    child: Image.network(
-                      'https://i0.wp.com/lindaraschke.net/wp-content/uploads/forex-banner-1000x350.jpg?fit=1000%2C350&ssl=1',
-                      height: 150,
-                      width: 300,
-                    ),
                     decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.grey, width: 0.5),
-                        borderRadius: BorderRadius.circular(15)),
+                      border: Border.all(color: AppColors.grey, width: 0.5),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        'images/cr_1.jpg',
+                        height: 130,
+                        width: 300,
+                        fit: BoxFit.cover, // Adjust this as needed
+                      ),
+                    ),
                   )
                 ],
               ),
@@ -456,7 +462,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
               InkWell(
                 onTap: () {
-                  // openYoutubeVideo(context, videoUrl);
+                  setState(() {
+                    isCommunitySelected = true;
+                  });
+
+                  _pageController.animateToPage(
+                    1,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.ease,
+                  );
                 },
                 child: Row(
                   children: [
@@ -666,37 +680,55 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
+  Future<YoutubePlayer?> _loadVideo(String videoUrl) async {
+    return YoutubePlayer(
+      controller: YoutubePlayerController(
+        initialVideoId: YoutubePlayer.convertUrlToId(videoUrl) ?? '',
+        flags: YoutubePlayerFlags(autoPlay: false),
+      ),
+    );
+  }
+
   Widget _buildContent() {
     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     return ListView.builder(
       itemCount: myVideoUrls.length,
       itemBuilder: (context, index) {
-        return YoutubePlayerBuilder(
-          player: YoutubePlayer(
-            controller: YoutubePlayerController(
-              initialVideoId:
-                  YoutubePlayer.convertUrlToId(myVideoUrls[index]) ?? '',
-              flags: YoutubePlayerFlags(autoPlay: false),
-            ),
-          ),
-          builder: (context, player) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  child: player,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Video ${index + 1}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
-            );
+        return FutureBuilder<YoutubePlayer?>(
+          future: _loadVideo(myVideoUrls[index]),
+          builder: (context, AsyncSnapshot<YoutubePlayer?> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return ShimmerListViewForYoutubeContent(itemCount: 4);
+            } else {
+              final player = snapshot.data;
+              if (player != null) {
+                return YoutubePlayerBuilder(
+                  player: player,
+                  builder: (context, _) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          child: player,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Video ${index + 1}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                );
+              } else {
+                return ShimmerListViewForYoutubeContent(itemCount: 4);
+              }
+            }
           },
         );
       },

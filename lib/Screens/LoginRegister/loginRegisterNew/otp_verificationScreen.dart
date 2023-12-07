@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
 import 'package:kraapp/Screens/Common/refreshtwo.dart';
@@ -115,11 +116,23 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
     }
   }
 
-  void signInWithOtp(BuildContext context, String otp) async {
+  void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
+
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: widget.verificationId, smsCode: smsCode);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      print(userCredential);
+
+      print('OTP verification successful!');
+    } catch (e) {
+      print("Failed OTP verfication $e");
+    }
+
     try {
       String deviceType = widget.deviceType;
-
       String? firebaseToken = widget.fcmToken;
       String countryCode = widget.countryCode;
       final apiUrl = ApiUrlConstants.otpLoginVerfication +
