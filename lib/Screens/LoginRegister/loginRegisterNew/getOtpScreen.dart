@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,8 +8,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreen.dart';
 
-import '../../../Helpers/httpRequest.dart';
-import '../../../Helpers/ApiUrls.dart';
+// import '../../../Helpers/httpRequest.dart';
+// import '../../../Helpers/ApiUrls.dart';
 import '../../../Helpers/sharedPref.dart';
 import '../../Constants/app_color.dart';
 
@@ -36,7 +36,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   TextEditingController phoneNumberController = TextEditingController();
 
   TextEditingController countryCodeController = TextEditingController();
-  HttpRequestHelper _httpHelper = HttpRequestHelper();
+  // HttpRequestHelper _httpHelper = HttpRequestHelper();
   SharedPref _sharedPref = SharedPref();
 
   Future<void> signInWithMobile(BuildContext context) async {
@@ -151,68 +151,68 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   //   }
   // }
 
-  signInWithoutMobileOtp() async {
-    if (true) {
-      print("login button is clicked");
-      if (true) {
-        //String _emailOrMobile = "+91" + phoneNumberController.text;
-        String _emailOrMobile = phoneNumberController.text;
-        String _password = '123456';
+  // signInWithoutMobileOtp() async {
+  //   if (true) {
+  //     print("login button is clicked");
+  //     if (true) {
+  //       //String _emailOrMobile = "+91" + phoneNumberController.text;
+  //       String _emailOrMobile = phoneNumberController.text;
+  //       String _password = '123456';
 
-        // if (_emailOrMobile.isEmpty || _password.isEmpty) {
-        //   setState(() {
-        //     _useremailError = _emailOrMobile.isEmpty;
-        //     _userPassword = _password.isEmpty;
-        //   });
-        //   return;
-        // }
-        HttpRequestHelper.checkInternetConnection(context);
+  //       // if (_emailOrMobile.isEmpty || _password.isEmpty) {
+  //       //   setState(() {
+  //       //     _useremailError = _emailOrMobile.isEmpty;
+  //       //     _userPassword = _password.isEmpty;
+  //       //   });
+  //       //   return;
+  //       // }
+  //       HttpRequestHelper.checkInternetConnection(context);
 
-        final apiUrl = ApiUrlConstants.login +
-            '?userName=$_emailOrMobile&password=$_password';
-        // final response = await http.get(Uri.parse(apiUrl));
-        final response = await _httpHelper.getWithOutToken(apiUrl);
-        if (response.statusCode == 200) {
-          SharedPref _sharedPref = SharedPref();
+  //       final apiUrl = ApiUrlConstants.login +
+  //           '?userName=$_emailOrMobile&password=$_password';
+  //       // final response = await http.get(Uri.parse(apiUrl));
+  //       final response = await _httpHelper.getWithOutToken(apiUrl);
+  //       if (response.statusCode == 200) {
+  //         SharedPref _sharedPref = SharedPref();
 
-          Map<String, dynamic> jsonResponse = json.decode(response.body);
+  //         Map<String, dynamic> jsonResponse = json.decode(response.body);
 
-          if (jsonResponse.containsKey('statusCode') &&
-              jsonResponse['statusCode'] == 200) {
-            _sharedPref.save(
-                SessionConstants.UserKey, jsonResponse['data']["publicKey"]);
-            _sharedPref.save(
-                SessionConstants.Token, jsonResponse['data']["token"]);
-            _sharedPref.save(SessionConstants.UserProfileImage,
-                jsonResponse['data']["image"]);
+  //         if (jsonResponse.containsKey('statusCode') &&
+  //             jsonResponse['statusCode'] == 200) {
+  //           _sharedPref.save(
+  //               SessionConstants.UserKey, jsonResponse['data']["publicKey"]);
+  //           _sharedPref.save(
+  //               SessionConstants.Token, jsonResponse['data']["token"]);
+  //           _sharedPref.save(SessionConstants.UserProfileImage,
+  //               jsonResponse['data']["image"]);
 
-            print(jsonResponse['data']);
-          } else {
-            String errorMessage = jsonResponse['message'];
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Enter valid Mobile'),
-                  content: Text(errorMessage),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        } else {
-          print('API Request Failed with status code: ${response.statusCode}');
-        }
-      }
-    }
-  }
+  //           print(jsonResponse['data']);
+  //         } else {
+  //           String errorMessage = jsonResponse['message'];
+  //           showDialog(
+  //             context: context,
+  //             builder: (BuildContext context) {
+  //               return AlertDialog(
+  //                 title: Text('Enter valid Mobile'),
+  //                 content: Text(errorMessage),
+  //                 actions: <Widget>[
+  //                   TextButton(
+  //                     child: Text('OK'),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                     },
+  //                   ),
+  //                 ],
+  //               );
+  //             },
+  //           );
+  //         }
+  //       } else {
+  //         print('API Request Failed with status code: ${response.statusCode}');
+  //       }
+  //     }
+  //   }
+  // }
 
   Future<String?> getDeviceType() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();

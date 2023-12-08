@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+import 'package:kraapp/Models/Response/SingleProductResponse.dart';
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -10,19 +11,9 @@ import '../../Helpers/sharedPref.dart';
 import '../Common/shimmerScreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  final String productName;
-  final String productDescription;
-  final String productRating;
-  final double productPrice;
-  final String productCategory;
+  final SingleProductResponse? product;
 
-  const ProductDetailsScreen(
-    this.productName,
-    this.productDescription,
-    this.productRating,
-    this.productPrice,
-    this.productCategory,
-  );
+  const ProductDetailsScreen({this.product, super.key});
 
   @override
   _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
@@ -212,7 +203,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "₹ ${widget.productPrice}",
+                '₹ ${widget.product!.data[0].price.toString()}',
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -233,9 +224,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       var options = {
                         'key': 'rzp_test_8x2It6dJUckx0i',
                         'amount':
-                            '${(widget.productPrice * 100).toString()}', //RS 1 (100paisa=1)
-                        'name': '${widget.productName}',
-                        'description': '${widget.productDescription}',
+                            '${(widget.product!.data[0].price * 100).toString()}',
+                        'name': '${widget.product!.data[0].name}',
+                        'description': '${widget.product!.data[0].description}',
                         'retry': {'enabled': true, 'max_count': 1},
                         'send_sms_hash': true,
                         'prefill': {
@@ -297,384 +288,393 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          Column(
-            children: [
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        widget.productName,
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  Column(
-                    children: [
-                      Icon(Icons.favorite_border_rounded),
-                    ],
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        widget.productCategory,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.grey,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  Column(
-                    children: [
-                      RatingBar.builder(
-                        initialRating:
-                            double.parse(widget.productRating.toString()),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        ignoreGestures: true,
-                        itemSize: 25,
-                        onRatingUpdate: (double value) {},
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.grey, width: 0.5),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        'images/cr_1.jpg',
-                        height: 130,
-                        width: 300,
-                        fit: BoxFit.cover, // Adjust this as needed
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Text("About This Course",
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontFamily: "poppins",
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.dark))
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.productDescription,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.grey,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Icon(
-                        Icons.access_time_rounded,
-                        size: 30,
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "6 Months Validity",
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: "poppins",
-                                fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "You will get this course for 6 full Month(s)",
-                            style: TextStyle(
-                                color: AppColors.grey,
-                                fontSize: 12,
-                                fontFamily: "poppins",
-                                fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      )
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    isCommunitySelected = true;
-                  });
-
-                  _pageController.animateToPage(
-                    1,
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.ease,
-                  );
-                },
-                child: Row(
+          ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: widget.product!.data.length,
+              itemBuilder: (context, index) {
+                final Product currentProduct = widget.product!.data[index];
+                return Column(
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: AppColors.primaryColor),
-                          child: Icon(
-                            Icons.play_arrow_rounded,
-                            size: 30,
-                            color: AppColors.light,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "6 Learning Material",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: "poppins",
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "6  Video lectures",
-                              style: TextStyle(
-                                  color: AppColors.grey,
-                                  fontSize: 12,
-                                  fontFamily: "poppins",
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    Spacer(),
-                    Column(
-                      children: [
-                        Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 20,
-                          color: AppColors.dark,
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      width: 10,
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Divider(
-                color: AppColors.grey,
-                thickness: 3.0,
-              ),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Image.asset(
-                        "images/cloudQuestion.jpg",
-                        height: 50,
-                        width: 50,
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Facing any difficulties,${_userName}?",
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontFamily: "poppins",
-                                fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              'Talk to me instantly',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              Divider(
-                color: AppColors.grey,
-                thickness: 3.0,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Pricing Details",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: AppColors.dark,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "poppins"),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.cyan, width: 0.5)),
-                    child: Row(
+                    Row(
                       children: [
                         Column(
                           children: [
                             Text(
-                              "You Pay",
+                              '${currentProduct.name}',
                               style: TextStyle(
-                                  color: AppColors.dark,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600),
-                            )
+                                fontSize: 18,
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ],
                         ),
                         Spacer(),
                         Column(
                           children: [
+                            Icon(Icons.favorite_border_rounded),
+                          ],
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Column(
+                          children: [
                             Text(
-                              "₹ ${widget.productPrice}",
+                              '${currentProduct.category}',
                               style: TextStyle(
-                                  color: AppColors.dark,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600),
-                            )
+                                fontSize: 14,
+                                color: AppColors.grey,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        // Column(
+                        //   children: [
+                        //     RatingBar.builder(
+                        //       initialRating:
+                        //           double.parse(widget.productRating.toString()),
+                        //       itemBuilder: (context, _) => Icon(
+                        //         Icons.star,
+                        //         color: Colors.amber,
+                        //       ),
+                        //       ignoreGestures: true,
+                        //       itemSize: 25,
+                        //       onRatingUpdate: (double value) {},
+                        //     ),
+                        //   ],
+                        // )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border:
+                                Border.all(color: AppColors.grey, width: 0.5),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.asset(
+                              'images/cr_1.jpg',
+                              height: 130,
+                              width: 300,
+                              fit: BoxFit.cover, // Adjust this as needed
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text("About This Course",
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    fontFamily: "poppins",
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.dark))
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                '${currentProduct.description}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.grey,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      "* Amount payble is inclusive of taxes Terms & Conditions apply ",
-                      style: TextStyle(
-                          fontFamily: "poppins",
-                          fontSize: 11,
-                          color: AppColors.dark,
-                          fontWeight: FontWeight.w600),
+                    SizedBox(
+                      height: 20,
                     ),
-                  )
-                ],
-              ),
-            ],
-          )
+                    Row(
+                      children: [
+                        Column(
+                          children: [
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 30,
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "6 Months Validity",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: "poppins",
+                                      fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "You will get this course for 6 full Month(s)",
+                                  style: TextStyle(
+                                      color: AppColors.grey,
+                                      fontSize: 12,
+                                      fontFamily: "poppins",
+                                      fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          isCommunitySelected = true;
+                        });
+
+                        _pageController.animateToPage(
+                          1,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.ease,
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color: AppColors.primaryColor),
+                                child: Icon(
+                                  Icons.play_arrow_rounded,
+                                  size: 30,
+                                  color: AppColors.light,
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    "6 Learning Material",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: "poppins",
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "6  Video lectures",
+                                    style: TextStyle(
+                                        color: AppColors.grey,
+                                        fontSize: 12,
+                                        fontFamily: "poppins",
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                          Spacer(),
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 20,
+                                color: AppColors.dark,
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 10,
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Divider(
+                      color: AppColors.grey,
+                      thickness: 3.0,
+                    ),
+                    Row(
+                      children: [
+                        Column(
+                          children: [
+                            Image.asset(
+                              "images/cloudQuestion.jpg",
+                              height: 50,
+                              width: 50,
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Facing any difficulties,${_userName}?",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontFamily: "poppins",
+                                      fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Text(
+                                    'Talk to me instantly',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                    Divider(
+                      color: AppColors.grey,
+                      thickness: 3.0,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Pricing Details",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.dark,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "poppins"),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: AppColors.cyan, width: 0.5)),
+                          child: Row(
+                            children: [
+                              Column(
+                                children: [
+                                  Text(
+                                    "You Pay",
+                                    style: TextStyle(
+                                        color: AppColors.dark,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              ),
+                              Spacer(),
+                              Column(
+                                children: [
+                                  Text(
+                                    "₹ ${(currentProduct.price).toString()}",
+                                    style: TextStyle(
+                                        color: AppColors.dark,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            "* Amount payble is inclusive of taxes Terms & Conditions apply ",
+                            style: TextStyle(
+                                fontFamily: "poppins",
+                                fontSize: 11,
+                                color: AppColors.dark,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                );
+              })
         ],
       ),
     );

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
+import 'package:kraapp/Screens/Product/readMoreScreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'dart:convert';
 import '../../Helpers/ApiUrls.dart';
+import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/ProductResponseModel.dart';
+import '../../Models/Response/SingleProductResponse.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/shimmerScreen.dart';
 import '../Constants/app_color.dart';
-import 'readMoreScreen.dart';
 
 class TradingScreen extends StatefulWidget {
   const TradingScreen({Key? key}) : super(key: key);
@@ -23,6 +25,7 @@ class _TradingScreen extends State<TradingScreen> {
   late List<bool> isFavoriteList = [];
   late List<int> likeCountList = [];
   late Future<List<ProductResponseModel>?> productsFuture;
+  SharedPref _sharedPref = SharedPref();
 
   @override
   void initState() {
@@ -125,12 +128,27 @@ class _TradingScreen extends State<TradingScreen> {
             .map((val) => ProductResponseModel.fromJson(val))
             .toList();
         isFavoriteList = List.generate(list.length, (index) => false);
-        likeCountList = List.generate(list.length, (index) => 0);
+        likeCountList = List.generate(list.length, (index) => 203);
         print(list);
       }
       return list;
     } else {
       throw Exception('Failed to load data');
+    }
+  }
+
+  Future<SingleProductResponse?> fetchProductById(String productId) async {
+    String UserKey = await _sharedPref.read("KingUserId");
+    String MobileKey = UserKey.replaceAll('"', '');
+    final String apiUrl =
+        'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=$MobileKey';
+    final response = await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      final dynamic parsedData = json.decode(response.body);
+      print(response.body);
+      return SingleProductResponse.fromJson(parsedData);
+    } else {
+      throw Exception('Failed to load product');
     }
   }
 
@@ -164,96 +182,94 @@ class _TradingScreen extends State<TradingScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return RefreshHelper.buildRefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              productsFuture = fetchDataThree();
-            });
-          },
-          child: Column(
-            children: [
-              Container(
-                margin:
-                    EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
-                decoration: BoxDecoration(
-                    color: AppColors.lightShadow,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isCommunitySelected = true;
-                          _pageController.animateToPage(0,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.ease);
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          backgroundColor:
-                              isCommunitySelected ? AppColors.light : null,
-                          padding: EdgeInsets.symmetric(horizontal: 45)),
-                      child: Text(
-                        'Services',
-                        style: TextStyle(
-                            color: isCommunitySelected
-                                ? AppColors.primaryColor
-                                : AppColors.grey,
-                            fontWeight: FontWeight.w700),
-                      ),
+        return Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
+              decoration: BoxDecoration(
+                  color: AppColors.lightShadow,
+                  borderRadius: BorderRadius.circular(10)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isCommunitySelected = true;
+                        _pageController.animateToPage(0,
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.ease);
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        backgroundColor:
+                            isCommunitySelected ? AppColors.light : null,
+                        padding: EdgeInsets.symmetric(horizontal: 45)),
+                    child: Text(
+                      'Services',
+                      style: TextStyle(
+                          color: isCommunitySelected
+                              ? AppColors.primaryColor
+                              : AppColors.grey,
+                          fontWeight: FontWeight.w700),
                     ),
-                    Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isCommunitySelected = false;
-                          _pageController.animateToPage(1,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.ease);
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          backgroundColor:
-                              !isCommunitySelected ? AppColors.light : null,
-                          padding: EdgeInsets.symmetric(horizontal: 45)),
-                      child: Text(
-                        'Algo Trading',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: !isCommunitySelected
-                                ? AppColors.primaryColor
-                                : AppColors.grey),
-                      ),
+                  ),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isCommunitySelected = false;
+                        _pageController.animateToPage(1,
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.ease);
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        backgroundColor:
+                            !isCommunitySelected ? AppColors.light : null,
+                        padding: EdgeInsets.symmetric(horizontal: 45)),
+                    child: Text(
+                      'Algo Trading',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: !isCommunitySelected
+                              ? AppColors.primaryColor
+                              : AppColors.grey),
                     ),
-                    Spacer(),
-                  ],
-                ),
+                  ),
+                  Spacer(),
+                ],
               ),
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() {
-                      isCommunitySelected = index == 0;
-                    });
-                  },
-                  children: [
-                    FutureBuilder<List<ProductResponseModel>?>(
-                      future: productsFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                                ConnectionState.waiting ||
-                            snapshot.hasError) {
-                          return ShimmerListView(itemCount: 5);
-                        } else {
-                          List<ProductResponseModel> data = snapshot.data!;
-                          return ListView.builder(
+            ),
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    isCommunitySelected = index == 0;
+                  });
+                },
+                children: [
+                  FutureBuilder<List<ProductResponseModel>?>(
+                    future: productsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          snapshot.hasError) {
+                        return ShimmerListView(itemCount: 5);
+                      } else {
+                        List<ProductResponseModel> data = snapshot.data!;
+                        return RefreshHelper.buildRefreshIndicator(
+                          onRefresh: () async {
+                            setState(() {
+                              productsFuture = fetchDataThree();
+                            });
+                          },
+                          child: ListView.builder(
                             itemCount: data.length,
                             itemBuilder: (context, index) {
                               return Container(
@@ -280,46 +296,44 @@ class _TradingScreen extends State<TradingScreen> {
                                 ),
                               );
                             },
-                          );
-                        }
-                      },
-                    ),
-                    FutureBuilder<List<ProductResponseModel>?>(
-                      future: productsFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                                ConnectionState.waiting ||
-                            snapshot.hasError) {
-                          return ShimmerListViewForListofItems(itemCount: 7);
-                        } else {
-                          List<ProductResponseModel> data = snapshot.data!;
-                          return Container(
-                            height: constraints.maxHeight,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  FutureBuilder<List<ProductResponseModel>?>(
+                    future: productsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          snapshot.hasError) {
+                        return ShimmerListViewForListofItems(itemCount: 7);
+                      } else {
+                        List<ProductResponseModel> data = snapshot.data!;
+                        return Container(
+                          height: constraints.maxHeight,
+                          child: RefreshHelper.buildRefreshIndicator(
+                            onRefresh: () async {
+                              setState(() {
+                                productsFuture = fetchDataThree();
+                              });
+                            },
                             child: ListView.builder(
                               itemCount: data.length,
                               itemBuilder: (context, index) {
                                 return Builder(
                                   builder: (context) {
                                     return GestureDetector(
-                                      onTap: () {
-                                        String productName = data[index].name;
-                                        String productDescription =
-                                            data[index].description;
-                                        String productRating =
-                                            data[index].raiting;
-                                        double productPrice = data[index].price;
-                                        String productCategory =
-                                            data[index].category;
+                                      onTap: () async {
+                                        String productId = data[index].id;
+                                        SingleProductResponse? product =
+                                            await fetchProductById(productId);
+
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ProductDetailsScreen(
-                                                      productName,
-                                                      productDescription,
-                                                      productRating,
-                                                      productPrice,
-                                                      productCategory),
+                                                      product: product),
                                             ));
                                       },
                                       child: Card(
@@ -494,35 +508,23 @@ class _TradingScreen extends State<TradingScreen> {
                                                                           25),
                                                             ),
                                                           ),
-                                                          onPressed: () {
-                                                            String productName =
-                                                                data[index]
-                                                                    .name;
-                                                            String
-                                                                productDescription =
-                                                                data[index]
-                                                                    .description;
-                                                            String
-                                                                productRating =
-                                                                data[index]
-                                                                    .raiting;
-                                                            double
-                                                                productPrice =
-                                                                data[index]
-                                                                    .price;
-                                                            String
-                                                                productCategory =
-                                                                data[index]
-                                                                    .category;
+                                                          onPressed: () async {
+                                                            String productId =
+                                                                data[index].id;
+                                                            SingleProductResponse?
+                                                                product =
+                                                                await fetchProductById(
+                                                                    productId);
+
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                  builder: (context) => ProductDetailsScreen(
-                                                                      productName,
-                                                                      productDescription,
-                                                                      productRating,
-                                                                      productPrice,
-                                                                      productCategory),
+                                                                  builder:
+                                                                      (context) =>
+                                                                          ProductDetailsScreen(
+                                                                    product:
+                                                                        product,
+                                                                  ),
                                                                 ));
                                                           },
                                                           child: Text(
@@ -552,15 +554,15 @@ class _TradingScreen extends State<TradingScreen> {
                                 );
                               },
                             ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );

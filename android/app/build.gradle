@@ -70,6 +70,6 @@ dependencies {
    implementation platform("com.google.firebase:firebase-bom:32.6.0")
    implementation "com.google.firebase:firebase-analytics"
    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.1.2'
-   implementation 'com.google.firebase:firebase-messaging:21.1.0' 
+   implementation 'com.google.firebase:firebase-messaging:21.1.0'    
    implementation 'com.pusher:push-notifications-android:1.9.0'
 }

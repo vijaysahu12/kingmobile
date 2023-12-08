@@ -55,136 +55,141 @@ class _CommunityGroupState extends State<CommunityGroup> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return RefreshHelper.buildRefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              dataFuture = fetchData();
-            });
-          },
-          child: Column(
-            children: [
-              Container(
-                margin:
-                    EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
-                decoration: BoxDecoration(
-                    color: AppColors.lightShadow,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isCommunitySelected = true;
-                          _pageController.animateToPage(0,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.ease);
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          backgroundColor:
-                              isCommunitySelected ? AppColors.light : null,
-                          padding: EdgeInsets.symmetric(horizontal: 45)),
-                      child: Text(
-                        'Community',
-                        style: TextStyle(
-                            color: isCommunitySelected
-                                ? AppColors.primaryColor
-                                : AppColors.grey,
-                            fontWeight: FontWeight.w700),
-                      ),
+        return Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
+              decoration: BoxDecoration(
+                  color: AppColors.lightShadow,
+                  borderRadius: BorderRadius.circular(10)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isCommunitySelected = true;
+                        _pageController.animateToPage(0,
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.ease);
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        backgroundColor:
+                            isCommunitySelected ? AppColors.light : null,
+                        padding: EdgeInsets.symmetric(horizontal: 45)),
+                    child: Text(
+                      'Community',
+                      style: TextStyle(
+                          color: isCommunitySelected
+                              ? AppColors.primaryColor
+                              : AppColors.grey,
+                          fontWeight: FontWeight.w700),
                     ),
-                    Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isCommunitySelected = false;
-                          _pageController.animateToPage(1,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.ease);
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          backgroundColor:
-                              !isCommunitySelected ? AppColors.light : null,
-                          padding: EdgeInsets.symmetric(horizontal: 45)),
-                      child: Text(
-                        'Groups',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: !isCommunitySelected
-                                ? AppColors.primaryColor
-                                : AppColors.grey),
-                      ),
+                  ),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isCommunitySelected = false;
+                        _pageController.animateToPage(1,
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.ease);
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        backgroundColor:
+                            !isCommunitySelected ? AppColors.light : null,
+                        padding: EdgeInsets.symmetric(horizontal: 45)),
+                    child: Text(
+                      'Groups',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: !isCommunitySelected
+                              ? AppColors.primaryColor
+                              : AppColors.grey),
                     ),
-                    Spacer(),
-                  ],
-                ),
+                  ),
+                  Spacer(),
+                ],
               ),
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() {
-                      isCommunitySelected = index == 0;
-                    });
-                  },
-                  children: [
-                    FutureBuilder<List<CommunityGroupResponse>?>(
-                      future: dataFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                                ConnectionState.waiting ||
-                            snapshot.hasError) {
-                          return ShimmerListView(itemCount: 5);
-                        } else {
-                          List<CommunityGroupResponse> data = snapshot.data!;
+            ),
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    isCommunitySelected = index == 0;
+                  });
+                },
+                children: [
+                  FutureBuilder<List<CommunityGroupResponse>?>(
+                    future: dataFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          snapshot.hasError) {
+                        return ShimmerListView(itemCount: 5);
+                      } else {
+                        List<CommunityGroupResponse> data = snapshot.data!;
 
-                          return ListView.builder(
+                        return RefreshHelper.buildRefreshIndicator(
+                          onRefresh: () async {
+                            setState(() {
+                              dataFuture = fetchData();
+                            });
+                          },
+                          child: ListView.builder(
                             itemCount: data.length,
                             itemBuilder: (context, index) {
                               return Container(
                                 margin: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 2),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: AppColors.grey, width: 0.3)),
                                 width: MediaQuery.of(context).size.width,
                                 height: 200,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Image.asset(
-                                    // data[index]['image'] != null &&
-                                    //         data[index]['image'].isNotEmpty
-                                    //     ? data[index]['image']
-                                    //     :
-                                    'images/cr_1.jpg',
-                                    height: 100,
-                                    width: 100,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: AppColors.grey, width: 0.5),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: Image.asset(
+                                      'images/cr_1.jpg',
+                                      height: 130,
+                                      width: 300,
+                                      fit:
+                                          BoxFit.cover, // Adjust this as needed
+                                    ),
                                   ),
                                 ),
                               );
                             },
-                          );
-                        }
-                      },
-                    ),
-                    FutureBuilder<List<CommunityGroupResponse>?>(
-                      future: dataFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                                ConnectionState.waiting ||
-                            snapshot.hasError) {
-                          return ShimmerListViewForListofItems(itemCount: 7);
-                        } else {
-                          List<CommunityGroupResponse> data = snapshot.data!;
-                          return ListView.builder(
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  FutureBuilder<List<CommunityGroupResponse>?>(
+                    future: dataFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          snapshot.hasError) {
+                        return ShimmerListViewForListofItems(itemCount: 7);
+                      } else {
+                        List<CommunityGroupResponse> data = snapshot.data!;
+                        return RefreshHelper.buildRefreshIndicator(
+                          onRefresh: () async {
+                            setState(() {
+                              dataFuture = fetchData();
+                            });
+                          },
+                          child: ListView.builder(
                             itemCount: data.length,
                             itemBuilder: (context, index) {
                               return Card(
@@ -201,7 +206,7 @@ class _CommunityGroupState extends State<CommunityGroup> {
                                   child: Row(
                                     children: [
                                       ClipRRect(
-                                        borderRadius: BorderRadius.circular(40),
+                                        borderRadius: BorderRadius.circular(50),
                                         child: Image.asset(
                                           // data[index]['image'] != null &&
                                           //         data[index]['image']
@@ -212,6 +217,9 @@ class _CommunityGroupState extends State<CommunityGroup> {
                                           height: 100,
                                           width: 100,
                                         ),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
                                       ),
                                       Expanded(
                                         child: Column(
@@ -258,15 +266,15 @@ class _CommunityGroupState extends State<CommunityGroup> {
                                 ),
                               );
                             },
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );

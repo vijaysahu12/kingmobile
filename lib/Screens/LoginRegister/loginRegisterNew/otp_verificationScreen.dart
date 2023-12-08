@@ -18,6 +18,7 @@ class OtpVerificationScreen extends StatefulWidget {
   final String deviceType;
   final String countryCode;
   final String? fcmToken;
+
   const OtpVerificationScreen({
     required this.verificationId,
     required this.resendToken,
@@ -37,7 +38,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
       List.generate(6, (index) => TextEditingController());
   // ignore: unused_field
   String _enteredOTP = '';
-
+  String? selectedGender;
   final _formKey = new GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -61,7 +62,6 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   }
 
   // FirebaseMessaging messaging = FirebaseMessaging.instance;
-
   // void configureFirebaseMessaging() {
   //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
   //     print("Received a notification: ");
@@ -77,61 +77,51 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
 
   void _userData() async {
     String mobile = await _sharedPref.read("UserProfileMobile");
-    // String name = await _sharedPref.read("KingUserName");
     setState(() {
-      // _mobileNumber = mobile.replaceAll('"', '');
       _mobileController.text = mobile.replaceAll('"', '');
-      // _nameController.text = name.replaceAll('"', '');
     });
   }
 
   Future<void> postUserData() async {
     final String apiUrl =
         'http://192.168.29.246:8083/api/Account/ManageUserDetails';
-
-    Map<String, dynamic> userData = {
-      "publicKey": "kjnfdyvbnjhbvdsjhb yhdvb hdvsbhdsbhvdhdv",
+    Map<String, String> userData = {
       "fullName": _nameController.text,
       "emailId": _emailController.text,
       "mobile": _mobileController.text,
       "city": _cityController.text,
-      "gender": "Male",
-      "dob": "knhddshb"
+      "gender": selectedGender.toString(),
+      "dob": "08-Dec-2022"
     };
+    print(userData);
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
-          'Content_Type': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json',
         },
         body: jsonEncode(userData),
       );
+
       if (response.statusCode == 200) {
-        print("Data is posted");
+        print("Data is updated successfully!");
       } else {
-        print('${response.statusCode}');
+        print('Failed to update data: ${response.statusCode}');
       }
     } catch (e) {
-      print("Exception $e");
+      print("Exception occurred: $e");
     }
   }
 
   void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
-
     try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: widget.verificationId, smsCode: smsCode);
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      print(userCredential);
-
+      // PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      //     verificationId: widget.verificationId, smsCode: smsCode);
+      // UserCredential userCredential =
+      //     await FirebaseAuth.instance.signInWithCredential(credential);
+      // print(userCredential);
       print('OTP verification successful!');
-    } catch (e) {
-      print("Failed OTP verfication $e");
-    }
-
-    try {
       String deviceType = widget.deviceType;
       String? firebaseToken = widget.fcmToken;
       String countryCode = widget.countryCode;
@@ -145,20 +135,12 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
         final OtpVerificationResponse vv =
             OtpVerificationResponse.fromJson(responseBody);
 
-        print(vv);
-
         _sharedPref.save(SessionConstants.UserKey, vv.data.publicKey);
         _sharedPref.save(SessionConstants.Token, vv.data.token);
         _sharedPref.save(
             SessionConstants.UserProfileImage, vv.data.profileImage);
-        //  _sharedPref.save(SessionConstants.UserName, vv.data.name);
 
-        print(vv.data.publicKey);
-        print(vv.data.token);
-        //  print(vv.data.name);
-        print(vv.data.profileImage);
         if (response.statusCode == 200) {
-          String? selectedGender;
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -577,33 +559,52 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
             },
           );
           // print('Message from the response: $statusCode');
-        } else {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Center(
-                  child: Dialog(
-                    backgroundColor: AppColors.purple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Text(
-                        "Enter valid OTP",
-                        style: TextStyle(
-                            color: AppColors.lightShadow,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-                );
-              });
         }
+        //  else {
+        //   showDialog(
+        //       context: context,
+        //       builder: (BuildContext context) {
+        //         return Center(
+        //           child: Dialog(
+        //             backgroundColor: AppColors.purple,
+        //             shape: RoundedRectangleBorder(
+        //               borderRadius: BorderRadius.circular(15.0),
+        //             ),
+        //             child: Padding(
+        //               padding: const EdgeInsets.all(30.0),
+        //               child: Text(
+        //                 "Enter valid OTP",
+        //                 style: TextStyle(
+        //                     color: AppColors.lightShadow,
+        //                     fontSize: 20,
+        //                     fontWeight: FontWeight.w600),
+        //               ),
+        //             ),
+        //           ),
+        //         );
+        //       });
+        // }
       }
     } catch (e) {
-      print("Error signing in with OTP: $e");
+      if (e is FirebaseAuthException && e.code == 'invalid-verification-code') {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Invalid OTP'),
+              content: Text('The entered OTP is incorrect. Please try again.'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
@@ -741,419 +742,3 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
     );
   }
 }
-
-
-
-
- // void signInWithOtp(BuildContext context) async {
-  //   print("signInWithOtp function called");
-  //   try {
-  //     String smsCode =
-  //         _otpControllers.map((controller) => controller.text).join();
-  //     PhoneAuthCredential credential = PhoneAuthProvider.credential(
-  //       verificationId: widget.verificationId,
-  //       smsCode: smsCode,
-  //     );
-  //     //UserCredential userCredential =
-  //     await FirebaseAuth.instance.signInWithCredential(credential);
-  //     // User user = userCredential.user!;
-  //     showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Center(
-  //           child: SingleChildScrollView(
-  //             child: Dialog(
-  //               backgroundColor: AppColors.lightShadow,
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(15.0),
-  //               ),
-  //               child: Padding(
-  //                 padding: EdgeInsets.all(20.0),
-  //                 child: Form(
-  //                   key: _formKey,
-  //                   child: Column(
-  //                     children: <Widget>[
-  //                       Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             'Full Name',
-  //                             style: TextStyle(
-  //                               fontSize: 12,
-  //                               color: AppColors.cyan,
-  //                             ),
-  //                           ),
-  //                           Container(
-  //                             margin: EdgeInsets.symmetric(vertical: 3),
-  //                             padding: EdgeInsets.symmetric(horizontal: 10),
-  //                             decoration: BoxDecoration(
-  //                               color: AppColors.lightShadow,
-  //                               borderRadius: BorderRadius.circular(10),
-  //                               // border: Border.all(
-  //                               //     color: _usernameError
-  //                               //         ? Colors.red
-  //                               //         : AppColors.lightShadow),
-  //                             ),
-  //                             child: TextFormField(
-  //                               controller: _nameController,
-  //                               style: TextStyle(
-  //                                 fontSize: 12,
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: AppColors.dark,
-  //                               ),
-  //                               decoration: InputDecoration(
-  //                                 border: InputBorder.none,
-  //                                 hintText: 'Enter Your Name',
-  //                                 hintStyle: TextStyle(
-  //                                   fontSize: 12,
-  //                                   fontWeight: FontWeight.bold,
-  //                                 ),
-  //                               ),
-  //                               validator: (value) {
-  //                                 if (value == null || value.isEmpty) {
-  //                                   setState(() {
-  //                                     // _usernameError = true;
-  //                                   });
-  //                                   return 'This field is required';
-  //                                 } else if (value.length < 4) {
-  //                                   setState(() {
-  //                                     //  _usernameError = true;
-  //                                   });
-  //                                   return 'Enter Full Name';
-  //                                 } else {
-  //                                   // _usernameError = false;
-  //                                 }
-  //                                 return null;
-  //                               },
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       SizedBox(
-  //                         height: 15,
-  //                       ),
-  //                       Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             'Email Id *',
-  //                             style: TextStyle(
-  //                               fontSize: 12,
-  //                               color: AppColors
-  //                                   .cyan, // Customize the color if needed
-  //                             ),
-  //                           ),
-  //                           Container(
-  //                             margin: EdgeInsets.symmetric(vertical: 3),
-  //                             padding: EdgeInsets.symmetric(horizontal: 10),
-  //                             decoration: BoxDecoration(
-  //                               color: AppColors.lightShadow,
-  //                               borderRadius: BorderRadius.circular(10),
-  //                               // border: Border.all(
-  //                               //   color: _useremailError
-  //                               //       ? Colors.red
-  //                               //       : AppColors.lightShadow,
-  //                               // ),
-  //                             ),
-  //                             child: TextFormField(
-  //                               controller: _emailController,
-  //                               style: TextStyle(
-  //                                 fontSize: 12,
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: AppColors.dark,
-  //                               ),
-  //                               decoration: InputDecoration(
-  //                                 border: InputBorder.none,
-  //                                 hintText: 'Enter Email Id',
-  //                                 hintStyle: TextStyle(
-  //                                   fontSize: 12,
-  //                                   fontWeight: FontWeight.bold,
-  //                                 ),
-  //                               ),
-  //                               validator: (value) {
-  //                                 if (value == null || value.isEmpty) {
-  //                                   //_useremailError = true;
-  //                                   return 'This field is required';
-  //                                 } else if (!RegExp(r'^\d{10}$')
-  //                                         .hasMatch(value) &&
-  //                                     !RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
-  //                                         .hasMatch(value)) {
-  //                                   //  _useremailError = true;
-  //                                   return 'Enter Valid Email';
-  //                                 } else {
-  //                                   //  _useremailError = false;
-  //                                 }
-  //                                 return null;
-  //                               },
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       SizedBox(
-  //                         height: 15,
-  //                       ),
-  //                       Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             'Mobile',
-  //                             style: TextStyle(
-  //                               fontSize: 12,
-  //                               color: AppColors.cyan,
-  //                             ),
-  //                           ),
-  //                           Container(
-  //                             margin: EdgeInsets.symmetric(vertical: 3),
-  //                             padding: EdgeInsets.symmetric(horizontal: 10),
-  //                             decoration: BoxDecoration(
-  //                               color: AppColors.lightShadow,
-  //                               borderRadius: BorderRadius.circular(10),
-  //                               // border: Border.all(
-  //                               //   color: _userMobileError
-  //                               //       ? Colors.red
-  //                               //       : AppColors.lightShadow,
-  //                               // ),
-  //                             ),
-  //                             child: TextFormField(
-  //                               controller: _mobileController,
-  //                               keyboardType: TextInputType.phone,
-  //                               style: TextStyle(
-  //                                 fontSize: 12,
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: AppColors.dark,
-  //                               ),
-  //                               decoration: InputDecoration(
-  //                                 border: InputBorder.none,
-  //                                 hintText: 'Enter Mobile Number',
-  //                                 hintStyle: TextStyle(
-  //                                   fontSize: 12,
-  //                                   fontWeight: FontWeight.bold,
-  //                                 ),
-  //                               ),
-  //                               validator: (value) {
-  //                                 if (value == null || value.isEmpty) {
-  //                                   // _userMobileError = true;
-  //                                   return 'This field is required';
-  //                                 } else if (!RegExp(r'^\d{10}$')
-  //                                     .hasMatch(value)) {
-  //                                   //_userMobileError = true;
-  //                                   return 'Enter 10digits valid number';
-  //                                 } else {
-  //                                   // _userMobileError = false;
-  //                                 }
-  //                                 return null;
-  //                               },
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       SizedBox(
-  //                         height: 15,
-  //                       ),
-  //                       Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             'City',
-  //                             style: TextStyle(
-  //                               fontSize: 12,
-  //                               color: AppColors
-  //                                   .cyan, // Customize the color if needed
-  //                             ),
-  //                           ),
-  //                           Container(
-  //                             margin: EdgeInsets.symmetric(vertical: 3),
-  //                             padding: EdgeInsets.symmetric(horizontal: 10),
-  //                             decoration: BoxDecoration(
-  //                               color: AppColors.lightShadow,
-  //                               borderRadius: BorderRadius.circular(10),
-  //                               // border: Border.all(
-  //                               //   color: _cityErrorController
-  //                               //       ? Colors.red
-  //                               //       : AppColors
-  //                               //           .lightShadow, // Change border color based on error
-  //                               // ),
-  //                             ),
-  //                             child: TextFormField(
-  //                               controller: _cityController,
-  //                               style: TextStyle(
-  //                                 fontSize: 12,
-  //                                 fontWeight: FontWeight.bold,
-  //                                 color: AppColors.dark,
-  //                               ),
-  //                               decoration: InputDecoration(
-  //                                 border: InputBorder.none,
-  //                                 hintText: 'Current City',
-  //                                 hintStyle: TextStyle(
-  //                                   fontSize: 12,
-  //                                   fontWeight: FontWeight.bold,
-  //                                 ),
-  //                               ),
-  //                               validator: (value) {
-  //                                 if (value == null || value.isEmpty) {
-  //                                   //  _cityErrorController = true;
-  //                                   return 'This field is required';
-  //                                 }
-  //                                 return null;
-  //                               },
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       SizedBox(
-  //                         height: 15,
-  //                       ),
-  //                       Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: <Widget>[
-  //                           Text(
-  //                             'Gender',
-  //                             style: TextStyle(
-  //                               fontSize: 12,
-  //                               color: AppColors.cyan,
-  //                             ),
-  //                           ),
-  //                           SizedBox(
-  //                             height: 5,
-  //                           ),
-  //                           Row(
-  //                             children: <Widget>[
-  //                               Expanded(
-  //                                 child: Container(
-  //                                   decoration: BoxDecoration(
-  //                                     color: AppColors.lightShadow,
-  //                                     borderRadius: BorderRadius.circular(10),
-  //                                   ),
-  //                                   padding: EdgeInsets.symmetric(
-  //                                       vertical: 3, horizontal: 10),
-  //                                   child: Row(
-  //                                     mainAxisAlignment:
-  //                                         MainAxisAlignment.spaceBetween,
-  //                                     children: <Widget>[
-  //                                       Text(
-  //                                         'Male',
-  //                                         style: TextStyle(
-  //                                             fontSize: 12,
-  //                                             fontFamily: 'poppins',
-  //                                             fontWeight: FontWeight.bold),
-  //                                       ),
-  //                                       Radio(
-  //                                         value: 'Male',
-  //                                         groupValue: selectedGender,
-  //                                         onChanged: (value) {
-  //                                           handleRadioValueChange(value);
-  //                                         },
-  //                                         activeColor: AppColors.primaryColor,
-  //                                       ),
-  //                                     ],
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                               SizedBox(
-  //                                 width: 10,
-  //                               ),
-  //                               Expanded(
-  //                                 child: Container(
-  //                                   padding: EdgeInsets.symmetric(
-  //                                       vertical: 3, horizontal: 10),
-  //                                   decoration: BoxDecoration(
-  //                                     color: AppColors.lightShadow,
-  //                                     borderRadius: BorderRadius.circular(10),
-  //                                   ),
-  //                                   child: Row(
-  //                                     mainAxisAlignment:
-  //                                         MainAxisAlignment.spaceBetween,
-  //                                     children: <Widget>[
-  //                                       Text(
-  //                                         'Female',
-  //                                         style: TextStyle(
-  //                                             fontSize: 12,
-  //                                             fontFamily: 'poppins',
-  //                                             fontWeight: FontWeight.bold),
-  //                                       ),
-  //                                       Radio(
-  //                                         value: 'Female',
-  //                                         groupValue: selectedGender,
-  //                                         onChanged: (value) {
-  //                                           handleRadioValueChange(value);
-  //                                         },
-  //                                         activeColor: AppColors.primaryColor,
-  //                                       ),
-  //                                     ],
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       SizedBox(
-  //                         height: 30,
-  //                       ),
-  //                       Row(
-  //                         mainAxisAlignment: MainAxisAlignment.center,
-  //                         children: [
-  //                           Container(
-  //                             child: ElevatedButton(
-  //                               onPressed: () async {
-  //                                 String fullName = _nameController.text;
-  //                                 String email = _emailController.text;
-  //                                 String mobile = _mobileController.text;
-  //                                 String city = _cityController.text;
-  //                                 if (_formKey.currentState!.validate()) {
-  //                                   _sharedPref.save(
-  //                                       "KingUserProfileName", fullName);
-  //                                   _sharedPref.save(
-  //                                       "KingUserProfileEmail", email);
-  //                                   _sharedPref.save(
-  //                                       "KingUserProfileMobile", mobile);
-  //                                   _sharedPref.save(
-  //                                       "KingUserProfileCity", city);
-  //                                   print(fullName);
-  //                                   print(email);
-  //                                   print(mobile);
-  //                                   print(city);
-  //                                   Navigator.push(
-  //                                       context,
-  //                                       MaterialPageRoute(
-  //                                         builder: (context) => HomeScreen(),
-  //                                       ));
-  //                                 }
-  //                               },
-  //                               style: ElevatedButton.styleFrom(
-  //                                 shape: RoundedRectangleBorder(
-  //                                   borderRadius: BorderRadius.circular(10),
-  //                                 ),
-  //                                 backgroundColor: AppColors.cyan,
-  //                                 padding: EdgeInsets.symmetric(
-  //                                   vertical: 20,
-  //                                   horizontal: 80,
-  //                                 ),
-  //                                 elevation: 20,
-  //                               ),
-  //                               child: Text(
-  //                                 'Register',
-  //                                 style: TextStyle(
-  //                                   color: AppColors.dark,
-  //                                   fontSize: 17,
-  //                                   fontWeight: FontWeight.bold,
-  //                                   fontFamily: 'poppins',
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     );
-  //   } catch (e) {
-  //     print("Error signing in with OTP: $e");
-  //   }
-  // }

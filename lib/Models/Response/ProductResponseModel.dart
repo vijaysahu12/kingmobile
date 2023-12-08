@@ -1,6 +1,6 @@
 // Suppose you have a User model
 class ProductResponseModel {
-//  String id;
+  String id;
   String name;
   String category;
   String description;
@@ -9,8 +9,7 @@ class ProductResponseModel {
   double price;
 
   ProductResponseModel(
-      {
-      //required this.id,
+      {required this.id,
       required this.name,
       required this.category,
       required this.description,
@@ -18,16 +17,27 @@ class ProductResponseModel {
       required this.liked,
       required this.price});
 
+  // factory ProductResponseModel.fromJson(Map<String, dynamic> json) {
+  //   return ProductResponseModel(
+  //     id: json['id'] ?? '',
+  //     name: json['name'] ?? '',
+  //     liked: json['liked'],
+  //     category: json['category'] ?? '',
+  //     description: json['description'],
+  //     raiting: json['rating'],
+  //     //favourite: json['favourite'],
+  //     price: json['price'],
+  //   );
+  // }
   factory ProductResponseModel.fromJson(Map<String, dynamic> json) {
     return ProductResponseModel(
-      // id: json['id'] ?? '',
+      id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
-      liked: json['liked'],
+      liked: json['liked'] ?? false,
       category: json['category'] ?? '',
-      description: json['description'],
-      raiting: json['rating'],
-      //favourite: json['favourite'],
-      price: json['price'],
+      description: json['description'] ?? '',
+      raiting: json['rating'] != null ? json['rating'].toString() : '',
+      price: (json['price'] ?? 0).toDouble(), // Handle conversion to double
     );
   }
 }
