@@ -140,8 +140,9 @@ class _TradingScreen extends State<TradingScreen> {
   Future<SingleProductResponse?> fetchProductById(String productId) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
+    print(MobileKey);
     final String apiUrl =
-        'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=$MobileKey';
+        'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=469FA374-A295-EE11-812A-00155D23D79C';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final dynamic parsedData = json.decode(response.body);

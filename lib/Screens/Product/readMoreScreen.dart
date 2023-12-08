@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:kraapp/Models/Response/SingleProductResponse.dart';
+import 'package:kraapp/Screens/Common/refreshtwo.dart';
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -390,9 +391,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     color: AppColors.dark))
                           ],
                         ),
-                        SizedBox(
-                          height: 5,
-                        ),
+                        // SizedBox(
+                        //   height: 5,
+                        // ),
                         Row(
                           children: [
                             Flexible(
@@ -606,6 +607,80 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         Row(
                           children: [
                             Text(
+                              "Extra Benifits",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.dark,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "poppins"),
+                            ),
+                          ],
+                        ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        Row(
+                          children: [
+                            Text(
+                              "Bonanza Service",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w600),
+                            ),
+                            Spacer(),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.grey,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 5),
+                                child: Text(
+                                  "Free",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.dark),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Months 1",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                "100Rs per day for next year where you will get bumper benefits. Like you will get limitted but powerfull option Trade and investment stocks",
+                                style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.grey),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
                               "Pricing Details",
                               style: TextStyle(
                                   fontSize: 16,
@@ -691,47 +766,58 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   Widget _buildContent() {
     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-    return ListView.builder(
-      itemCount: myVideoUrls.length,
-      itemBuilder: (context, index) {
-        return FutureBuilder<YoutubePlayer?>(
-          future: _loadVideo(myVideoUrls[index]),
-          builder: (context, AsyncSnapshot<YoutubePlayer?> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return ShimmerListViewForYoutubeContent(itemCount: 4);
-            } else {
-              final player = snapshot.data;
-              if (player != null) {
-                return YoutubePlayerBuilder(
-                  player: player,
-                  builder: (context, _) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          child: player,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Video ${index + 1}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                );
-              } else {
+    return RefreshHelper.buildRefreshIndicator(
+      onRefresh: () async {},
+      child: ListView.builder(
+        itemCount: myVideoUrls.length,
+        itemBuilder: (context, index) {
+          return FutureBuilder<YoutubePlayer?>(
+            future: _loadVideo(myVideoUrls[index]),
+            builder: (context, AsyncSnapshot<YoutubePlayer?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return ShimmerListViewForYoutubeContent(itemCount: 4);
+              } else {
+                final player = snapshot.data;
+                if (player != null) {
+                  return YoutubePlayerBuilder(
+                    player: player,
+                    builder: (context, _) {
+                      return Column(
+                        //mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                height: 80,
+                                width: 120,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10),
+                                child: player,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Flexible(
+                                  child: Text(
+                                      "Das ka dum-King reserach aug-22 Batch Day-1")),
+                              Icon(Icons.lock_rounded),
+                              SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return ShimmerListViewForYoutubeContent(itemCount: 4);
+                }
               }
-            }
-          },
-        );
-      },
+            },
+          );
+        },
+      ),
     );
   }
 }
