@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class SingleProductResponse {
   final int statusCode;
   final String? message;
@@ -20,39 +22,63 @@ class SingleProductResponse {
 }
 
 class Product {
-  final String id;
   final String name;
   final String description;
   final String category;
   final double price;
-  // final double priceAfterDiscount;
-  // final int discount;
   final String rating;
-  // final bool liked;
+  final List<ExtraBenefit> extraBenefits;
 
   Product({
-    required this.id,
     required this.name,
     required this.description,
     required this.category,
     required this.price,
-    // required this.priceAfterDiscount,
-    // required this.discount,
     required this.rating,
-    // required this.liked,
+    required this.extraBenefits,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    List<ExtraBenefit> parseExtraBenefits(dynamic jsonValue) {
+      if (jsonValue is List) {
+        return jsonValue.map((item) => ExtraBenefit.fromJson(item)).toList();
+      }
+      return [];
+    }
+
     return Product(
-      id: json['id']?.toString() ?? '',
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      category: json['category'] ?? '',
-      price: json['price']?.toDouble() ?? 0.0,
-      // priceAfterDiscount: json['priceAfterDiscount']?.toDouble() ?? 0.0,
-      // discount: json['discount'] ?? 0,
-      rating: json['rating'] ?? '',
-      // liked: json['liked'] == null ? false : json['liked'] as bool,
+        name: json['name'] ?? '',
+        description: json['description'] ?? '',
+        category: json['category'] ?? '',
+        price: json['price']?.toDouble() ?? 0.0,
+        rating: json['rating'] ?? '',
+        extraBenefits: parseExtraBenefits(
+          json['extraBenefits'] != null
+              ? jsonDecode(json['extraBenefits'])
+              : [],
+        ));
+  }
+}
+
+class ExtraBenefit {
+  final String subscriptionName;
+  final int months;
+  final String name;
+  final String description;
+
+  ExtraBenefit({
+    required this.subscriptionName,
+    required this.months,
+    required this.name,
+    required this.description,
+  });
+
+  factory ExtraBenefit.fromJson(Map<String, dynamic> json) {
+    return ExtraBenefit(
+      subscriptionName: json['SubscriptionName'] ?? '',
+      months: json['Months'] ?? 0,
+      name: json['Name'] ?? '',
+      description: json['Description'] ?? '',
     );
   }
 }

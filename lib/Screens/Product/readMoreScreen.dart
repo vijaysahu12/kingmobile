@@ -295,6 +295,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               itemCount: widget.product!.data.length,
               itemBuilder: (context, index) {
                 final Product currentProduct = widget.product!.data[index];
+                ExtraBenefit? benefit;
+
+                if (currentProduct.extraBenefits.isNotEmpty) {
+                  benefit = currentProduct.extraBenefits[index];
+                  print(benefit);
+                } else {
+                  print('No extra benefits available');
+                }
+
                 return Column(
                   children: [
                     Row(
@@ -602,77 +611,74 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Extra Benifits",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.dark,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: "poppins"),
-                            ),
-                          ],
-                        ),
-                        // SizedBox(
-                        //   height: 10,
-                        // ),
-                        Row(
-                          children: [
-                            Text(
-                              "Bonanza Service",
-                              style: TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.w600),
-                            ),
-                            Spacer(),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.grey,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 5),
-                                child: Text(
-                                  "Free",
-                                  style: TextStyle(
+                    if (benefit != null)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Extra Benefits",
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: AppColors.dark,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "poppins"),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    benefit.name,
+                                    style: TextStyle(
                                       fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.dark),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColors.grey,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 15,
+                                        vertical: 5,
+                                      ),
+                                      child: Text(
+                                        benefit.subscriptionName,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.dark,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 20),
+                                ],
+                              ),
+                              Text(
+                                "Months ${benefit.months}",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Months 1",
-                              style: TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                "100Rs per day for next year where you will get bumper benefits. Like you will get limitted but powerfull option Trade and investment stocks",
+                              Text(
+                                benefit.description,
                                 style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.grey),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.grey,
+                                ),
                               ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
+                              SizedBox(height: 20),
+                            ],
+                          ),
+                        ],
+                      ),
                     SizedBox(
                       height: 20,
                     ),

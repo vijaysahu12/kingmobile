@@ -328,7 +328,7 @@ class _TradingScreen extends State<TradingScreen> {
                                         String productId = data[index].id;
                                         SingleProductResponse? product =
                                             await fetchProductById(productId);
-
+                                        print(product);
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
