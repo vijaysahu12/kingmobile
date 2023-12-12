@@ -6,11 +6,13 @@ import 'package:kraapp/Screens/all_screens.dart';
 
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
+import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 // import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
-// // import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
-// // //import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
-// // //import 'package:pusher_beams/pusher_beams.dart';
-// // //import 'firebase_options.dart';
+// import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+// import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+// import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+// import 'package:pusher_beams/pusher_beams.dart';
+// import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +25,6 @@ void main() async {
   // PushNotifications.start(getApplicationContext(), "dbd74c3a-6994-42b0-b282-1e1313512047");
   // PushNotifications.addDeviceInterest("hello");
   await FirebaseAppCheck.instance.activate();
-
   runApp(const MyApp());
 }
 
@@ -55,8 +56,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        //body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
-        body: HomeScreen(),
+        body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
+        // body: HomeScreen(),
       ),
     );
   }

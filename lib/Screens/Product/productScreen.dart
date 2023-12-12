@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:kraapp/Screens/Product/readMoreScreen.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+// import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'dart:convert';
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
@@ -40,59 +40,60 @@ class _TradingScreen extends State<TradingScreen> {
     super.dispose();
   }
 
-  void onLikedButtonPressed(int index) {
-    setState(() {
-      if (isFavoriteList[index]) {
-        likeCountList[index]--;
-        isFavoriteList[index] = false;
-      } else {
-        likeCountList[index]++;
-        isFavoriteList[index] = true;
-      }
-    });
-  }
+  // void onLikedButtonPressed(int index, String productId) async {
+  //   setState(() {
+  //     if (isFavoriteList[index]) {
+  //       likeCountList[index]--;
+  //       isFavoriteList[index] = false;
+  //     } else {
+  //       likeCountList[index]++;
+  //       isFavoriteList[index] = true;
+  //     }
+  //   });
+  //   await Isliked(productId);
+  // }
 
   Future<void> refreshData() async {
     await fetchDataThree();
   }
 
   //success
-  void paymentSuccessResponse(PaymentSuccessResponse response) {
-    showAlertDialog(
-        context, "Payment Successful", "Payment ID: ${response.paymentId}");
-  }
+  // void paymentSuccessResponse(PaymentSuccessResponse response) {
+  //   showAlertDialog(
+  //       context, "Payment Successful", "Payment ID: ${response.paymentId}");
+  // }
 
-  void paymentFailureResponse(PaymentFailureResponse response) {
-    showAlertDialog(context, "Payment Failed",
-        "code : ${response.code}\n Description :${response.message}");
-  }
+  // void paymentFailureResponse(PaymentFailureResponse response) {
+  //   showAlertDialog(context, "Payment Failed",
+  //       "code : ${response.code}\n Description :${response.message}");
+  // }
 
-  void handleExternalWalletSelected(ExternalWalletResponse response) {
-    showAlertDialog(
-        context, "External Wallet Selected", "${response.walletName}");
-  }
+  // void handleExternalWalletSelected(ExternalWalletResponse response) {
+  //   showAlertDialog(
+  //       context, "External Wallet Selected", "${response.walletName}");
+  // }
 
-  void showAlertDialog(BuildContext context, String title, String message) {
-    Widget continueButton = ElevatedButton(
-      child: const Text("Continue"),
-      onPressed: () {},
-    );
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        continueButton,
-      ],
-    );
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  // void showAlertDialog(BuildContext context, String title, String message) {
+  //   Widget continueButton = ElevatedButton(
+  //     child: const Text("Continue"),
+  //     onPressed: () {},
+  //   );
+  //   // set up the AlertDialog
+  //   AlertDialog alert = AlertDialog(
+  //     title: Text(title),
+  //     content: Text(message),
+  //     actions: [
+  //       continueButton,
+  //     ],
+  //   );
+  //   // show the dialog
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return alert;
+  //     },
+  //   );
+  // }
 
   // Future<List<Map<String, dynamic>>> fetchData() async {
   //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
@@ -128,7 +129,7 @@ class _TradingScreen extends State<TradingScreen> {
             .map((val) => ProductResponseModel.fromJson(val))
             .toList();
         isFavoriteList = List.generate(list.length, (index) => false);
-        likeCountList = List.generate(list.length, (index) => 203);
+        // likeCountList = List.generate(list.length, (index) => 0);
         print(list);
       }
       return list;
@@ -150,6 +151,34 @@ class _TradingScreen extends State<TradingScreen> {
       return SingleProductResponse.fromJson(parsedData);
     } else {
       throw Exception('Failed to load product');
+    }
+  }
+
+  Future<void> Isliked(String productId, bool userHasHeart) async {
+    // String UserKey = await _sharedPref.read("KingUserId");
+    // String MobileKey = UserKey.replaceAll('"', '');
+    final String apiUrl =
+        'http://192.168.29.246:8083/api/Product/LikeUnlikeProduct';
+    String action = userHasHeart ? 'like' : 'unlike';
+
+    Map<String, dynamic> isLikedData = {
+      'productId': productId,
+      "likeId": "1",
+      "createdby": "469FA374-A295-EE11-812A-00155D23D79C",
+      "action": action
+    };
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(isLikedData),
+    );
+    print(isLikedData);
+    if (response.statusCode == 200) {
+      print("Liked successfully!");
+    } else {
+      print('Failed to update data: ${response.statusCode}');
     }
   }
 
@@ -334,7 +363,8 @@ class _TradingScreen extends State<TradingScreen> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ProductDetailsScreen(
-                                                      product: product),
+                                                product: product,
+                                              ),
                                             ));
                                       },
                                       child: Card(
@@ -414,33 +444,46 @@ class _TradingScreen extends State<TradingScreen> {
                                                         ),
                                                         GestureDetector(
                                                           onTap: () {
+                                                            String productId =
+                                                                data[index].id;
                                                             setState(() {
-                                                              // isFavoriteList[
-                                                              //         index] =
-                                                              //     !isFavoriteList[
-                                                              //         index];
-                                                              onLikedButtonPressed(
-                                                                  index);
+                                                              if (data[index]
+                                                                  .userHasHeart) {
+                                                                data[index]
+                                                                    .heartsCount--;
+                                                                data[index]
+                                                                        .userHasHeart =
+                                                                    false;
+                                                              } else {
+                                                                data[index]
+                                                                    .heartsCount++;
+                                                                data[index]
+                                                                        .userHasHeart =
+                                                                    true;
+                                                              }
+                                                              Isliked(
+                                                                  productId,
+                                                                  data[index]
+                                                                      .userHasHeart);
                                                             });
                                                           },
                                                           child: Column(
                                                             children: [
                                                               Icon(
-                                                                isFavoriteList[
-                                                                        index]
+                                                                data[
+                                                                            index]
+                                                                        .userHasHeart
                                                                     ? Icons
                                                                         .favorite
                                                                     : Icons
                                                                         .favorite_border,
-                                                                color:
-                                                                    isFavoriteList[
-                                                                            index]
-                                                                        ? Colors
-                                                                            .red
-                                                                        : null,
+                                                                color: data[index]
+                                                                        .userHasHeart
+                                                                    ? Colors.red
+                                                                    : null,
                                                               ),
                                                               Text(
-                                                                  '${likeCountList[index]}')
+                                                                  '${data[index].heartsCount.toStringAsFixed(0)}'),
                                                             ],
                                                           ),
                                                         ),

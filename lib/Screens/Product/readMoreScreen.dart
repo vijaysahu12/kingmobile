@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:kraapp/Models/Response/SingleProductResponse.dart';
@@ -40,6 +44,33 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   //     ),
   //   );
   // }
+
+  Future<void> Isliked(String productId, bool isHeart) async {
+    // String userKey = await _sharedPref.read("KingUserId");
+    // String mobileKey = userKey.replaceAll('"', '');
+    final String apiUrl =
+        'http://192.168.29.246:8083/api/Product/LikeUnlikeProduct';
+    String action = isHeart ? 'like' : 'unlike';
+    Map<String, dynamic> isLikedData = {
+      'productId': productId,
+      "likeId": "1",
+      "createdby": "469FA374-A295-EE11-812A-00155D23D79C",
+      "action": action,
+    };
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(isLikedData),
+    );
+    print(isLikedData);
+    if (response.statusCode == 200) {
+      print("Liked successfully!");
+    } else {
+      print('Failed to update data: ${response.statusCode}');
+    }
+  }
 
   void paymentSuccessResponse(PaymentSuccessResponse response) {
     showAlertDialog(
@@ -321,11 +352,32 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ],
                         ),
                         Spacer(),
-                        Column(
-                          children: [
-                            Icon(Icons.favorite_border_rounded),
-                          ],
-                        )
+                        GestureDetector(
+                          onTap: () async {
+                            try {
+                              setState(() {
+                                currentProduct.isHeart =
+                                    !currentProduct.isHeart;
+                              });
+
+                              await Isliked(
+                                  currentProduct.id, currentProduct.isHeart);
+                            } catch (error) {
+                              print('Error occurred: $error');
+                            }
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                currentProduct.isHeart
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color:
+                                    currentProduct.isHeart ? Colors.red : null,
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     Row(
@@ -343,21 +395,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ],
                         ),
                         Spacer(),
-                        // Column(
-                        //   children: [
-                        //     RatingBar.builder(
-                        //       initialRating:
-                        //           double.parse(widget.productRating.toString()),
-                        //       itemBuilder: (context, _) => Icon(
-                        //         Icons.star,
-                        //         color: Colors.amber,
-                        //       ),
-                        //       ignoreGestures: true,
-                        //       itemSize: 25,
-                        //       onRatingUpdate: (double value) {},
-                        //     ),
-                        //   ],
-                        // )
+                        Column(
+                          children: [
+                            RatingBar.builder(
+                              initialRating: double.parse(
+                                  currentProduct.rating.toString()),
+                              itemBuilder: (context, _) => Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                              ignoreGestures: true,
+                              itemSize: 25,
+                              onRatingUpdate: (double value) {},
+                            ),
+                          ],
+                        )
                       ],
                     ),
                     SizedBox(
@@ -392,12 +444,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       children: [
                         Row(
                           children: [
-                            Text("About This Course",
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    fontFamily: "poppins",
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.dark))
+                            Text(
+                              "About This Course",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  fontFamily: "poppins",
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.dark),
+                            ),
                           ],
                         ),
                         // SizedBox(
@@ -679,9 +733,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ],
                       ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
+
                     Column(
                       children: [
                         Row(

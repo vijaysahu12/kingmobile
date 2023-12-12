@@ -91,7 +91,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
       "mobile": _mobileController.text,
       "city": _cityController.text,
       "gender": selectedGender.toString(),
-      "dob": "08-Dec-2022"
+      "dob": ""
     };
     print(userData);
     try {
@@ -116,11 +116,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
     try {
-      // PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      //     verificationId: widget.verificationId, smsCode: smsCode);
-      // UserCredential userCredential =
-      //     await FirebaseAuth.instance.signInWithCredential(credential);
-      // print(userCredential);
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: widget.verificationId, smsCode: smsCode);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      print(userCredential);
       print('OTP verification successful!');
       String deviceType = widget.deviceType;
       String? firebaseToken = widget.fcmToken;
@@ -407,36 +407,32 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                 Row(
                                   children: <Widget>[
                                     Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: AppColors.lightShadow,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 3, horizontal: 10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Text(
-                                              'Male',
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontFamily: 'poppins',
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Radio(
-                                              value: 'Male',
-                                              groupValue: selectedGender,
-                                              onChanged: (value) {
-                                                selectedGender =
-                                                    value as String;
-                                              },
-                                              activeColor:
-                                                  AppColors.primaryColor,
-                                            ),
-                                          ],
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedGender = 'Male';
+                                          });
+                                        },
+                                        child: Container(
+                                          // ... other styles
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Text('Male'),
+                                              Radio(
+                                                value: 'Male',
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    selectedGender = value;
+                                                  });
+                                                },
+                                                groupValue: selectedGender,
+                                                activeColor:
+                                                    AppColors.primaryColor,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -444,36 +440,32 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 3, horizontal: 10),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.lightShadow,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Text(
-                                              'Female',
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontFamily: 'poppins',
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Radio(
-                                              value: 'Female',
-                                              groupValue: selectedGender,
-                                              onChanged: (value) {
-                                                selectedGender =
-                                                    value as String;
-                                              },
-                                              activeColor:
-                                                  AppColors.primaryColor,
-                                            ),
-                                          ],
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedGender = 'Female';
+                                          });
+                                        },
+                                        child: Container(
+                                          // ... other styles
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Text('Female'),
+                                              Radio(
+                                                value: 'Female',
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    selectedGender = value;
+                                                  });
+                                                },
+                                                groupValue: selectedGender,
+                                                activeColor:
+                                                    AppColors.primaryColor,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -558,32 +550,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
               );
             },
           );
-          // print('Message from the response: $statusCode');
         }
-        //  else {
-        //   showDialog(
-        //       context: context,
-        //       builder: (BuildContext context) {
-        //         return Center(
-        //           child: Dialog(
-        //             backgroundColor: AppColors.purple,
-        //             shape: RoundedRectangleBorder(
-        //               borderRadius: BorderRadius.circular(15.0),
-        //             ),
-        //             child: Padding(
-        //               padding: const EdgeInsets.all(30.0),
-        //               child: Text(
-        //                 "Enter valid OTP",
-        //                 style: TextStyle(
-        //                     color: AppColors.lightShadow,
-        //                     fontSize: 20,
-        //                     fontWeight: FontWeight.w600),
-        //               ),
-        //             ),
-        //           ),
-        //         );
-        //       });
-        // }
       }
     } catch (e) {
       if (e is FirebaseAuthException && e.code == 'invalid-verification-code') {

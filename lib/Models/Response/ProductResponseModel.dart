@@ -5,6 +5,8 @@ class ProductResponseModel {
   String category;
   String description;
   String raiting;
+  bool userHasHeart;
+  double heartsCount;
   bool liked;
   double price;
 
@@ -13,6 +15,8 @@ class ProductResponseModel {
       required this.name,
       required this.category,
       required this.description,
+      required this.userHasHeart,
+      required this.heartsCount,
       required this.raiting,
       required this.liked,
       required this.price});
@@ -34,8 +38,10 @@ class ProductResponseModel {
       id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
       liked: json['liked'] ?? false,
-      category: json['category'] ?? '',
+      category: json['category'] ?? false,
       description: json['description'] ?? '',
+      userHasHeart: json['userHasHeart'] ?? '',
+      heartsCount: (json['heartsCount'] ?? 0).toDouble(),
       raiting: json['rating'] != null ? json['rating'].toString() : '',
       price: (json['price'] ?? 0).toDouble(), // Handle conversion to double
     );

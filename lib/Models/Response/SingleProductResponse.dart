@@ -22,17 +22,21 @@ class SingleProductResponse {
 }
 
 class Product {
+  final String id;
   final String name;
   final String description;
   final String category;
   final double price;
   final String rating;
+  late bool isHeart;
   final List<ExtraBenefit> extraBenefits;
 
   Product({
+    required this.id,
     required this.name,
     required this.description,
     required this.category,
+    required this.isHeart,
     required this.price,
     required this.rating,
     required this.extraBenefits,
@@ -47,11 +51,13 @@ class Product {
     }
 
     return Product(
+        id: json['id'].toString(),
         name: json['name'] ?? '',
         description: json['description'] ?? '',
         category: json['category'] ?? '',
         price: json['price']?.toDouble() ?? 0.0,
         rating: json['rating'] ?? '',
+        isHeart: json['isHeart'],
         extraBenefits: parseExtraBenefits(
           json['extraBenefits'] != null
               ? jsonDecode(json['extraBenefits'])
