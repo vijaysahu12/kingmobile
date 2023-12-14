@@ -34,7 +34,9 @@ class _CommunityGroupState extends State<CommunityGroup> {
   }
 
   Future<List<CommunityGroupResponse>?> fetchData() async {
-    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+    final String apiUrl =
+        "${ApiUrlConstants.getProducts}/4642a8e0-369a-ee11-812a-00155d23d79c";
+    final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       List<CommunityGroupResponse>? list;
       final dynamic parsedData = json.decode(response.body);

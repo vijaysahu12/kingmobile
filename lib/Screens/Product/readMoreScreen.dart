@@ -12,13 +12,16 @@ import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../Common/shimmerScreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final SingleProductResponse? product;
+  final Function updateParent;
 
-  const ProductDetailsScreen({this.product, super.key});
+  const ProductDetailsScreen(
+      {this.product, super.key, required this.updateParent});
 
   @override
   _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
@@ -48,8 +51,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Future<void> Isliked(String productId, bool isHeart) async {
     // String userKey = await _sharedPref.read("KingUserId");
     // String mobileKey = userKey.replaceAll('"', '');
-    final String apiUrl =
-        'http://192.168.29.246:8083/api/Product/LikeUnlikeProduct';
+    final String apiUrl = '${ApiUrlConstants.LikeUnlikeProduct}';
     String action = isHeart ? 'like' : 'unlike';
     Map<String, dynamic> isLikedData = {
       'productId': productId,
@@ -362,6 +364,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
                               await Isliked(
                                   currentProduct.id, currentProduct.isHeart);
+                              widget.updateParent();
                             } catch (error) {
                               print('Error occurred: $error');
                             }
@@ -882,3 +885,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 }
+// if (this.list != null) {
+//       final dd = this
+//           .list
+//           ?.where((element) => element.id == productId)
+//           .toList()[0]
+//           .heartsCount = 1;
+
+//       setState(() {
+//         print("State Method Called");
+//         this.list = dd as List<ProductResponseModel>?;
+//       });
+//     }

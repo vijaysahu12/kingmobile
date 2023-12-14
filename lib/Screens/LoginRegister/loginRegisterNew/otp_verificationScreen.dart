@@ -127,7 +127,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
       String countryCode = widget.countryCode;
       final apiUrl = ApiUrlConstants.otpLoginVerfication +
           '?mobileNumber=${widget.mobileNumber}&FirebaseFcmToken=$firebaseToken&deviceType=$deviceType&countryCode=$countryCode';
-
+      print(apiUrl);
       final response = await http.post(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
         print(response);

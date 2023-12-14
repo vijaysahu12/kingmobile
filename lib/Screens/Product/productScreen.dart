@@ -24,7 +24,7 @@ class _TradingScreen extends State<TradingScreen> {
   bool isCommunitySelected = true;
   late List<bool> isFavoriteList = [];
   late List<int> likeCountList = [];
-  late Future<List<ProductResponseModel>?> productsFuture;
+  late Future<List<ProductResponseModel>?> productsFuture = fetchDataThree();
   SharedPref _sharedPref = SharedPref();
 
   @override
@@ -32,6 +32,12 @@ class _TradingScreen extends State<TradingScreen> {
     super.initState();
     productsFuture = fetchDataThree();
     _pageController = PageController(initialPage: 0);
+  }
+
+  void updateParent() {
+    setState(() {
+      productsFuture = fetchDataThree();
+    });
   }
 
   @override
@@ -119,7 +125,11 @@ class _TradingScreen extends State<TradingScreen> {
   // }
 
   Future<List<ProductResponseModel>?> fetchDataThree() async {
-    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
+    String MobileKey = UserKey.replaceAll('"', '');
+    final String apiUrl =
+        '${ApiUrlConstants.getProducts}/4642a8e0-369a-ee11-812a-00155d23d79c';
+    final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       List<ProductResponseModel>? list;
       final dynamic parsedData = json.decode(response.body);
@@ -143,7 +153,7 @@ class _TradingScreen extends State<TradingScreen> {
     String MobileKey = UserKey.replaceAll('"', '');
     print(MobileKey);
     final String apiUrl =
-        'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=469FA374-A295-EE11-812A-00155D23D79C';
+        'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=4642a8e0-369a-ee11-812a-00155d23d79c';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final dynamic parsedData = json.decode(response.body);
@@ -359,13 +369,22 @@ class _TradingScreen extends State<TradingScreen> {
                                             await fetchProductById(productId);
                                         print(product);
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ProductDetailsScreen(
-                                                product: product,
-                                              ),
-                                            ));
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProductDetailsScreen(
+                                              product: product,
+                                              updateParent: updateParent,
+                                            ),
+                                          ),
+                                        );
+                                        // .then((value) {
+                                        //   if (value) {
+                                        //     setState(() {
+                                        //       productsFuture = fetchDataThree();
+                                        //     });
+                                        //   }
+                                        // });
                                       },
                                       child: Card(
                                         margin: EdgeInsets.symmetric(
@@ -568,6 +587,8 @@ class _TradingScreen extends State<TradingScreen> {
                                                                           ProductDetailsScreen(
                                                                     product:
                                                                         product,
+                                                                    updateParent:
+                                                                        updateParent,
                                                                   ),
                                                                 ));
                                                           },

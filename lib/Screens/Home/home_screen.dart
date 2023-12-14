@@ -9,8 +9,11 @@ import 'package:kraapp/Screens/Common/shimmerScreen.dart';
 
 import '../../Helpers/ApiUrls.dart';
 
+import '../../Helpers/sharedPref.dart';
 import '../Common/refreshtwo.dart';
 import '../Constants/app_color.dart';
+
+SharedPref _sharedPref = SharedPref();
 
 class Personal extends StatefulWidget {
   const Personal({super.key});
@@ -51,7 +54,13 @@ class _Personal extends State<Personal> {
   // }
 
   Future<List<HomeResponse>?> fetchData() async {
-    final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
+    String MobileKey = UserKey.replaceAll('"', '');
+    final String apiUrl =
+        '${ApiUrlConstants.getProducts}/4642a8e0-369a-ee11-812a-00155d23d79c';
+    print(apiUrl);
+    final response = await http.get(Uri.parse(apiUrl));
+
     if (response.statusCode == 200) {
       List<HomeResponse>? list;
       final dynamic parsedData = json.decode(response.body);
