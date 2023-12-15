@@ -152,7 +152,7 @@ class _TradingScreen extends State<TradingScreen> {
     String MobileKey = UserKey.replaceAll('"', '');
     print(MobileKey);
     final String apiUrl =
-        'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=4642a8e0-369a-ee11-812a-00155d23d79c';
+        'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=$MobileKey';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final dynamic parsedData = json.decode(response.body);
@@ -166,8 +166,7 @@ class _TradingScreen extends State<TradingScreen> {
   Future<void> Isliked(String productId, bool userHasHeart) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
-    final String apiUrl =
-        'http://192.168.29.246:8083/api/Product/LikeUnlikeProduct';
+    final String apiUrl = '${ApiUrlConstants.LikeUnlikeProduct}';
     String action = userHasHeart ? 'like' : 'unlike';
 
     Map<String, dynamic> isLikedData = {
@@ -377,13 +376,6 @@ class _TradingScreen extends State<TradingScreen> {
                                             ),
                                           ),
                                         );
-                                        // .then((value) {
-                                        //   if (value) {
-                                        //     setState(() {
-                                        //       productsFuture = fetchDataThree();
-                                        //     });
-                                        //   }
-                                        // });
                                       },
                                       child: Card(
                                         margin: EdgeInsets.symmetric(

@@ -116,11 +116,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
     try {
-      // PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      //     verificationId: widget.verificationId, smsCode: smsCode);
-      // UserCredential userCredential =
-      //     await FirebaseAuth.instance.signInWithCredential(credential);
-      // print(userCredential);
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: widget.verificationId, smsCode: smsCode);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      print(userCredential);
       print('OTP verification successful!');
       String deviceType = widget.deviceType;
       String? firebaseToken = widget.fcmToken;
