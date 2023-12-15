@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+// import 'package:device_info/device_info.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +26,14 @@ class _PersonalDetails extends State<PersonalDetails> {
   final TextEditingController _userDateOfBirthController =
       TextEditingController();
   //HttpRequestHelper _httpHelper = HttpRequestHelper();
+
+  // final FirebaseAuth auth = FirebaseAuth.instance;
+  // void inputData() {
+  //   final User? user = auth.currentUser;
+  //   final uid = user?.uid;
+  //   print(uid);
+  //   // here you write the codes to input the data into firestore
+  // }
 
   final _formKey = new GlobalKey<FormState>();
   SharedPref _sharedPref = SharedPref();
@@ -89,6 +99,24 @@ class _PersonalDetails extends State<PersonalDetails> {
       });
     }
   }
+
+  // Future<String?> getImei() async {
+  //   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  //   try {
+  //     if (Platform.isAndroid) {
+  //       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+  //       print(androidInfo.androidId);
+  //       return 'Device Type is Android  and AndroidID: ${androidInfo.androidId}';
+  //     } else if (Platform.isIOS) {
+  //       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+  //       return 'Device Type is IOS & IosId ${iosInfo.identifierForVendor}';
+  //     }
+  //   } catch (e) {
+  //     print('Error getting IMEI: $e');
+  //     return null;
+  //   }
+  //   return null;
+  // }
 
   @override
   void initState() {
@@ -593,6 +621,8 @@ class _PersonalDetails extends State<PersonalDetails> {
                                     .checkInternetConnection(context);
                                 if (isConnected) {
                                   updateUserData();
+                                  // getImei();
+                                  //   inputData();
                                   Navigator.pop(context,
                                       {'name': fullName, 'email': email});
                                 }

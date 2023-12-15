@@ -1,4 +1,5 @@
 import 'dart:convert';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -56,8 +57,7 @@ class _Personal extends State<Personal> {
   Future<List<HomeResponse>?> fetchData() async {
     String UserKey = await _sharedPref.read(SessionConstants.UserKey);
     String MobileKey = UserKey.replaceAll('"', '');
-    final String apiUrl =
-        '${ApiUrlConstants.getProducts}/4642a8e0-369a-ee11-812a-00155d23d79c';
+    final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
     print(apiUrl);
     final response = await http.get(Uri.parse(apiUrl));
 

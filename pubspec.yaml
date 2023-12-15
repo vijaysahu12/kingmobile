@@ -80,6 +80,8 @@ dependencies:
   shimmer: ^3.0.0
   pusher_beams: ^1.1.1
   flutter_local_notifications: ^16.2.0
+  device_info_plus: ^9.1.1
+  flutter_timezone: ^1.0.8
   
 
 

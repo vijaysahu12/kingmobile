@@ -127,8 +127,7 @@ class _TradingScreen extends State<TradingScreen> {
   Future<List<ProductResponseModel>?> fetchDataThree() async {
     String UserKey = await _sharedPref.read(SessionConstants.UserKey);
     String MobileKey = UserKey.replaceAll('"', '');
-    final String apiUrl =
-        '${ApiUrlConstants.getProducts}/4642a8e0-369a-ee11-812a-00155d23d79c';
+    final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       List<ProductResponseModel>? list;
@@ -165,8 +164,8 @@ class _TradingScreen extends State<TradingScreen> {
   }
 
   Future<void> Isliked(String productId, bool userHasHeart) async {
-    // String UserKey = await _sharedPref.read("KingUserId");
-    // String MobileKey = UserKey.replaceAll('"', '');
+    String UserKey = await _sharedPref.read("KingUserId");
+    String MobileKey = UserKey.replaceAll('"', '');
     final String apiUrl =
         'http://192.168.29.246:8083/api/Product/LikeUnlikeProduct';
     String action = userHasHeart ? 'like' : 'unlike';
@@ -174,7 +173,7 @@ class _TradingScreen extends State<TradingScreen> {
     Map<String, dynamic> isLikedData = {
       'productId': productId,
       "likeId": "1",
-      "createdby": "469FA374-A295-EE11-812A-00155D23D79C",
+      "createdby": MobileKey,
       "action": action
     };
     final response = await http.post(

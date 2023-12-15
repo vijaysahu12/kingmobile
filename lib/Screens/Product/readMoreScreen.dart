@@ -49,14 +49,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   // }
 
   Future<void> Isliked(String productId, bool isHeart) async {
-    // String userKey = await _sharedPref.read("KingUserId");
-    // String mobileKey = userKey.replaceAll('"', '');
+    String userKey = await _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
     final String apiUrl = '${ApiUrlConstants.LikeUnlikeProduct}';
     String action = isHeart ? 'like' : 'unlike';
     Map<String, dynamic> isLikedData = {
       'productId': productId,
       "likeId": "1",
-      "createdby": "469FA374-A295-EE11-812A-00155D23D79C",
+      "createdby": mobileKey,
       "action": action,
     };
     final response = await http.post(

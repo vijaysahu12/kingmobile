@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../Helpers/ApiUrls.dart';
+import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/CommunityGroupResponse.dart';
 
 import '../Common/refreshtwo.dart';
@@ -17,6 +18,8 @@ class CommunityGroup extends StatefulWidget {
 }
 
 class _CommunityGroupState extends State<CommunityGroup> {
+  SharedPref _sharedPref = SharedPref();
+
   late PageController _pageController;
   bool isCommunitySelected = true;
   late Future<List<CommunityGroupResponse>?> dataFuture;
@@ -34,8 +37,9 @@ class _CommunityGroupState extends State<CommunityGroup> {
   }
 
   Future<List<CommunityGroupResponse>?> fetchData() async {
-    final String apiUrl =
-        "${ApiUrlConstants.getProducts}/4642a8e0-369a-ee11-812a-00155d23d79c";
+    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
+    String MobileKey = UserKey.replaceAll('"', '');
+    final String apiUrl = "${ApiUrlConstants.getProducts}${MobileKey}";
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       List<CommunityGroupResponse>? list;
