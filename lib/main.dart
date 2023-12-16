@@ -9,6 +9,7 @@ import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
 // import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 // import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'Screens/all_screens.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -20,8 +21,8 @@ Future<void> showNotificationFromToken(String? title, String? body) async {
     '126', // channel id
     'TokenNotification', //channel name
     importance: Importance.max,
-    priority: Priority
-        .high, //High priority suggests that the notification is urgent and should be shown to the user immediately.
+    priority: Priority.high,
+    //High priority suggests that the notification is urgent and should be shown to the user immediately.
     // sound: RawResourceAndroidNotificationSound("tone"),
     // playSound: true,
   );
@@ -176,8 +177,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        // body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
-        body: HomeScreen(),
+        body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
+        // body: HomeScreen(),
       ),
     );
   }

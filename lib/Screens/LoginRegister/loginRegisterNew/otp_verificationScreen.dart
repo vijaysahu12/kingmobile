@@ -91,7 +91,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
       "mobile": _mobileController.text,
       "city": _cityController.text,
       "gender": selectedGender.toString(),
-      "dob": ""
+      "dob": "08-08-20"
     };
     print(userData);
     try {

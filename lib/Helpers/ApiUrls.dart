@@ -9,6 +9,8 @@ class ApiUrlConstants {
   static String otpLogin = baseUrl + "Account/otpLogin";
   static String otpLoginVerfication = baseUrl + "Account/otpLoginVerfication";
   static String LikeUnlikeProduct = baseUrl + "Product/LikeUnlikeProduct";
+  static String GetNotifications =
+      baseUrl + 'PushNotification/GetNotifications';
 }
 
 class SessionConstants {

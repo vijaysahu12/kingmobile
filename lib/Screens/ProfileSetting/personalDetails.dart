@@ -25,6 +25,7 @@ class _PersonalDetails extends State<PersonalDetails> {
   final TextEditingController _userCityController = TextEditingController();
   final TextEditingController _userDateOfBirthController =
       TextEditingController();
+
   //HttpRequestHelper _httpHelper = HttpRequestHelper();
 
   // final FirebaseAuth auth = FirebaseAuth.instance;
@@ -84,6 +85,7 @@ class _PersonalDetails extends State<PersonalDetails> {
         );
       },
     );
+
     if (picked != null) {
       setState(() {
         selectedDate = picked;

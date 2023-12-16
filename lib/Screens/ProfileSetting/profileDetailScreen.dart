@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kraapp/Screens/ProfileSetting/myBucket.dart';
 
 import 'package:kraapp/Screens/ProfileSetting/notifications.dart';
 import 'package:kraapp/Screens/ProfileSetting/personalDetails.dart';
@@ -137,7 +138,7 @@ class _PersonalInformation extends State<PersonalInformation> {
                 // );
               },
               child: Container(
-                padding: EdgeInsets.all(15),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppColors.lightShadow,
                   borderRadius: BorderRadius.circular(15),
@@ -182,7 +183,7 @@ class _PersonalInformation extends State<PersonalInformation> {
                 );
               },
               child: Container(
-                padding: EdgeInsets.all(15),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppColors.lightShadow,
                   borderRadius: BorderRadius.circular(15),
@@ -220,13 +221,58 @@ class _PersonalInformation extends State<PersonalInformation> {
             GestureDetector(
               onTap: () {
                 Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyBucketScreen(),
+                  ),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.lightShadow,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle_outline,
+                      color: AppColors.grey,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Text(
+                      'My Bucket',
+                      style: TextStyle(
+                          color: AppColors.grey,
+                          fontFamily: 'poppins',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14),
+                    ),
+                    Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios_outlined,
+                      color: AppColors.grey,
+                      size: 18,
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SettingsScreen(),
                     ));
               },
               child: Container(
-                padding: EdgeInsets.all(15),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                     color: AppColors.lightShadow,
                     borderRadius: BorderRadius.circular(15)),
@@ -269,7 +315,7 @@ class _PersonalInformation extends State<PersonalInformation> {
               //     (route) => false);
 
               child: Container(
-                padding: EdgeInsets.all(15),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                     color: AppColors.lightShadow,
                     borderRadius: BorderRadius.circular(15)),
@@ -308,7 +354,7 @@ class _PersonalInformation extends State<PersonalInformation> {
               child: Container(
                 color: AppColors.lightShadow,
                 child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Row(
                     children: [
                       Icon(
