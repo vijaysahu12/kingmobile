@@ -1,24 +1,3 @@
-// class getNotificationsResponse {
-//   final int statusCode;
-//   final String message;
-//   final List<NotificationsList> data;
-
-//   const getNotificationsResponse(
-//       {required this.statusCode, required this.message, required this.data});
-
-//   factory getNotificationsResponse.fromJson(Map<String, dynamic> json) {
-//     return getNotificationsResponse(
-//       statusCode: json['statusCode'] ?? 0,
-//       message: json['message'] ?? '',
-//       data: (json['data'] != null && json['data'] is List)
-//           ? List<NotificationsList>.from(
-//               json['data'].map((item) => NotificationsList.fromJson(item)),
-//             )
-//           : [],
-//     );
-//   }
-// }
-
 class NotificationsList {
   final String title;
   final String body;
@@ -47,5 +26,22 @@ class NotificationsList {
         createdBy: json['createdBy'] ?? '',
         isRead: json['isRead'],
         isDelete: json['isDelete']);
+  }
+}
+
+class Category {
+  final int id;
+  final String name;
+
+  Category({
+    required this.id,
+    required this.name,
+  });
+
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      id: json['id'],
+      name: json['name'],
+    );
   }
 }

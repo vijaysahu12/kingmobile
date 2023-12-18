@@ -77,7 +77,7 @@ class AppBarBuilder {
                     ),
                     Spacer(),
                     IconButton(
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
