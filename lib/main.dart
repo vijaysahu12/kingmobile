@@ -4,14 +4,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kraapp/Screens/Notifications/notificationsList.dart';
+// import 'package:kraapp/Screens/Notifications/notificationsList.dart';
 import 'package:pusher_beams/pusher_beams.dart';
 
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
-// import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
-// import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'Screens/all_screens.dart';
+
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -94,6 +95,8 @@ void main() async {
   await PusherBeams.instance.addDeviceInterest("FREE");
   await FirebaseAppCheck.instance.activate();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true, badge: true, sound: true);
   runApp(const MyApp());
 }
 
@@ -110,6 +113,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     showNotificationFromToken(
         message.notification?.title, message.notification?.body);
   }
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (navigatorKey.currentState != null) {
+      Navigator.push(
+        navigatorKey.currentState!.context,
+        MaterialPageRoute(builder: (context) => AllNotifications()),
+      );
+    }
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -133,6 +144,49 @@ class _MyAppState extends State<MyApp> {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      handleNotificationTap(message);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (navigatorKey.currentState != null) {
+          Navigator.push(
+            navigatorKey.currentState!.context,
+            MaterialPageRoute(builder: (context) => AllNotifications()),
+          );
+        }
+      });
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      handleNotificationTap(message);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (navigatorKey.currentState != null) {
+          Navigator.push(
+            navigatorKey.currentState!.context,
+            MaterialPageRoute(builder: (context) => AllNotifications()),
+          );
+        }
+      });
+    });
+  }
+
+  void handleNotificationTap(RemoteMessage message) {
+    if (message.data.containsKey("pusher")) {
+      showNotificationFromPusher(
+        message.notification!.title,
+        message.notification!.body,
+      );
+    } else if (message.from!.startsWith('/topics/')) {
+      showNotificationFromTopic(
+        message.notification?.title,
+        message.notification?.body,
+      );
+    } else {
+      showNotificationFromToken(
+        message.notification?.title,
+        message.notification?.body,
+      );
+    }
   }
 
   @override
@@ -140,56 +194,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     checkLoginStatus();
     initializeNotifications();
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.data.containsKey("pusher")) {
-        showNotificationFromPusher(
-            message.notification!.title, message.notification!.body);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AllNotifications()),
-        );
-      } else if (message.from!.startsWith('/topics/')) {
-        print(
-            'Received foreground message for topic: ${message.notification?.title}');
-        showNotificationFromTopic(
-            message.notification?.title, message.notification?.body);
-      } else {
-        print(
-            'Received foreground message for token: ${message.notification?.title}');
-        showNotificationFromToken(
-            message.notification?.title, message.notification?.body);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AllNotifications()),
-        );
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (message.data.isNotEmpty) {
-        showNotificationFromPusher(
-            message.notification!.title, message.notification!.body);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AllNotifications()),
-        );
-      } else if (message.from!.startsWith('/topics/')) {
-        print(
-            'Opened app from background message: ${message.notification?.title}');
-        showNotificationFromTopic(
-            message.notification?.title, message.notification?.body);
-      } else {
-        showNotificationFromToken(
-            message.notification?.title, message.notification?.body);
-      }
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                AllNotifications()), // Replace NotificationScreen with your screen name
-      );
-    });
   }
 
   void checkLoginStatus() async {
@@ -201,11 +205,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
-        // body: HomeScreen(),
+    return ScrollConfiguration(
+      behavior: ScrollBehavior(),
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
+          // body: HomeScreen(),
+        ),
+        routes: {
+          '/notifications': (context) => AllNotifications(),
+        },
       ),
     );
   }
