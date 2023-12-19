@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:kraapp/Helpers/httpRequest.dart';
 import 'package:kraapp/Screens/Notifications/notificationsList.dart';
 // import 'package:kraapp/Screens/Notifications/notificationsList.dart';
 import 'package:pusher_beams/pusher_beams.dart';
@@ -95,8 +96,8 @@ void main() async {
   await PusherBeams.instance.addDeviceInterest("FREE");
   await FirebaseAppCheck.instance.activate();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true, badge: true, sound: true);
+  // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+  //     alert: true, badge: true, sound: true);
   runApp(const MyApp());
 }
 
@@ -135,6 +136,7 @@ class _MyAppState extends State<MyApp> {
   SharedPref _sharedPref = SharedPref();
 
   Future<void> initializeNotifications() async {
+    bool isConnected = await HttpRequestHelper.checkInternetConnection(context);
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/launcher_icon');
 
@@ -146,27 +148,32 @@ class _MyAppState extends State<MyApp> {
     );
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      handleNotificationTap(message);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (navigatorKey.currentState != null) {
-          Navigator.push(
-            navigatorKey.currentState!.context,
-            MaterialPageRoute(builder: (context) => AllNotifications()),
-          );
-        }
-      });
+      if (isConnected) {
+        handleNotificationTap(message);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (navigatorKey.currentState != null) {
+            Navigator.push(
+              navigatorKey.currentState!.context,
+              MaterialPageRoute(builder: (context) => AllNotifications()),
+            );
+          }
+        });
+      }
     });
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      handleNotificationTap(message);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (navigatorKey.currentState != null) {
-          Navigator.push(
-            navigatorKey.currentState!.context,
-            MaterialPageRoute(builder: (context) => AllNotifications()),
-          );
-        }
-      });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      if (isConnected) {
+        handleNotificationTap(message);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (navigatorKey.currentState != null) {
+            Navigator.push(
+              navigatorKey.currentState!.context,
+              MaterialPageRoute(builder: (context) => AllNotifications()),
+            );
+          }
+        });
+      }
     });
   }
 

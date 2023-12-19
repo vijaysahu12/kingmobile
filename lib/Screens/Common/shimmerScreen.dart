@@ -314,3 +314,79 @@ class ShimmerListViewForYoutubeContent extends StatelessWidget {
     );
   }
 }
+
+class ShimmerListViewForNotification extends StatelessWidget {
+  final int itemCount;
+  const ShimmerListViewForNotification({required this.itemCount, Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: ListView.builder(
+        itemCount: itemCount,
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: AppColors.grey, width: 1)),
+            height: 60,
+            margin: EdgeInsets.all(10),
+            child: ListTile(
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Container(
+                            height: 10.0,
+                            color: Colors.grey,
+                            margin: EdgeInsets.symmetric(vertical: 5),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Container(
+                            height: 10.0,
+                            color: Colors.grey,
+                            margin: EdgeInsets.symmetric(vertical: 5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Container(
+                          height: 15.0,
+                          color: Colors.grey,
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            child: Text(''),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
