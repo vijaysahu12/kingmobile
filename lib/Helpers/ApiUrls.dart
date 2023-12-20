@@ -11,6 +11,8 @@ class ApiUrlConstants {
   static String LikeUnlikeProduct = baseUrl + "Product/LikeUnlikeProduct";
   static String GetNotifications =
       baseUrl + 'PushNotification/GetNotifications';
+  static String MarkNotificationsIsRead =
+      baseUrl + 'PushNotification/MarkNotificationAsRead';
 }
 
 class SessionConstants {

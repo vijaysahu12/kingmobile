@@ -1,47 +1,48 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:kraapp/Screens/Notifications/notificationsList.dart';
-
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
-import '../../Models/Response/getNotificationsResponse.dart';
 import '../Constants/app_color.dart';
+import '../Notifications/notificationsListTwo.dart';
+
+Future<int?> NotificationList() async {
+  final String apiUrl = '${ApiUrlConstants.GetNotifications}';
+  final Map<String, dynamic> requestBody = {
+    "id": 0,
+    "pageSize": 200,
+    "pageNumber": 1,
+    "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+  };
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: <String, String>{'Content-Type': 'application/json'},
+    body: jsonEncode(requestBody),
+  );
+  if (response.statusCode == 200) {
+    final dynamic unReadCount = await jsonDecode(response.body);
+    if (unReadCount.containsKey('data') &&
+        unReadCount['data'] != null &&
+        unReadCount['data']['unReadCount'] != null) {
+      final int parsedCount = unReadCount['data']['unReadCount'];
+      print(parsedCount);
+      return parsedCount;
+    }
+    return null;
+  } else {
+    print('Request failed with status: ${response.statusCode}');
+    throw Exception('Failed to load notifications');
+  }
+}
+
+@override
+void initState() {
+  initState();
+  NotificationList();
+}
 
 class AppBarBuilder {
   static SharedPref _sharedPref = SharedPref();
-
-  static Future<List<NotificationsList>?> NotificationList() async {
-    final String apiUrl = '${ApiUrlConstants.GetNotifications}';
-    final Map<String, dynamic> requestBody = {
-      "id": 0,
-      "pageSize": 3,
-      "pageNumber": 3,
-      "requestedBy": "9A8AD607-089B-EE11-812B-00155D23D79C"
-    };
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: <String, String>{'Content-Type': 'application/json'},
-      body: jsonEncode(requestBody),
-    );
-    if (response.statusCode == 200) {
-      List<NotificationsList>? list;
-      final dynamic dataList = json.decode(response.body);
-      if (dataList.containsKey('data') &&
-          dataList['data'] != null &&
-          dataList['data']['notification'] is List) {
-        List<dynamic> parsedList = dataList['data']['notification'];
-        list =
-            parsedList.map((val) => NotificationsList.fromJson(val)).toList();
-        print(list);
-      }
-      return list;
-    } else {
-      print('Request failed with status: ${response.statusCode}');
-      throw Exception('Failed to load notifications');
-    }
-  }
 
   static Future<String> loadUserName() async {
     String fullName = await _sharedPref.read("KingUserProfileName") ?? '';
@@ -76,35 +77,55 @@ class AppBarBuilder {
                       ),
                     ),
                     Spacer(),
-                    IconButton(
-                      onPressed: () async {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AllNotifications()),
-                        );
-                      },
-                      icon: Stack(
-                        children: [
-                          Icon(
-                            Icons.notifications,
-                            color: AppColors.lightShadow,
-                          ),
-                          Positioned(
-                            right: 0,
-                            child: Container(
-                              child: Text(
-                                "9",
-                                style: TextStyle(
-                                    color: AppColors.lightShadow,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    FutureBuilder(
+                        future: NotificationList(),
+                        builder: (context, snapshot) {
+                          int? unreadCount = snapshot.data;
+                          return IconButton(
+                              onPressed: () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PracticeScreen()),
+                                );
+                              },
+                              icon: Stack(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.notifications,
+                                      color: AppColors.light,
+                                      size: 25,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PracticeScreen()),
+                                      );
+                                    },
+                                  ),
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: Container(
+                                      padding: EdgeInsets.all(0),
+                                      child: Center(
+                                        child: Text(
+                                          unreadCount.toString(),
+                                          style: TextStyle(
+                                            color: AppColors.green,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ));
+                        }),
                   ],
                 );
               },

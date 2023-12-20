@@ -1,4 +1,14 @@
+class AllNotificationsCount {
+  final int unReadCount;
+  const AllNotificationsCount({required this.unReadCount});
+
+  factory AllNotificationsCount.fromJson(Map<String, dynamic> json) {
+    return AllNotificationsCount(unReadCount: json['unReadCount'] ?? 0);
+  }
+}
+
 class NotificationsList {
+  final int id;
   final String title;
   final String body;
   final String category;
@@ -8,6 +18,7 @@ class NotificationsList {
   final bool isDelete;
 
   const NotificationsList({
+    required this.id,
     required this.title,
     required this.body,
     required this.category,
@@ -19,6 +30,7 @@ class NotificationsList {
 
   factory NotificationsList.fromJson(Map<String, dynamic> json) {
     return NotificationsList(
+        id: json['id'] ?? 0,
         title: json['title'] ?? '',
         body: json['body'] ?? '',
         category: json['category'] ?? '',

@@ -96,8 +96,8 @@ void main() async {
   await PusherBeams.instance.addDeviceInterest("FREE");
   await FirebaseAppCheck.instance.activate();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-  //     alert: true, badge: true, sound: true);
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true, badge: true, sound: true);
   runApp(const MyApp());
 }
 
