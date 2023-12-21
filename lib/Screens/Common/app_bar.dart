@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../Constants/app_color.dart';
+import '../Notifications/notificationThree.dart';
+// import '../Notifications/notificationsList.dart';
 import '../Notifications/notificationsListTwo.dart';
 
 Future<int?> NotificationList() async {
@@ -102,7 +104,7 @@ class AppBarBuilder {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                PracticeScreen()),
+                                                NotificationThree()),
                                       );
                                     },
                                   ),

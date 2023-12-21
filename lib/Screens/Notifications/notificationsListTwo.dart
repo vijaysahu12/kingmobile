@@ -25,6 +25,25 @@ class _PracticeScreenState extends State<PracticeScreen> {
   // bool isRead = false;
   final scrollController = ScrollController();
 
+  @override
+  void initState() {
+    super.initState();
+    unReadCountNotificationList();
+    scrollController.addListener(_scrollListener);
+    fetchNotifications();
+  }
+
+  void _scrollListener() {
+    if (isLoadingMore) return;
+    if (scrollController.position.pixels ==
+        scrollController.position.minScrollExtent) {
+      loadPreviousItems();
+    } else if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      fetchNotifications();
+    }
+  }
+
   Future<List<NotificationsList>?> notificationList(
       selectedCategoryId, int page) async {
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
@@ -63,14 +82,13 @@ class _PracticeScreenState extends State<PracticeScreen> {
     final response = await http.post(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
-      print("Notification is Read");
-      notificationList(selectedCategoryId, page);
+      print("Notification is Marked");
     } else {
       print("Failder to mark");
     }
   }
 
-  Future<int?> NotificationList() async {
+  Future<int?> unReadCountNotificationList() async {
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
     final Map<String, dynamic> requestBody = {
       "id": 0,
@@ -96,25 +114,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
     } else {
       print('Request failed with status: ${response.statusCode}');
       throw Exception('Failed to load notifications');
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    NotificationList();
-    scrollController.addListener(_scrollListener);
-    fetchNotifications();
-  }
-
-  void _scrollListener() {
-    if (isLoadingMore) return;
-    if (scrollController.position.pixels ==
-        scrollController.position.minScrollExtent) {
-      loadPreviousItems();
-    } else if (scrollController.position.pixels ==
-        scrollController.position.maxScrollExtent) {
-      fetchNotifications();
     }
   }
 
@@ -311,7 +310,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
                       onTap: () {
                         setState(() {
                           markNotificationAsRead(id);
-                          print("called");
                         });
                       },
                       child: Container(

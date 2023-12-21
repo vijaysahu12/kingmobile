@@ -880,14 +880,4 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       ),
     );
   }
-
-  //                 return ShimmerListViewForYoutubeContent(itemCount: 4);
-  //               }
-  //             }
-  //           },
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 }

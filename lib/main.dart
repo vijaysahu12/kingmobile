@@ -10,7 +10,7 @@ import 'package:pusher_beams/pusher_beams.dart';
 
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
-import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+// import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'Screens/all_screens.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

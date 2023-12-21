@@ -6,7 +6,7 @@ import 'package:kraapp/Screens/Common/refreshtwo.dart';
 import '../../Helpers/ApiUrls.dart';
 // import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
-import '../Common/shimmerScreen.dart';
+// import '../Common/shimmerScreen.dart';
 import '../Constants/app_color.dart';
 
 class AllNotifications extends StatefulWidget {
@@ -16,60 +16,102 @@ class AllNotifications extends StatefulWidget {
 }
 
 class _AllNotifications extends State<AllNotifications> {
-  // SharedPref _sharedPref = SharedPref();
-  // bool isCommunitySelected = true;
-  int selectedCategoryId = 0;
-  bool isRead = true;
   late ScrollController _controller = ScrollController();
-  late Future<List<NotificationsList>?> dataFuture;
-
-  int pageNumber = 1;
-  bool isLoading = false;
+  List<NotificationsList> items = [];
+  bool isLoadingMore = false;
+  int page = 0;
+  bool hasMoreNotifications = true;
+  int selectedCategoryId = 0;
+  int pageSize = 10;
 
   @override
   void initState() {
     super.initState();
-    _controller = ScrollController();
     _controller.addListener(_scrollListener);
-    dataFuture = Future.value([]);
     fetchNotifications();
   }
 
   void _scrollListener() {
+    // if (_controller.position.pixels == _controller.position.minScrollExtent &&
+    //     !_controller.position.outOfRange) {
+    //   _loadPreviousItems();
+    // } else
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
       _getMoreNotifications();
     }
+    //  else if(items == null || items.isEmpty){
+    //     return
+    // }
   }
 
+  // Future<void> _loadPreviousItems() async {
+  //   if (!isLoadingMore && page > 1) {
+  //     setState(() {
+  //       isLoadingMore = true;
+  //     });
+
+  //     final notifications =
+  //         await NotificationList(selectedCategoryId, page - 1);
+  //     if (notifications != null) {
+  //       setState(() {
+  //         List<NotificationsList> tempNotifications = List.from(notifications);
+  //         // Check for duplicates and add only unique notifications
+  //         for (var notification in items) {
+  //           if (!tempNotifications
+  //               .any((element) => element.id == notification.id)) {
+  //             tempNotifications.add(notification);
+  //           }
+  //         }
+  //         items = tempNotifications;
+  //         isLoadingMore = false;
+  //         page--;
+  //         hasMoreNotifications =
+  //             true; // Assuming you can always load more upwards
+  //       });
+  //     } else {
+  //       setState(() {
+  //         isLoadingMore = false;
+  //       });
+  //     }
+  //   }
+  // }
+
   Future<void> fetchNotifications() async {
+    // Fetch initial notifications
     setState(() {
-      dataFuture = NotificationList(selectedCategoryId, pageNumber);
+      isLoadingMore = true;
     });
+    final notifications = await NotificationList(selectedCategoryId, page);
+    if (notifications != null) {
+      setState(() {
+        items = List.from(notifications);
+        isLoadingMore = false;
+        if (items.isNotEmpty) {
+          page++;
+        }
+        hasMoreNotifications = notifications.isNotEmpty;
+      });
+    }
   }
 
   Future<void> _getMoreNotifications() async {
-    if (!isLoading) {
+    if (!isLoadingMore && hasMoreNotifications) {
       setState(() {
-        isLoading = true;
+        isLoadingMore = true;
       });
-
-      try {
-        final List<NotificationsList>? newData =
-            await NotificationList(selectedCategoryId, pageNumber);
+      final notifications = await NotificationList(selectedCategoryId, page);
+      if (notifications != null) {
+        List<NotificationsList> tempNotifications = List.from(notifications);
         setState(() {
-          if (newData != null && newData.isNotEmpty) {
-            pageNumber++;
-            dataFuture = dataFuture.then((currentData) {
-              List<NotificationsList>? currentList = currentData ?? [];
-              return [...currentList, ...newData];
-            });
-          } else {}
+          items.addAll(tempNotifications);
+          isLoadingMore = false;
+          page++;
+          hasMoreNotifications = notifications.isNotEmpty;
         });
-      } catch (e) {
-      } finally {
+      } else {
         setState(() {
-          isLoading = false;
+          isLoadingMore = false;
         });
       }
     }
@@ -118,7 +160,7 @@ class _AllNotifications extends State<AllNotifications> {
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
     final Map<String, dynamic> requestBody = {
       "id": selectedCategoryId,
-      "pageSize": 50,
+      "pageSize": 15,
       "pageNumber": page,
       "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
     };
@@ -147,7 +189,7 @@ class _AllNotifications extends State<AllNotifications> {
 
   Future<void> refreshData() async {
     setState(() {
-      dataFuture = NotificationList(selectedCategoryId, pageNumber);
+      // dataFuture = NotificationList(selectedCategoryId, pageNumber);
     });
   }
 
@@ -254,9 +296,9 @@ class _AllNotifications extends State<AllNotifications> {
                                   onPressed: () {
                                     setState(() {
                                       selectedCategoryId = category.id;
+                                      page = 0;
                                     });
-                                    NotificationList(
-                                        selectedCategoryId, pageNumber);
+                                    NotificationList(selectedCategoryId, page);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: isActive
@@ -291,86 +333,106 @@ class _AllNotifications extends State<AllNotifications> {
                   ),
                   Expanded(
                     child: FutureBuilder<List<NotificationsList>?>(
-                      future: NotificationList(selectedCategoryId, pageNumber),
+                      future: NotificationList(selectedCategoryId, page),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return ShimmerListViewForNotification(
-                            itemCount: 8,
+                          return Center(
+                            child: CircularProgressIndicator(),
                           );
                         } else if (snapshot.hasData && snapshot.data != null) {
                           List<NotificationsList>? data = snapshot.data!;
-                          return ListView.builder(
-                            controller: _controller,
-                            itemCount: data.length + 1,
-                            // itemExtent: data.length.toDouble(),
-                            itemBuilder: (context, index) {
-                              if (index < data.length) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                      //  color: isRead ? null : AppColors.light,
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: AppColors.cyan,
-                                              width: 0.4))),
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: 2, horizontal: 8),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 12),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
+                          return items.isEmpty
+                              ? Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : ListView.builder(
+                                  controller: _controller,
+                                  itemCount: data.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index < data.length) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                                    color: AppColors.cyan,
+                                                    width: 0.4))),
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 2, horizontal: 8),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 12),
+                                          child: Row(
                                             children: [
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    data[index].title,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: AppColors.dark,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  )
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      data[index].body,
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: AppColors.grey,
-                                                          fontWeight:
-                                                              FontWeight.w500),
+                                              Expanded(
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          data[index].title,
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: AppColors
+                                                                  .dark,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        )
+                                                      ],
                                                     ),
-                                                  ),
-                                                  Text(
-                                                    data[index].category,
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: AppColors.purple,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                ],
-                                              )
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Text(
+                                                            data[index].body,
+                                                            style: TextStyle(
+                                                                fontSize: 14,
+                                                                color: AppColors
+                                                                    .grey,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          data[index].category,
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: AppColors
+                                                                  .purple,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                        Text(
+                                                          data[index]
+                                                              .id
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: AppColors
+                                                                  .purple,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
+                                      );
+                                    }
+                                    return null;
+                                  },
                                 );
-                              }
-                              return null;
-                            },
-                          );
                         } else {
-                          return ShimmerListViewForNotification(
-                            itemCount: 8,
+                          return Center(
+                            child: CircularProgressIndicator(),
                           );
                         }
                       },
