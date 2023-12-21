@@ -10,11 +10,12 @@ import 'package:kraapp/Screens/Common/refreshtwo.dart';
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
-import '../Common/shimmerScreen.dart';
+// import '../Common/shimmerScreen.dart';
+import 'youtube.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final SingleProductResponse? product;
@@ -33,12 +34,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   bool isCommunitySelected = true;
   late PageController _pageController;
 
-  List<String> myVideoUrls = [
-    'https://youtu.be/5f1U2AQLVo4?si=4rDzrBfHFPVV9wx7',
-    'https://youtu.be/uR8Gc5htyr0?si=3sAtn-hIPmNrPvWE',
-  ];
-  final String videoUrl = 'https://youtu.be/uR8Gc5htyr0?si=6938x8gYU-qSXgUb';
-
   // void openYoutubeVideo(BuildContext context, String videoUrl) {
   //   Navigator.push(
   //     context,
@@ -56,7 +51,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     Map<String, dynamic> isLikedData = {
       'productId': productId,
       "likeId": "1",
-      "createdby": mobileKey,
+      "createdby": "E551010E-9795-EE11-812A-00155D23D79C",
       "action": action,
     };
     final response = await http.post(
@@ -819,81 +814,80 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Future<YoutubePlayer?> _loadVideo(String videoUrl) async {
-    return YoutubePlayer(
-      controller: YoutubePlayerController(
-        initialVideoId: YoutubePlayer.convertUrlToId(videoUrl) ?? '',
-        flags: YoutubePlayerFlags(autoPlay: false),
-      ),
-    );
-  }
-
   Widget _buildContent() {
     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     return RefreshHelper.buildRefreshIndicator(
       onRefresh: () async {},
       child: ListView.builder(
-        itemCount: myVideoUrls.length,
+        itemCount: widget.product!.data.length,
         itemBuilder: (context, index) {
-          return FutureBuilder<YoutubePlayer?>(
-            future: _loadVideo(myVideoUrls[index]),
-            builder: (context, AsyncSnapshot<YoutubePlayer?> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return ShimmerListViewForYoutubeContent(itemCount: 4);
-              } else {
-                final player = snapshot.data;
-                if (player != null) {
-                  return YoutubePlayerBuilder(
-                    player: player,
-                    builder: (context, _) {
-                      return Column(
-                        //mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                height: 80,
-                                width: 120,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10),
-                                child: player,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Flexible(
-                                  child: Text(
-                                      "Das ka dum-King reserach aug-22 Batch Day-1")),
-                              Icon(Icons.lock_rounded),
-                              SizedBox(
-                                width: 10,
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
+          final Product contentData = widget.product!.data[index];
+          List<ContentResponse> content = contentData.content;
+          return Container(
+              child: Column(
+            children: content.map((contentItem) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => YoutubePlayerScreen(
+                        videoUrls: ["${contentItem.Attachment}"],
+                        product: contentItem,
+                      ),
+                    ),
                   );
-                } else {
-                  return ShimmerListViewForYoutubeContent(itemCount: 4);
-                }
-              }
-            },
-          );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: AppColors.cyan, width: 0.5),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 100,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Image.network(
+                          "https://www.kingresearch.co.in/wp-content/uploads/2023/11/home-page-banner-2.4.png",
+                          height: 50,
+                          width: 50,
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          "${contentItem.Title}",
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'poppins',
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grey),
+                        ),
+                      ),
+                      Icon(Icons.lock_rounded),
+                      SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ));
         },
       ),
     );
   }
-}
-// if (this.list != null) {
-//       final dd = this
-//           .list
-//           ?.where((element) => element.id == productId)
-//           .toList()[0]
-//           .heartsCount = 1;
 
-//       setState(() {
-//         print("State Method Called");
-//         this.list = dd as List<ProductResponseModel>?;
-//       });
-//     }
+  //                 return ShimmerListViewForYoutubeContent(itemCount: 4);
+  //               }
+  //             }
+  //           },
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+}

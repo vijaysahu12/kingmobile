@@ -68,17 +68,14 @@ class _TradingScreen extends State<TradingScreen> {
   //   showAlertDialog(
   //       context, "Payment Successful", "Payment ID: ${response.paymentId}");
   // }
-
   // void paymentFailureResponse(PaymentFailureResponse response) {
   //   showAlertDialog(context, "Payment Failed",
   //       "code : ${response.code}\n Description :${response.message}");
   // }
-
   // void handleExternalWalletSelected(ExternalWalletResponse response) {
   //   showAlertDialog(
   //       context, "External Wallet Selected", "${response.walletName}");
   // }
-
   // void showAlertDialog(BuildContext context, String title, String message) {
   //   Widget continueButton = ElevatedButton(
   //     child: const Text("Continue"),
@@ -100,7 +97,6 @@ class _TradingScreen extends State<TradingScreen> {
   //     },
   //   );
   // }
-
   // Future<List<Map<String, dynamic>>> fetchData() async {
   //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
   //   if (response.statusCode == 200) {

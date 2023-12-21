@@ -218,8 +218,8 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
-          // body: HomeScreen(),
+          // body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
+          body: HomeScreen(),
         ),
         routes: {
           '/notifications': (context) => AllNotifications(),

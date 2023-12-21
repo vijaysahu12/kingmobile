@@ -30,6 +30,7 @@ class Product {
   final String rating;
   late bool isHeart;
   final List<ExtraBenefit> extraBenefits;
+  final List<ContentResponse> content;
 
   Product({
     required this.id,
@@ -40,12 +41,20 @@ class Product {
     required this.price,
     required this.rating,
     required this.extraBenefits,
+    required this.content,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     List<ExtraBenefit> parseExtraBenefits(dynamic jsonValue) {
       if (jsonValue is List) {
         return jsonValue.map((item) => ExtraBenefit.fromJson(item)).toList();
+      }
+      return [];
+    }
+
+    List<ContentResponse> parseContentResponse(dynamic jsonValue) {
+      if (jsonValue is List) {
+        return jsonValue.map((item) => ContentResponse.fromJson(item)).toList();
       }
       return [];
     }
@@ -62,6 +71,9 @@ class Product {
           json['extraBenefits'] != null
               ? jsonDecode(json['extraBenefits'])
               : [],
+        ),
+        content: parseContentResponse(
+          json['content'] != null ? jsonDecode(json['content']) : [],
         ));
   }
 }
@@ -86,5 +98,36 @@ class ExtraBenefit {
       name: json['Name'] ?? '',
       description: json['Description'] ?? '',
     );
+  }
+}
+
+class ContentResponse {
+  final int Id;
+  final int ProductId;
+  final String Title;
+  final String Description;
+  final String ThumbnailImage;
+  final String ListImage;
+  final String Attachment;
+
+  const ContentResponse({
+    required this.Id,
+    required this.Attachment,
+    required this.Description,
+    required this.ListImage,
+    required this.ProductId,
+    required this.ThumbnailImage,
+    required this.Title,
+  });
+
+  factory ContentResponse.fromJson(Map<String, dynamic> json) {
+    return ContentResponse(
+        Id: json['Id'] ?? 0,
+        ProductId: json['ProductId'] ?? 0,
+        Attachment: json['Attachment'] ?? '',
+        Description: json['Description'] ?? '',
+        ListImage: json['ListImage'] ?? '',
+        ThumbnailImage: json['ThumbnailImage'] ?? '',
+        Title: json['Title'] ?? '');
   }
 }

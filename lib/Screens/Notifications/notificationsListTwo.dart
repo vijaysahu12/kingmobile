@@ -70,7 +70,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
     }
   }
 
-  Future<int?> ReadOrUnReadNotificationList() async {
+  Future<int?> NotificationList() async {
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
     final Map<String, dynamic> requestBody = {
       "id": 0,
@@ -102,7 +102,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   @override
   void initState() {
     super.initState();
-    ReadOrUnReadNotificationList();
+    NotificationList();
     scrollController.addListener(_scrollListener);
     fetchNotifications();
   }
@@ -119,7 +119,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Future<void> fetchNotifications() async {
-    if (isLoadingMore) return;
     try {
       final notifications = await notificationList(selectedCategoryId, page);
       if (notifications != null) {
@@ -128,7 +127,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
             items = List.from(notifications);
           } else {
             tempNotifications = List.from(notifications);
-
             items.addAll(tempNotifications);
           }
           isLoadingMore = false;
@@ -376,7 +374,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                     );
                   } else {
                     if (index == items.length) {
-                      return const Center(child: Text("No data"));
+                      return const Center(child: CircularProgressIndicator());
                     }
                   }
                   return SizedBox.shrink();
