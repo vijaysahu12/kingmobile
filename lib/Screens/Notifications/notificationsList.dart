@@ -5,6 +5,7 @@ import 'package:kraapp/Screens/Common/refreshtwo.dart';
 
 import '../../Helpers/ApiUrls.dart';
 // import '../../Helpers/sharedPref.dart';
+import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
 // import '../Common/shimmerScreen.dart';
 import '../Constants/app_color.dart';
@@ -23,6 +24,7 @@ class _AllNotifications extends State<AllNotifications> {
   bool hasMoreNotifications = true;
   int selectedCategoryId = 0;
   int pageSize = 10;
+  SharedPref _sharedPref = SharedPref();
 
   @override
   void initState() {
@@ -155,14 +157,14 @@ class _AllNotifications extends State<AllNotifications> {
 
   Future<List<NotificationsList>?> NotificationList(
       selectedCategoryId, page) async {
-    // String UserKey = await _sharedPref.read(SessionConstants.UserKey);
-    // String MobileKey = UserKey.replaceAll('"', '');
+    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
+    String MobileKey = UserKey.replaceAll('"', '');
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
     final Map<String, dynamic> requestBody = {
       "id": selectedCategoryId,
       "pageSize": 15,
       "pageNumber": page,
-      "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+      "requestedBy": MobileKey,
     };
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -194,13 +196,15 @@ class _AllNotifications extends State<AllNotifications> {
   }
 
   Future<List<Category>?> fetchCategories() async {
+    String userKey = _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
     try {
       final String apiUrl = '${ApiUrlConstants.GetNotifications}';
       final Map<String, dynamic> requestBody = {
         "id": 0,
         "pageSize": 30,
         "pageNumber": 1,
-        "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+        "requestedBy": mobileKey
       };
       final response = await http.post(
         Uri.parse(apiUrl),

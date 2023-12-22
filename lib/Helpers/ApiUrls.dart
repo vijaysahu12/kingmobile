@@ -13,6 +13,7 @@ class ApiUrlConstants {
       baseUrl + 'PushNotification/GetNotifications';
   static String MarkNotificationsIsRead =
       baseUrl + 'PushNotification/MarkNotificationAsRead';
+  static String ManagePurchaseOrder = baseUrl + 'Payment/ManagePurchaseOrder';
 }
 
 class SessionConstants {

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 // import 'package:kraapp/Models/Response/getNotificationsResponse.dart';
 
 import '../../Helpers/ApiUrls.dart';
+import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
 import '../Constants/app_color.dart';
 
@@ -22,14 +23,17 @@ class _NotificationThree extends State<NotificationThree> {
   bool isLoadingMore = false;
   final scrollContoller = ScrollController();
   int selectedCategoryId = 0;
+  SharedPref _sharedPref = SharedPref();
 
   Future<void> fetchData() async {
+    String userKey = _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
     String apiURL = "${ApiUrlConstants.GetNotifications}";
     final Map<String, dynamic> requestBody = {
       "id": selectedCategoryId,
       "pageSize": 15,
       "pageNumber": page,
-      "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+      "requestedBy": mobileKey
     };
     final response = await http.post(
       Uri.parse(apiURL),
@@ -59,7 +63,7 @@ class _NotificationThree extends State<NotificationThree> {
     super.initState();
     scrollContoller.addListener(_scrollListener);
     fetchData();
-    // unReadCountNotificationList();
+    //  unReadCountNotificationList();
   }
 
   void _scrollListener() {
@@ -68,23 +72,36 @@ class _NotificationThree extends State<NotificationThree> {
         scrollContoller.position.maxScrollExtent) {
       setState(() {
         isLoadingMore = true;
-        page++;
       });
-      fetchData();
+      page++;
+      fetchData().then((_) {
+        setState(() {
+          isLoadingMore = false;
+        });
+      });
+    } else if (scrollContoller.position.pixels ==
+        scrollContoller.position.minScrollExtent) {
       setState(() {
-        isLoadingMore = false;
+        isLoadingMore = true;
       });
-    } else {}
+      fetchData().then((_) {
+        setState(() {
+          isLoadingMore = false;
+        });
+      });
+    }
   }
 
   Future<List<Category>?> fetchCategories() async {
+    String userKey = _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
     try {
       final String apiUrl = '${ApiUrlConstants.GetNotifications}';
       final Map<String, dynamic> requestBody = {
         "id": 0,
         "pageSize": 30,
         "pageNumber": 1,
-        "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+        "requestedBy": mobileKey
       };
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -109,6 +126,37 @@ class _NotificationThree extends State<NotificationThree> {
     } catch (e) {
       print('Error fetching categories: $e');
       return null;
+    }
+  }
+
+  Future<int?> unReadCountNotificationList() async {
+    String userKey = await _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
+    final String apiUrl = '${ApiUrlConstants.GetNotifications}';
+    final Map<String, dynamic> requestBody = {
+      "id": 0,
+      "pageSize": 200,
+      "pageNumber": 1,
+      "requestedBy": mobileKey
+    };
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+    if (response.statusCode == 200) {
+      final dynamic unReadCount = await jsonDecode(response.body);
+      if (unReadCount.containsKey('data') &&
+          unReadCount['data'] != null &&
+          unReadCount['data']['unReadCount'] != null) {
+        final int parsedCount = unReadCount['data']['unReadCount'];
+        print(parsedCount);
+        return parsedCount;
+      }
+      return null;
+    } else {
+      print('Request failed with status: ${response.statusCode}');
+      throw Exception('Failed to load notifications');
     }
   }
 
@@ -171,7 +219,7 @@ class _NotificationThree extends State<NotificationThree> {
             future: fetchCategories(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Center(child: Text('Error loading categories'));
+                return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData && snapshot.data != null) {
                 List<Category> data = snapshot.data!;
 
@@ -187,6 +235,7 @@ class _NotificationThree extends State<NotificationThree> {
                             setState(() {
                               selectedCategoryId = category.id;
                               page = 0;
+                              Items.clear();
                             });
                             fetchData();
                           },
@@ -227,6 +276,7 @@ class _NotificationThree extends State<NotificationThree> {
                     controller: scrollContoller,
                     itemCount: isLoadingMore ? Items.length + 1 : Items.length,
                     itemBuilder: (context, index) {
+                      // if (isLoadingMore)
                       if (index < Items.length) {
                         final title = Items[index]['title'];
                         final body = Items[index]['body'];
@@ -241,11 +291,12 @@ class _NotificationThree extends State<NotificationThree> {
                           },
                           child: Container(
                             decoration: BoxDecoration(
+                              color: isRead
+                                  ? AppColors.light
+                                  : AppColors.lightShadow,
                               border: Border(
                                 bottom: BorderSide(
-                                  color: isRead
-                                      ? AppColors.light
-                                      : AppColors.lightShadow,
+                                  color: AppColors.cyan,
                                   width: 0.4,
                                 ),
                               ),

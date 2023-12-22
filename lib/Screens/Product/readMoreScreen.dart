@@ -30,28 +30,21 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   var isPaid = false;
+
   SharedPref _sharedPref = SharedPref();
   bool isCommunitySelected = true;
   late PageController _pageController;
 
-  // void openYoutubeVideo(BuildContext context, String videoUrl) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => YoutubePlayerScreen(videoUrls: myVideoUrls),
-  //     ),
-  //   );
-  // }
-
   Future<void> Isliked(String productId, bool isHeart) async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
+    print(mobileKey);
     final String apiUrl = '${ApiUrlConstants.LikeUnlikeProduct}';
     String action = isHeart ? 'like' : 'unlike';
     Map<String, dynamic> isLikedData = {
       'productId': productId,
       "likeId": "1",
-      "createdby": "E551010E-9795-EE11-812A-00155D23D79C",
+      "createdby": mobileKey,
       "action": action,
     };
     final response = await http.post(
@@ -69,9 +62,40 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
   }
 
-  void paymentSuccessResponse(PaymentSuccessResponse response) {
-    showAlertDialog(
-        context, "Payment Successful", "Payment ID: ${response.paymentId}");
+  void paymentIsCompleted(String productId,
+      PaymentSuccessResponse responseOfpayment, String paymentAmount) async {
+    String UserKey = await _sharedPref.read("KingUserId");
+    String MobileKey = UserKey.replaceAll('"', '');
+    final String apiURL = '${ApiUrlConstants.ManagePurchaseOrder}';
+
+    Map<String, dynamic> userPaymentData = {
+      'mobileUserKey': MobileKey,
+      "productId": productId,
+      "paymentID": responseOfpayment.paymentId,
+      "paidAmount": paymentAmount
+    };
+    final response = await http.post(
+      Uri.parse(apiURL),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(userPaymentData),
+    );
+    if (response.statusCode == 200) {
+      print("called succesfully");
+      showAlertDialog(context, "Payment Successful", "Payment ID:");
+    }
+  }
+
+  void paymentSuccessResponse(PaymentSuccessResponse responseOfpayment) {
+    final productId = '${widget.product!.data[0].id}';
+    final paymentAmount =
+        '${((widget.product!.data[0].price) * 100).toString()}';
+    print(responseOfpayment);
+    paymentIsCompleted(productId, responseOfpayment, paymentAmount);
+
+    showAlertDialog(context, "Payment Successful",
+        "Payment ID: ${responseOfpayment.paymentId}");
   }
 
   void paymentFailureResponse(PaymentFailureResponse response) {
@@ -129,6 +153,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    int index = 0;
+    bool isInMyBucketString = widget.product!.data[index].isInMyBucket;
+    bool isInValidity = widget.product!.data[index].isInValidity;
+
+    print(isInMyBucketString);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.purple,
@@ -224,92 +254,109 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: AppColors.purple,
-        child: Container(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '₹ ${widget.product!.data[0].price.toString()}',
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.lightShadow),
-              ),
-              if (isPaid)
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 35),
-                    backgroundColor: AppColors.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+      bottomNavigationBar: isInMyBucketString
+          ? null
+          : BottomAppBar(
+              color: AppColors.purple,
+              child: Container(
+                height: 60,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '₹ ${widget.product!.data[0].price.toString()}',
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.lightShadow),
                     ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      Razorpay razorpay = Razorpay();
-                      var options = {
-                        'key': 'rzp_test_8x2It6dJUckx0i',
-                        'amount':
-                            '${(widget.product!.data[0].price * 100).toString()}',
-                        'name': '${widget.product!.data[0].name}',
-                        'description': '${widget.product!.data[0].description}',
-                        'retry': {'enabled': true, 'max_count': 1},
-                        'send_sms_hash': true,
-                        'prefill': {
-                          'contact': '6309373318',
-                          'email': 'kakuseshadri033@gmail.com'
+                    if (isInValidity != true)
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 35),
+                          backgroundColor: AppColors.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            Razorpay razorpay = Razorpay();
+                            var options = {
+                              'key': 'rzp_test_8x2It6dJUckx0i',
+                              'amount':
+                                  '${(widget.product!.data[0].price * 100).toString()}',
+                              'name': '${widget.product!.data[0].name}',
+                              'description':
+                                  '${widget.product!.data[0].description}',
+                              'retry': {'enabled': true, 'max_count': 1},
+                              'send_sms_hash': true,
+                              'prefill': {
+                                'contact': '6309373318',
+                                'email': 'kakuseshadri033@gmail.com'
+                              },
+                              'external': {
+                                'wallets': ['paytm']
+                              }
+                            };
+                            razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+                                paymentSuccessResponse);
+                            razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+                                paymentFailureResponse);
+                            razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+                                handleExternalWalletSelected);
+                            razorpay.open(options);
+                            // Navigator.pop(context);
+                          });
                         },
-                        'external': {
-                          'wallets': ['paytm']
-                        }
-                      };
-                      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
-                          paymentSuccessResponse);
-                      razorpay.on(
-                          Razorpay.EVENT_PAYMENT_ERROR, paymentFailureResponse);
-                      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
-                          handleExternalWalletSelected);
-                      razorpay.open(options);
-                      Navigator.pop(context);
-                    });
-                  },
-                  child: Text(
-                    "Buy Now",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.lightShadow,
-                    ),
-                  ),
+                        child: Text(
+                          "Buy Now",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.lightShadow,
+                          ),
+                        ),
+                      ),
+                    if (isInValidity == true)
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 35),
+                          backgroundColor: AppColors.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => YoutubePlayerScreen(
+                                  videoUrls: [
+                                    "${widget.product!.data[0].content[0].Attachment}"
+                                  ],
+                                  product: widget.product!.data[0].content[0],
+                                ),
+                              ),
+                            );
+                          });
+                        },
+                        child: Text(
+                          "Open",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.lightShadow,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              if (isPaid != true)
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 35),
-                    backgroundColor: AppColors.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  onPressed: () {
-                    // openYoutubeVideo(context, videoUrl);
-                  },
-                  child: Text(
-                    "Open",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.lightShadow,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+              ),
+            ),
     );
   }
 
@@ -493,7 +540,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             Row(
                               children: [
                                 Text(
-                                  "6 Months Validity",
+                                  "${widget.product!.data[index].subscriptionData} Months Validity",
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontFamily: "poppins",
@@ -557,7 +604,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    "6 Learning Material",
+                                    "${widget.product!.data[index].content.length} Learning Material",
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: "poppins",
@@ -568,7 +615,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    "6  Video lectures",
+                                    "${widget.product!.data[index].content.length}   Video lectures",
                                     style: TextStyle(
                                         color: AppColors.grey,
                                         fontSize: 12,
@@ -816,6 +863,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   Widget _buildContent() {
     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    int index = 0;
+    // bool isInValidity = widget.product!.data[index].isInValidity;
+    bool isInMyBucketString = widget.product!.data[index].isInMyBucket;
+    print(isInMyBucketString);
     return RefreshHelper.buildRefreshIndicator(
       onRefresh: () async {},
       child: ListView.builder(
@@ -828,15 +879,46 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             children: content.map((contentItem) {
               return GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => YoutubePlayerScreen(
-                        videoUrls: ["${contentItem.Attachment}"],
-                        product: contentItem,
+                  if (isInMyBucketString != true) {
+                    setState(() {
+                      Razorpay razorpay = Razorpay();
+                      var options = {
+                        'key': 'rzp_test_8x2It6dJUckx0i',
+                        'amount':
+                            '${(widget.product!.data[index].price * 100).toString()}',
+                        'name': '${widget.product!.data[index].name}',
+                        'description':
+                            '${widget.product!.data[index].description}',
+                        'retry': {'enabled': true, 'max_count': 1},
+                        'send_sms_hash': true,
+                        'prefill': {
+                          'contact': '6309373318',
+                          'email': 'kakuseshadri033@gmail.com'
+                        },
+                        'external': {
+                          'wallets': ['paytm']
+                        }
+                      };
+                      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+                          paymentSuccessResponse);
+                      razorpay.on(
+                          Razorpay.EVENT_PAYMENT_ERROR, paymentFailureResponse);
+                      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+                          handleExternalWalletSelected);
+                      razorpay.open(options);
+                      //    Navigator.pop(context);
+                    });
+                  } else if (isInMyBucketString == true) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => YoutubePlayerScreen(
+                          videoUrls: ["${contentItem.Attachment}"],
+                          product: contentItem,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -866,7 +948,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               color: AppColors.grey),
                         ),
                       ),
-                      Icon(Icons.lock_rounded),
+                      if (isInMyBucketString != true) Icon(Icons.lock_rounded),
+                      if (isInMyBucketString == true)
+                        Icon(Icons.lock_open_rounded),
                       SizedBox(
                         width: 10,
                       ),

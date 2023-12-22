@@ -6,27 +6,34 @@ import '../../Helpers/sharedPref.dart';
 import '../Constants/app_color.dart';
 import '../Notifications/notificationThree.dart';
 // import '../Notifications/notificationsList.dart';
-import '../Notifications/notificationsListTwo.dart';
+// import '../Notifications/notificationsListTwo.dart';
+
+// SharedPref _sharedPref = SharedPref();
 
 Future<int?> NotificationList() async {
+  // final String userKey = _sharedPref.read("KingUserId");
+  // String mobileKey = userKey.replaceAll('"', '');
   final String apiUrl = '${ApiUrlConstants.GetNotifications}';
   final Map<String, dynamic> requestBody = {
     "id": 0,
     "pageSize": 200,
     "pageNumber": 1,
-    "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+    "requestedBy": "BC4B2449-C4A0-EE11-812C-00155D23D79C"
   };
+
   final response = await http.post(
     Uri.parse(apiUrl),
     headers: <String, String>{'Content-Type': 'application/json'},
     body: jsonEncode(requestBody),
   );
+
   if (response.statusCode == 200) {
-    final dynamic unReadCount = await jsonDecode(response.body);
-    if (unReadCount.containsKey('data') &&
-        unReadCount['data'] != null &&
-        unReadCount['data']['unReadCount'] != null) {
-      final int parsedCount = unReadCount['data']['unReadCount'];
+    final dynamic jsonResponse = await jsonDecode(response.body);
+
+    if (jsonResponse.containsKey('data') &&
+        jsonResponse['data'] != null &&
+        jsonResponse['data']['unReadCount'] != null) {
+      final int parsedCount = jsonResponse['data']['unReadCount'] as int;
       print(parsedCount);
       return parsedCount;
     }
@@ -88,7 +95,8 @@ class AppBarBuilder {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PracticeScreen()),
+                                      builder: (context) =>
+                                          NotificationThree()),
                                 );
                               },
                               icon: Stack(

@@ -2,6 +2,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kraapp/Helpers/httpRequest.dart';
 import 'package:kraapp/Screens/Notifications/notificationsList.dart';
@@ -11,6 +12,7 @@ import 'package:pusher_beams/pusher_beams.dart';
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
 // import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'Screens/all_screens.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -98,6 +100,11 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
+
+//  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
+//       .then((_) {
+//     runApp(const MyApp());
+//   });
   runApp(const MyApp());
 }
 
@@ -218,8 +225,8 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          // body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
-          body: HomeScreen(),
+          body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
+          // body: HomeScreen(),
         ),
         routes: {
           '/notifications': (context) => AllNotifications(),

@@ -26,6 +26,9 @@ class Product {
   final String name;
   final String description;
   final String category;
+  final String subscriptionData;
+  final bool isInMyBucket;
+  final bool isInValidity;
   final double price;
   final String rating;
   late bool isHeart;
@@ -37,6 +40,9 @@ class Product {
     required this.name,
     required this.description,
     required this.category,
+    required this.isInMyBucket,
+    required this.isInValidity,
+    required this.subscriptionData,
     required this.isHeart,
     required this.price,
     required this.rating,
@@ -66,6 +72,9 @@ class Product {
         category: json['category'] ?? '',
         price: json['price']?.toDouble() ?? 0.0,
         rating: json['rating'] ?? '',
+        isInValidity: json['isInValidity'] ?? false,
+        isInMyBucket: json['isInMyBucket'] ?? false,
+        subscriptionData: json['subscriptionData'] ?? '',
         isHeart: json['isHeart'],
         extraBenefits: parseExtraBenefits(
           json['extraBenefits'] != null

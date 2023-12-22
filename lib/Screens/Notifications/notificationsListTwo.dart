@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Helpers/ApiUrls.dart';
+import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
 import '../Constants/app_color.dart';
 
@@ -24,6 +25,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   bool hasMoreNotifications = true;
   // bool isRead = false;
   final scrollController = ScrollController();
+  SharedPref _sharedPref = SharedPref();
 
   @override
   void initState() {
@@ -46,12 +48,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   Future<List<NotificationsList>?> notificationList(
       selectedCategoryId, int page) async {
+    String userKey = _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
     final Map<String, dynamic> requestBody = {
       "id": selectedCategoryId,
       "pageSize": pageSize,
       "pageNumber": page,
-      "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+      "requestedBy": mobileKey
     };
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -89,12 +93,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Future<int?> unReadCountNotificationList() async {
+    String userKey = _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
     final Map<String, dynamic> requestBody = {
       "id": 0,
       "pageSize": 200,
       "pageNumber": 1,
-      "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+      "requestedBy": mobileKey
     };
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -171,13 +177,15 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Future<List<Category>?> fetchCategories() async {
+    String userKey = _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
     try {
       final String apiUrl = '${ApiUrlConstants.GetNotifications}';
       final Map<String, dynamic> requestBody = {
         "id": 0,
         "pageSize": 30,
         "pageNumber": 1,
-        "requestedBy": "E551010E-9795-EE11-812A-00155D23D79C"
+        "requestedBy": mobileKey
       };
       final response = await http.post(
         Uri.parse(apiUrl),
