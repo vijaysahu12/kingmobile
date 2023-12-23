@@ -5,14 +5,12 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kraapp/Helpers/httpRequest.dart';
-import 'package:kraapp/Screens/Notifications/notificationsList.dart';
-// import 'package:kraapp/Screens/Notifications/notificationsList.dart';
 import 'package:pusher_beams/pusher_beams.dart';
 
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
-// import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
+import 'Screens/Notifications/allNotificationList.dart';
 import 'Screens/all_screens.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -28,9 +26,6 @@ Future<void> showNotificationFromToken(String? title, String? body) async {
 
     importance: Importance.max,
     priority: Priority.high,
-    //High priority suggests that the notification is urgent and should be shown to the user immediately.
-    // sound: RawResourceAndroidNotificationSound("tone"),
-    // playSound: true,
   );
   const NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -51,8 +46,6 @@ Future<void> showNotificationFromTopic(String? title, String? body) async {
     'TopicNotification', //channel name
     importance: Importance.max,
     priority: Priority.high,
-    // sound: RawResourceAndroidNotificationSound('tone'),
-    // playSound: true,
   );
   const NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -101,10 +94,6 @@ void main() async {
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
 
-//  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
-//       .then((_) {
-//     runApp(const MyApp());
-//   });
   runApp(const MyApp());
 }
 

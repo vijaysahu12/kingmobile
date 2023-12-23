@@ -43,13 +43,13 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
 
   @override
   void dispose() {
-    _controller.dispose();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    _controller.dispose();
     super.dispose();
   }
 
@@ -80,55 +80,62 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
       body: ListView.builder(
         itemCount: widget.videoUrls.length,
         itemBuilder: (context, index) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              YoutubePlayer(
-                controller: _controller,
-                showVideoProgressIndicator: false,
-                aspectRatio: 16 / 9,
-              ),
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: AppColors.light,
-                    border: Border(
-                        bottom: BorderSide(color: AppColors.cyan, width: 0.6))),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${widget.product?.Title ?? ""}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.dark,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${widget.product?.Description ?? ""}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.grey,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+          return OrientationBuilder(builder: (context, orientation) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: orientation == Orientation.portrait ? 250 : 150,
+                  child: YoutubePlayer(
+                    controller: _controller,
+                    showVideoProgressIndicator: false,
+                    aspectRatio: 16 / 9,
+                  ),
                 ),
-              ),
-            ],
-          );
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: AppColors.light,
+                      border: Border(
+                          bottom:
+                              BorderSide(color: AppColors.cyan, width: 0.6))),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${widget.product?.Title ?? ""}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.dark,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${widget.product?.Description ?? ""}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.grey,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          });
         },
       ),
     );

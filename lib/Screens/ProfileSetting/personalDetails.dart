@@ -26,16 +26,6 @@ class _PersonalDetails extends State<PersonalDetails> {
   final TextEditingController _userDateOfBirthController =
       TextEditingController();
 
-  //HttpRequestHelper _httpHelper = HttpRequestHelper();
-
-  // final FirebaseAuth auth = FirebaseAuth.instance;
-  // void inputData() {
-  //   final User? user = auth.currentUser;
-  //   final uid = user?.uid;
-  //   print(uid);
-  //   // here you write the codes to input the data into firestore
-  // }
-
   final _formKey = new GlobalKey<FormState>();
   SharedPref _sharedPref = SharedPref();
   String? selectedGender;
@@ -210,7 +200,6 @@ class _PersonalDetails extends State<PersonalDetails> {
   //     }
   //   });
   // }
-
   // Future<void> _selectDOB() async {
   //   final DateTime? picked = await showDatePicker(
   //     context: context,

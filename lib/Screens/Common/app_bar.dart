@@ -4,21 +4,21 @@ import 'package:flutter/material.dart';
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../Constants/app_color.dart';
-import '../Notifications/notificationThree.dart';
+import '../Notifications/allNotificationList.dart';
 // import '../Notifications/notificationsList.dart';
 // import '../Notifications/notificationsListTwo.dart';
 
-// SharedPref _sharedPref = SharedPref();
+SharedPref _sharedPref = SharedPref();
 
 Future<int?> NotificationList() async {
-  // final String userKey = _sharedPref.read("KingUserId");
-  // String mobileKey = userKey.replaceAll('"', '');
+  final String userKey = await _sharedPref.read(SessionConstants.UserKey);
+  String mobileKey = userKey.replaceAll('"', '');
   final String apiUrl = '${ApiUrlConstants.GetNotifications}';
   final Map<String, dynamic> requestBody = {
     "id": 0,
     "pageSize": 200,
     "pageNumber": 1,
-    "requestedBy": "BC4B2449-C4A0-EE11-812C-00155D23D79C"
+    "requestedBy": mobileKey
   };
 
   final response = await http.post(
@@ -95,8 +95,7 @@ class AppBarBuilder {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          NotificationThree()),
+                                      builder: (context) => AllNotifications()),
                                 );
                               },
                               icon: Stack(
@@ -112,7 +111,7 @@ class AppBarBuilder {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                NotificationThree()),
+                                                AllNotifications()),
                                       );
                                     },
                                   ),

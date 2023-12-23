@@ -9,14 +9,14 @@ import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
 import '../Constants/app_color.dart';
 
-class NotificationThree extends StatefulWidget {
-  const NotificationThree({super.key});
+class AllNotifications extends StatefulWidget {
+  const AllNotifications({super.key});
 
   @override
-  State<NotificationThree> createState() => _NotificationThree();
+  State<AllNotifications> createState() => _AllNotifications();
 }
 
-class _NotificationThree extends State<NotificationThree> {
+class _AllNotifications extends State<AllNotifications> {
   List Items = [];
   int page = 0;
   int pageSize = 10;
@@ -26,7 +26,7 @@ class _NotificationThree extends State<NotificationThree> {
   SharedPref _sharedPref = SharedPref();
 
   Future<void> fetchData() async {
-    String userKey = _sharedPref.read("KingUserId");
+    String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
     String apiURL = "${ApiUrlConstants.GetNotifications}";
     final Map<String, dynamic> requestBody = {
@@ -93,7 +93,7 @@ class _NotificationThree extends State<NotificationThree> {
   }
 
   Future<List<Category>?> fetchCategories() async {
-    String userKey = _sharedPref.read("KingUserId");
+    String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
     try {
       final String apiUrl = '${ApiUrlConstants.GetNotifications}';

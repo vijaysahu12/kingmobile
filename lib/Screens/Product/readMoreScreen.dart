@@ -89,8 +89,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   void paymentSuccessResponse(PaymentSuccessResponse responseOfpayment) {
     final productId = '${widget.product!.data[0].id}';
-    final paymentAmount =
-        '${((widget.product!.data[0].price) * 100).toString()}';
+    final paymentAmount = '${((widget.product!.data[0].price)).toString()}';
     print(responseOfpayment);
     paymentIsCompleted(productId, responseOfpayment, paymentAmount);
 
@@ -254,7 +253,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: isInMyBucketString
+      bottomNavigationBar: (isInMyBucketString && isInValidity)
           ? null
           : BottomAppBar(
               color: AppColors.purple,
@@ -270,89 +269,91 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           fontWeight: FontWeight.w600,
                           color: AppColors.lightShadow),
                     ),
-                    if (isInValidity != true)
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 35),
-                          backgroundColor: AppColors.primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            Razorpay razorpay = Razorpay();
-                            var options = {
-                              'key': 'rzp_test_8x2It6dJUckx0i',
-                              'amount':
-                                  '${(widget.product!.data[0].price * 100).toString()}',
-                              'name': '${widget.product!.data[0].name}',
-                              'description':
-                                  '${widget.product!.data[0].description}',
-                              'retry': {'enabled': true, 'max_count': 1},
-                              'send_sms_hash': true,
-                              'prefill': {
-                                'contact': '6309373318',
-                                'email': 'kakuseshadri033@gmail.com'
-                              },
-                              'external': {
-                                'wallets': ['paytm']
-                              }
-                            };
-                            razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
-                                paymentSuccessResponse);
-                            razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
-                                paymentFailureResponse);
-                            razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
-                                handleExternalWalletSelected);
-                            razorpay.open(options);
-                            // Navigator.pop(context);
-                          });
-                        },
-                        child: Text(
-                          "Buy Now",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.lightShadow,
-                          ),
+                    //  if (!isInValidity || !isInMyBucketString)
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 15, horizontal: 35),
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                    if (isInValidity == true)
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 35),
-                          backgroundColor: AppColors.primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => YoutubePlayerScreen(
-                                  videoUrls: [
-                                    "${widget.product!.data[0].content[0].Attachment}"
-                                  ],
-                                  product: widget.product!.data[0].content[0],
-                                ),
-                              ),
-                            );
-                          });
-                        },
-                        child: Text(
-                          "Open",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.lightShadow,
-                          ),
+                      onPressed: () {
+                        setState(() {
+                          Razorpay razorpay = Razorpay();
+                          var options = {
+                            'key': 'rzp_test_8x2It6dJUckx0i',
+                            'amount':
+                                '${(widget.product!.data[0].price * 100).toString()}',
+                            'name': '${widget.product!.data[0].name}',
+                            'description':
+                                '${widget.product!.data[0].description}',
+                            'retry': {'enabled': true, 'max_count': 1},
+                            'send_sms_hash': true,
+                            'prefill': {
+                              'contact': '6309373318',
+                              'email': 'kakuseshadri033@gmail.com'
+                            },
+                            'external': {
+                              'wallets': ['paytm']
+                            }
+                          };
+                          razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+                              paymentSuccessResponse);
+                          razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+                              paymentFailureResponse);
+                          razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+                              handleExternalWalletSelected);
+                          razorpay.open(options);
+                          // Navigator.pop(context);
+                        });
+                      },
+                      child: Text(
+                        !isInValidity && isInMyBucketString
+                            ? "Renew"
+                            : "Buy Now",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.lightShadow,
                         ),
                       ),
+                    ),
+                    // if (isInValidity == true)
+                    //   ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //       padding: EdgeInsets.symmetric(
+                    //           vertical: 15, horizontal: 35),
+                    //       backgroundColor: AppColors.primaryColor,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(10.0),
+                    //       ),
+                    //     ),
+                    //     onPressed: () {
+                    //       setState(() {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (context) => YoutubePlayerScreen(
+                    //               videoUrls: [
+                    //                 "${widget.product!.data[0].content[0].Attachment}"
+                    //               ],
+                    //               product: widget.product!.data[0].content[0],
+                    //             ),
+                    //           ),
+                    //         );
+                    //       });
+                    //     },
+                    //     child: Text(
+                    //       "Open",
+                    //       style: TextStyle(
+                    //         fontSize: 16,
+                    //         fontWeight: FontWeight.w600,
+                    //         color: AppColors.lightShadow,
+                    //       ),
+                    //     ),
+                    //   ),
                   ],
                 ),
               ),

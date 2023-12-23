@@ -14,6 +14,7 @@ class ApiUrlConstants {
   static String MarkNotificationsIsRead =
       baseUrl + 'PushNotification/MarkNotificationAsRead';
   static String ManagePurchaseOrder = baseUrl + 'Payment/ManagePurchaseOrder';
+  static String MyBucketContent = baseUrl + 'Product/MyBucketContent';
 }
 
 class SessionConstants {
