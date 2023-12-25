@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kraapp/Helpers/httpRequest.dart';
 import 'package:pusher_beams/pusher_beams.dart';
 
+import 'Helpers/ApiUrls.dart';
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
 import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
@@ -17,6 +21,7 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+SharedPref _sharedPref = SharedPref();
 
 Future<void> showNotificationFromToken(String? title, String? body) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -85,10 +90,14 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  _firebaseMessaging.subscribeToTopic("FREE");
+  final List<String> topics = await fetchSubscriptionTopics();
 
   await PusherBeams.instance.start('b16893bd-70f8-4868-ba42-32e53e665741');
-  await PusherBeams.instance.addDeviceInterest("FREE");
+  for (final topic in topics) {
+    await PusherBeams.instance.addDeviceInterest(topic);
+    _firebaseMessaging.subscribeToTopic(topic);
+  }
+
   await FirebaseAppCheck.instance.activate();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -97,12 +106,27 @@ void main() async {
   runApp(const MyApp());
 }
 
+Future<List<String>> fetchSubscriptionTopics() async {
+  final String userKey = await _sharedPref.read(SessionConstants.UserKey);
+  final mobileUserKey = userKey.replaceAll('"', '');
+  final apiUrl =
+      '${ApiUrlConstants.GetSubscriptionTopics}?userKey=${mobileUserKey}';
+  final response = await http.get(Uri.parse(apiUrl));
+  if (response.statusCode == 200) {
+    final getSubscriptionData = jsonDecode(response.body);
+    final List<dynamic> topicList = json.decode(getSubscriptionData['data']);
+    return topicList.map((topic) => topic['code'].toString()).toList();
+  } else {
+    throw Exception("Failed to fetch Subscription topics");
+  }
+}
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
   if (message.data.isNotEmpty) {
     showNotificationFromPusher(
         message.notification!.title, message.notification!.body);
-  } else if (message.from!.startsWith('/topics/')) {
+  } else if (message.from?.startsWith('/topics/') ?? false) {
     print('Opened app from background message: ${message.notification?.title}');
     showNotificationFromTopic(
         message.notification?.title, message.notification?.body);

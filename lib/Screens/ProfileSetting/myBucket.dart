@@ -83,13 +83,11 @@ class _MyBucketScreen extends State<MyBucketScreen> {
           future: myBucketdata(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(); // Show a loading indicator while data is being fetched.
+              return CircularProgressIndicator();
             } else if (snapshot.hasError) {
-              return Text(
-                  "Error: ${snapshot.error}"); // Show an error message if fetching data fails.
+              return Text("Error: ${snapshot.error}");
             } else if (!snapshot.hasData || snapshot.data == null) {
-              return Text(
-                  "No data available"); // Handle case where no data is available.
+              return Text("No data available");
             } else {
               List<myBucketListResponse>? data = snapshot.data!;
 
@@ -99,7 +97,6 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                     final String isShowReminder = "${data[index].showReminder}";
                     return Container(
                       padding: EdgeInsets.all(5),
-                      // height: 130,
                       decoration: BoxDecoration(
                           color: AppColors.cyan,
                           borderRadius: BorderRadius.circular(15)),
