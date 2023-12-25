@@ -13,6 +13,7 @@ import 'package:pusher_beams/pusher_beams.dart';
 import 'Helpers/ApiUrls.dart';
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
+import 'Screens/Common/useSharedPref.dart';
 import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'Screens/Notifications/allNotificationList.dart';
 import 'Screens/all_screens.dart';
@@ -22,6 +23,8 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 SharedPref _sharedPref = SharedPref();
+UsingHeaders usingHeaders = UsingHeaders();
+UsingSharedPref usingSharedPref = UsingSharedPref();
 
 Future<void> showNotificationFromToken(String? title, String? body) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -94,8 +97,10 @@ void main() async {
 
   await PusherBeams.instance.start('b16893bd-70f8-4868-ba42-32e53e665741');
   for (final topic in topics) {
-    await PusherBeams.instance.addDeviceInterest(topic);
-    _firebaseMessaging.subscribeToTopic(topic);
+    // await PusherBeams.instance.addDeviceInterest(topic);
+    await PusherBeams.instance.removeDeviceInterest(topic);
+    // _firebaseMessaging.subscribeToTopic(topic);
+    _firebaseMessaging.unsubscribeFromTopic(topic);
   }
 
   await FirebaseAppCheck.instance.activate();
@@ -109,9 +114,11 @@ void main() async {
 Future<List<String>> fetchSubscriptionTopics() async {
   final String userKey = await _sharedPref.read(SessionConstants.UserKey);
   final mobileUserKey = userKey.replaceAll('"', '');
+  final jwtToken = await usingSharedPref.getJwtToken();
+  Map<String, String> headers = usingHeaders.createHeaders(jwtToken: jwtToken);
   final apiUrl =
       '${ApiUrlConstants.GetSubscriptionTopics}?userKey=${mobileUserKey}';
-  final response = await http.get(Uri.parse(apiUrl));
+  final response = await http.get(Uri.parse(apiUrl), headers: headers);
   if (response.statusCode == 200) {
     final getSubscriptionData = jsonDecode(response.body);
     final List<dynamic> topicList = json.decode(getSubscriptionData['data']);

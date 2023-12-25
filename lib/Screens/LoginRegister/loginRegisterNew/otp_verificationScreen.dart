@@ -8,6 +8,7 @@ import 'package:kraapp/Screens/all_screens.dart';
 
 import '../../../Helpers/sharedPref.dart';
 import '../../../Models/Response/OtpVerficationResponse.dart';
+import '../../Common/useSharedPref.dart';
 import '../../Constants/app_color.dart';
 import 'package:http/http.dart' as http;
 
@@ -46,7 +47,8 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   final TextEditingController _cityController = TextEditingController();
 
   SharedPref _sharedPref = SharedPref();
-
+  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingHeaders usingHeaders = UsingHeaders();
   void _otpChanged(int index, String value) {
     if (value.isNotEmpty) {
       if (index < 6) {
@@ -83,8 +85,10 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   }
 
   Future<void> postUserData() async {
-    final String apiUrl =
-        'http://192.168.29.246:8083/api/Account/ManageUserDetails';
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
+    final String apiUrl = '${ApiUrlConstants.ManageUserDetails}';
     Map<String, String> userData = {
       "fullName": _nameController.text,
       "emailId": _emailController.text,
@@ -97,9 +101,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
         body: jsonEncode(userData),
       );
 

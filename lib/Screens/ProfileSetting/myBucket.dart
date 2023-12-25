@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
 
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/myBucketListResponse.dart';
+import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
 class MyBucketScreen extends StatefulWidget {
@@ -16,8 +18,10 @@ class MyBucketScreen extends StatefulWidget {
 
 class _MyBucketScreen extends State<MyBucketScreen> {
   SharedPref _sharedPref = SharedPref();
-  bool isLiked = true;
-  bool showReminder = false;
+  // bool isLiked = true;
+  // bool showReminder = false;
+  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingHeaders usingHeaders = UsingHeaders();
 
   @override
   void initState() {
@@ -31,24 +35,32 @@ class _MyBucketScreen extends State<MyBucketScreen> {
   }
 
   Future<List<myBucketListResponse>?> myBucketdata() async {
-    final String userKey = await _sharedPref.read(SessionConstants.UserKey);
-    final mobileUserKey = userKey.replaceAll('"', '');
-    final String apiUrl =
-        '${ApiUrlConstants.MyBucketContent}?userKey=$mobileUserKey';
-    final response = await http.get(Uri.parse(apiUrl));
-    if (response.statusCode == 200) {
-      print("called myBacket api");
-      List<myBucketListResponse>? list;
-      final dynamic ListOfBucket = json.decode(response.body);
-      if (ListOfBucket['data'] is List) {
-        List<dynamic> bucketList = ListOfBucket['data'];
-        list = bucketList
-            .map((listOfItems) => myBucketListResponse.fromJson(listOfItems))
-            .toList();
+    try {
+      final String userKey = await _sharedPref.read(SessionConstants.UserKey);
+      final mobileUserKey = userKey.replaceAll('"', '');
+
+      final jwtToken = await usingSharedPref.getJwtToken();
+      Map<String, String> headers =
+          usingHeaders.createHeaders(jwtToken: jwtToken);
+      final String apiUrl =
+          '${ApiUrlConstants.MyBucketContent}?userKey=$mobileUserKey';
+      final response = await http.get(Uri.parse(apiUrl), headers: headers);
+      if (response.statusCode == 200) {
+        print("called myBacket api");
+        List<myBucketListResponse>? list;
+        final dynamic ListOfBucket = json.decode(response.body);
+        if (ListOfBucket['data'] is List) {
+          List<dynamic> bucketList = ListOfBucket['data'];
+          list = bucketList
+              .map((listOfItems) => myBucketListResponse.fromJson(listOfItems))
+              .toList();
+        }
+        return list;
+      } else {
+        throw Exception("failed to fetch data");
       }
-      return list;
-    } else {
-      throw Exception("failed to fetch data");
+    } catch (e) {
+      throw Exception('Failed to perform request :$e');
     }
   }
 
@@ -95,6 +107,13 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final String isShowReminder = "${data[index].showReminder}";
+
+                    DateTime startdate = data[index].startdate;
+                    DateTime enddate = data[index].enddate;
+                    String formattedStartDate =
+                        DateFormat('dd-MMM-yyyy').format(startdate);
+                    String formattedEndDate =
+                        DateFormat('dd-MMM-yyyy').format(enddate);
                     return Container(
                       padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
@@ -132,18 +151,17 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                                     GestureDetector(
                                       onTap: () async {
                                         setState(() {
-                                          // if (data[index].isHeart) {
-                                          //   data[index].isHeart = false;
-                                          // } else {
-                                          //   data[index].isHeart = true;
-                                          // }
+                                          data[index].isHeart =
+                                              !data[index].isHeart;
                                         });
                                       },
                                       child: Icon(
                                         data[index].isHeart
                                             ? Icons.favorite
                                             : Icons.favorite_border_rounded,
-                                        color: isLiked ? Colors.red : null,
+                                        color: data[index].isHeart
+                                            ? Colors.red
+                                            : null,
                                       ),
                                     ),
                                     SizedBox(
@@ -158,11 +176,11 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                                 ),
                                 Row(
                                   children: [
-                                    Text("Stated Date"),
+                                    Text(formattedStartDate),
                                     SizedBox(
                                       width: 50,
                                     ),
-                                    Text("End Date"),
+                                    Text(formattedEndDate),
                                   ],
                                 ),
                                 Row(

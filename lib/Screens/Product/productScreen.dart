@@ -10,6 +10,7 @@ import '../../Models/Response/ProductResponseModel.dart';
 import '../../Models/Response/SingleProductResponse.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/shimmerScreen.dart';
+import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
 class TradingScreen extends StatefulWidget {
@@ -26,6 +27,8 @@ class _TradingScreen extends State<TradingScreen> {
   late List<int> likeCountList = [];
   late Future<List<ProductResponseModel>?> productsFuture = fetchDataThree();
   SharedPref _sharedPref = SharedPref();
+  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingHeaders usingHeaders = UsingHeaders();
 
   @override
   void initState() {
@@ -45,19 +48,6 @@ class _TradingScreen extends State<TradingScreen> {
     _pageController.dispose();
     super.dispose();
   }
-
-  // void onLikedButtonPressed(int index, String productId) async {
-  //   setState(() {
-  //     if (isFavoriteList[index]) {
-  //       likeCountList[index]--;
-  //       isFavoriteList[index] = false;
-  //     } else {
-  //       likeCountList[index]++;
-  //       isFavoriteList[index] = true;
-  //     }
-  //   });
-  //   await Isliked(productId);
-  // }
 
   Future<void> refreshData() async {
     await fetchDataThree();
@@ -123,8 +113,11 @@ class _TradingScreen extends State<TradingScreen> {
   Future<List<ProductResponseModel>?> fetchDataThree() async {
     String UserKey = await _sharedPref.read(SessionConstants.UserKey);
     String MobileKey = UserKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
-    final response = await http.get(Uri.parse(apiUrl));
+    final response = await http.get(Uri.parse(apiUrl), headers: headers);
     if (response.statusCode == 200) {
       List<ProductResponseModel>? list;
       final dynamic parsedData = json.decode(response.body);
@@ -146,10 +139,13 @@ class _TradingScreen extends State<TradingScreen> {
   Future<SingleProductResponse?> fetchProductById(String productId) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     print(MobileKey);
     final String apiUrl =
         'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=$MobileKey';
-    final response = await http.get(Uri.parse(apiUrl));
+    final response = await http.get(Uri.parse(apiUrl), headers: headers);
     if (response.statusCode == 200) {
       final dynamic parsedData = json.decode(response.body);
       print(response.body);
@@ -162,6 +158,9 @@ class _TradingScreen extends State<TradingScreen> {
   Future<void> Isliked(String productId, bool userHasHeart) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.LikeUnlikeProduct}';
     String action = userHasHeart ? 'like' : 'unlike';
 
@@ -173,9 +172,7 @@ class _TradingScreen extends State<TradingScreen> {
     };
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(isLikedData),
     );
     print(isLikedData);

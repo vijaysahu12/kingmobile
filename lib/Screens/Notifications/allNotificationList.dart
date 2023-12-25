@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
+import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
 class AllNotifications extends StatefulWidget {
@@ -24,10 +25,15 @@ class _AllNotifications extends State<AllNotifications> {
   final scrollContoller = ScrollController();
   int selectedCategoryId = 0;
   SharedPref _sharedPref = SharedPref();
+  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingHeaders usingHeaders = UsingHeaders();
 
   Future<void> fetchData() async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     String apiURL = "${ApiUrlConstants.GetNotifications}";
     final Map<String, dynamic> requestBody = {
       "id": selectedCategoryId,
@@ -37,7 +43,7 @@ class _AllNotifications extends State<AllNotifications> {
     };
     final response = await http.post(
       Uri.parse(apiURL),
-      headers: <String, String>{'Content-Type': 'application/json'},
+      headers: headers,
       body: jsonEncode(requestBody),
     );
 
@@ -95,6 +101,9 @@ class _AllNotifications extends State<AllNotifications> {
   Future<List<Category>?> fetchCategories() async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     try {
       final String apiUrl = '${ApiUrlConstants.GetNotifications}';
       final Map<String, dynamic> requestBody = {
@@ -105,7 +114,7 @@ class _AllNotifications extends State<AllNotifications> {
       };
       final response = await http.post(
         Uri.parse(apiUrl),
-        headers: <String, String>{'Content-Type': 'application/json'},
+        headers: headers,
         body: jsonEncode(requestBody),
       );
 
@@ -132,6 +141,9 @@ class _AllNotifications extends State<AllNotifications> {
   Future<int?> unReadCountNotificationList() async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
     final Map<String, dynamic> requestBody = {
       "id": 0,
@@ -141,7 +153,7 @@ class _AllNotifications extends State<AllNotifications> {
     };
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: <String, String>{'Content-Type': 'application/json'},
+      headers: headers,
       body: jsonEncode(requestBody),
     );
     if (response.statusCode == 200) {
@@ -168,8 +180,11 @@ class _AllNotifications extends State<AllNotifications> {
   }
 
   Future<void> markNotificationAsRead(int id) async {
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     String apiUrl = '${ApiUrlConstants.MarkNotificationsIsRead}?id=${id}';
-    final response = await http.post(Uri.parse(apiUrl));
+    final response = await http.post(Uri.parse(apiUrl), headers: headers);
 
     if (response.statusCode == 200) {
       print("Notification is Marked");

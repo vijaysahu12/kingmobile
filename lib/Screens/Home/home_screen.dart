@@ -12,9 +12,11 @@ import '../../Helpers/ApiUrls.dart';
 
 import '../../Helpers/sharedPref.dart';
 import '../Common/refreshtwo.dart';
+import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
 SharedPref _sharedPref = SharedPref();
+UsingHeaders usingHeaders = UsingHeaders();
 
 class Personal extends StatefulWidget {
   const Personal({super.key});
@@ -57,9 +59,13 @@ class _Personal extends State<Personal> {
   Future<List<HomeResponse>?> fetchData() async {
     String UserKey = await _sharedPref.read(SessionConstants.UserKey);
     String MobileKey = UserKey.replaceAll('"', '');
+    UsingSharedPref usingSharedPref = UsingSharedPref();
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
     print(apiUrl);
-    final response = await http.get(Uri.parse(apiUrl));
+    final response = await http.get(Uri.parse(apiUrl), headers: headers);
 
     if (response.statusCode == 200) {
       List<HomeResponse>? list;

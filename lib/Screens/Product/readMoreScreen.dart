@@ -15,6 +15,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 // import '../Common/shimmerScreen.dart';
+import '../Common/useSharedPref.dart';
 import 'youtube.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -32,12 +33,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   var isPaid = false;
 
   SharedPref _sharedPref = SharedPref();
+  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingHeaders usingHeaders = UsingHeaders();
+
   bool isCommunitySelected = true;
   late PageController _pageController;
 
   Future<void> Isliked(String productId, bool isHeart) async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
+
     print(mobileKey);
     final String apiUrl = '${ApiUrlConstants.LikeUnlikeProduct}';
     String action = isHeart ? 'like' : 'unlike';
@@ -49,9 +57,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     };
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: jsonEncode(isLikedData),
     );
     print(isLikedData);
@@ -66,6 +72,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       PaymentSuccessResponse responseOfpayment, String paymentAmount) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiURL = '${ApiUrlConstants.ManagePurchaseOrder}';
 
     Map<String, dynamic> userPaymentData = {
@@ -76,9 +85,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     };
     final response = await http.post(
       Uri.parse(apiURL),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: headers,
       body: jsonEncode(userPaymentData),
     );
     if (response.statusCode == 200) {

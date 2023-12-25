@@ -6,9 +6,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:kraapp/Helpers/ApiUrls.dart';
 import '../../Helpers/httpRequest.dart';
 import '../../Helpers/sharedPref.dart';
 import '../Common/refreshtwo.dart';
+import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,6 +33,9 @@ class _PersonalDetails extends State<PersonalDetails> {
   String? selectedGender;
   File? _image;
   DateTime selectedDate = DateTime.now();
+  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingHeaders usingHeaders = UsingHeaders();
+
   // bool isConnected =_httpHelper.checkInternetConnection(context);
 
   Future<void> _selectedDate() async {
@@ -159,8 +164,10 @@ class _PersonalDetails extends State<PersonalDetails> {
   }
 
   Future<void> updateUserData() async {
-    final String apiUrl =
-        'http://192.168.29.246:8083/api/Account/ManageUserDetails';
+    final jwtToken = await usingSharedPref.getJwtToken();
+    final String apiUrl = '${ApiUrlConstants.ManageUserDetails}';
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
 
     Map<String, String> userData = {
       "fullName": _userNameController.text,
@@ -174,9 +181,7 @@ class _PersonalDetails extends State<PersonalDetails> {
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
         body: jsonEncode(userData),
       );
 

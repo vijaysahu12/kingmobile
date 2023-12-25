@@ -17,6 +17,7 @@ class ApiUrlConstants {
   static String MyBucketContent = baseUrl + 'Product/MyBucketContent';
   static String GetSubscriptionTopics =
       baseUrl + 'Account/GetSubscriptionTopics';
+  static String ManageUserDetails = baseUrl + 'Account/ManageUserDetails';
 }
 
 class SessionConstants {

@@ -2,21 +2,22 @@ class myBucketListResponse {
   final int id;
   final String name;
   final int daysToGo;
-  final bool isHeart;
-  // final DateTime startdate;
-  // final DateTime enddate;
+
+  final DateTime startdate;
+  final DateTime enddate;
   final String categoryName;
   final dynamic showReminder;
+  bool isHeart;
 
-  const myBucketListResponse({
+  myBucketListResponse({
     required this.id,
     required this.daysToGo,
-    // required this.startdate,
-    // required this.enddate,
+    required this.startdate,
+    required this.enddate,
     required this.categoryName,
-    required this.isHeart,
     required this.name,
     required this.showReminder,
+    required this.isHeart,
   });
 
   factory myBucketListResponse.fromJson(Map<String, dynamic> json) {
@@ -27,6 +28,8 @@ class myBucketListResponse {
       categoryName: json['categoryName'] ?? '',
       showReminder: json['showReminder'],
       isHeart: json['isHeart'] ?? false,
+      startdate: DateTime.parse(json['startdate']),
+      enddate: DateTime.parse(json['enddate']),
     );
   }
 }
