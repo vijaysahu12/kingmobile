@@ -49,6 +49,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   SharedPref _sharedPref = SharedPref();
   UsingSharedPref usingSharedPref = UsingSharedPref();
   UsingHeaders usingHeaders = UsingHeaders();
+
   void _otpChanged(int index, String value) {
     if (value.isNotEmpty) {
       if (index < 6) {
@@ -56,15 +57,18 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
           _enteredOTP =
               _otpControllers.map((controller) => controller.text).join();
         });
+
         if (index < 5) {
           FocusScope.of(context).nextFocus();
-        } else {
-          // if (index > 0) {
-          //   _otpControllers[index - 1].text = '';
-          //   FocusScope.of(context).previousFocus();
-          // }
         }
       }
+    } else {
+      // Check if it's the first field or a deletion in any other field
+      if (index == 0 || (index > 0 && _otpControllers[index].text.isEmpty)) {
+        FocusScope.of(context).previousFocus();
+      }
+      // Clear the current field
+      _otpControllers[index].text = '';
     }
   }
 
@@ -413,32 +417,38 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                 Row(
                                   children: <Widget>[
                                     Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedGender = 'Male';
-                                          });
-                                        },
-                                        child: Container(
-                                          // ... other styles
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text('Male'),
-                                              Radio(
-                                                value: 'Male',
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    selectedGender = value;
-                                                  });
-                                                },
-                                                groupValue: selectedGender,
-                                                activeColor:
-                                                    AppColors.primaryColor,
-                                              ),
-                                            ],
-                                          ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: AppColors.lightShadow,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 3, horizontal: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Text(
+                                              'Male',
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'poppins',
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Radio(
+                                              value: 'Male',
+                                              groupValue: selectedGender,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectedGender =
+                                                      value as String;
+                                                });
+                                              },
+                                              activeColor:
+                                                  AppColors.primaryColor,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -446,32 +456,38 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedGender = 'Female';
-                                          });
-                                        },
-                                        child: Container(
-                                          // ... other styles
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text('Female'),
-                                              Radio(
-                                                value: 'Female',
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    selectedGender = value;
-                                                  });
-                                                },
-                                                groupValue: selectedGender,
-                                                activeColor:
-                                                    AppColors.primaryColor,
-                                              ),
-                                            ],
-                                          ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 3, horizontal: 10),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.lightShadow,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Text(
+                                              'Female',
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'poppins',
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Radio(
+                                              value: 'Female',
+                                              groupValue: selectedGender,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectedGender =
+                                                      value as String;
+                                                });
+                                              },
+                                              activeColor:
+                                                  AppColors.primaryColor,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
