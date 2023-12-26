@@ -9,12 +9,14 @@ import 'package:kraapp/Models/Response/SingleProductResponse.dart';
 import 'package:kraapp/Screens/Common/refreshtwo.dart';
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
+import 'package:pusher_beams/pusher_beams.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 // import '../Common/shimmerScreen.dart';
+// import '../../Models/Response/ManagePurchaseResponse.dart';
 import '../Common/useSharedPref.dart';
 import 'youtube.dart';
 
@@ -68,7 +70,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
   }
 
-  void paymentIsCompleted(String productId,
+  Future<String?> paymentIsCompleted(String productId,
       PaymentSuccessResponse responseOfpayment, String paymentAmount) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
@@ -88,9 +90,28 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       headers: headers,
       body: jsonEncode(userPaymentData),
     );
+
     if (response.statusCode == 200) {
-      print("called succesfully");
-      showAlertDialog(context, "Payment Successful", "Payment ID:");
+      final dynamic SubscriptionTopics = json.decode(response.body);
+      if (SubscriptionTopics.containsKey('data')) {
+        String? data = SubscriptionTopics['data'];
+        print(data);
+        return data;
+      }
+    }
+    return null;
+  }
+
+  Future<void> processPaymentAndAddInterest(String productId,
+      PaymentSuccessResponse responseOfPayment, String paymentAmount) async {
+    String? data =
+        await paymentIsCompleted(productId, responseOfPayment, paymentAmount);
+
+    if (data != null) {
+      await PusherBeams.instance.addDeviceInterest(data);
+      print('Device interest added successfully for: $data');
+    } else {
+      print('No data available after payment completion.');
     }
   }
 
@@ -99,6 +120,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final paymentAmount = '${((widget.product!.data[0].price)).toString()}';
     print(responseOfpayment);
     paymentIsCompleted(productId, responseOfpayment, paymentAmount);
+    processPaymentAndAddInterest(productId, responseOfpayment, paymentAmount);
 
     showAlertDialog(context, "Payment Successful",
         "Payment ID: ${responseOfpayment.paymentId}");

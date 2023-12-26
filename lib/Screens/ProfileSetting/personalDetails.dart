@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
 import '../../Helpers/httpRequest.dart';
 import '../../Helpers/sharedPref.dart';
+import '../../Models/Response/UserDetailsResponse.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
@@ -119,9 +120,50 @@ class _PersonalDetails extends State<PersonalDetails> {
   void initState() {
     super.initState();
     _loadUserData();
+    //  GetUserDetails();
+  }
+
+  Future<List<UserDetailsResponse>?> GetUserDetails() async {
+    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
+    String MobileKey = UserKey.replaceAll('"', '');
+    UsingSharedPref usingSharedPref = UsingSharedPref();
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
+    final String apiUrl =
+        '${ApiUrlConstants.GetUserDetails}?mobileUserKey=$MobileKey';
+    final response = await http.get(Uri.parse(apiUrl), headers: headers);
+    if (response.statusCode == 200) {
+      List<UserDetailsResponse>? list;
+      final dynamic GetUserData = json.decode(response.body);
+      if (GetUserData['data'] is List) {
+        List<dynamic> GetUsersData = GetUserData['data'];
+        list = GetUsersData.map(
+            (userInfo) => UserDetailsResponse.fromJson(userInfo)).toList();
+      }
+      return list;
+    } else {
+      print('failed to fetch GetUsersData');
+    }
+    return null;
   }
 
   Future<void> _loadUserData() async {
+    // List<UserDetailsResponse>? userdetailsList = await GetUserDetails();
+
+    // if (userdetailsList != null && userdetailsList.isNotEmpty) {
+    //   UserDetailsResponse userDetailsResponse = userdetailsList.first;
+    //   setState(() {
+    //     _userNameController.text = userDetailsResponse.fullName;
+    //     _userEmailController.text = userDetailsResponse.emailId;
+    //     _userMobileController.text = userDetailsResponse.mobile;
+    //     _userCityController.text = userDetailsResponse.city;
+    //     _userDateOfBirthController.text =
+    //         userDetailsResponse.dob.day.toString();
+
+    //     selectedGender = userDetailsResponse.gender.toString();
+    //   });
+    // }
     _userNameController.text =
         (await _sharedPref.read("KingUserProfileName") ?? '')
             .replaceAll('"', '');

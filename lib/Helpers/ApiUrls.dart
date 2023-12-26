@@ -18,6 +18,7 @@ class ApiUrlConstants {
   static String GetSubscriptionTopics =
       baseUrl + 'Account/GetSubscriptionTopics';
   static String ManageUserDetails = baseUrl + 'Account/ManageUserDetails';
+  static String GetUserDetails = baseUrl + 'Account/GetUserDetails';
 }
 
 class SessionConstants {

@@ -93,18 +93,28 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final List<String> topics = await fetchSubscriptionTopics();
+  final List<String> latestSubscriptionList = await fetchSubscriptionTopics();
 
   await PusherBeams.instance.start('b16893bd-70f8-4868-ba42-32e53e665741');
-  Future<List<String?>> name = PusherBeams.instance.getDeviceInterests();
-  print(name);
-  for (final topic in topics) {
-    // await PusherBeams.instance.addDeviceInterest(topic);
-    await PusherBeams.instance.removeDeviceInterest(topic);
-
-    // _firebaseMessaging.subscribeToTopic(topic);
-    _firebaseMessaging.unsubscribeFromTopic(topic);
+  List<String?> currentSubscriptionList =
+      await PusherBeams.instance.getDeviceInterests();
+  print(currentSubscriptionList);
+  for (final topic in latestSubscriptionList) {
+    await PusherBeams.instance.addDeviceInterest(topic);
+    _firebaseMessaging.subscribeToTopic(topic);
   }
+
+  for (final item in currentSubscriptionList) {
+    if (currentSubscriptionList.contains(item) &&
+        !latestSubscriptionList.contains(item)) {
+      await PusherBeams.instance.removeDeviceInterest(item.toString());
+
+      _firebaseMessaging.unsubscribeFromTopic(item.toString());
+    }
+  }
+
+  List<String?> asd = await PusherBeams.instance.getDeviceInterests();
+  print(asd);
 
   await FirebaseAppCheck.instance.activate();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
