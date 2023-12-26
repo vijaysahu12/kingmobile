@@ -395,7 +395,9 @@ class _PersonalDetails extends State<PersonalDetails> {
                                         value: 'Male',
                                         groupValue: selectedGender,
                                         onChanged: (value) {
-                                          selectedGender = value as String;
+                                          setState(() {
+                                            selectedGender = value as String;
+                                          });
                                         },
                                         activeColor: AppColors.primaryColor,
                                       ),
@@ -429,7 +431,9 @@ class _PersonalDetails extends State<PersonalDetails> {
                                         value: 'Female',
                                         groupValue: selectedGender,
                                         onChanged: (value) {
-                                          selectedGender = value as String;
+                                          setState(() {
+                                            selectedGender = value as String;
+                                          });
                                         },
                                         activeColor: AppColors.primaryColor,
                                       ),

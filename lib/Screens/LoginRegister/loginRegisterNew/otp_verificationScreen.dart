@@ -58,7 +58,12 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
         });
         if (index < 5) {
           FocusScope.of(context).nextFocus();
-        } else {}
+        } else {
+          // if (index > 0) {
+          //   _otpControllers[index - 1].text = '';
+          //   FocusScope.of(context).previousFocus();
+          // }
+        }
       }
     }
   }

@@ -115,19 +115,36 @@ void main() async {
 }
 
 Future<List<String>> fetchSubscriptionTopics() async {
-  final String userKey = await _sharedPref.read(SessionConstants.UserKey);
-  final mobileUserKey = userKey.replaceAll('"', '');
-  final jwtToken = await usingSharedPref.getJwtToken();
-  Map<String, String> headers = usingHeaders.createHeaders(jwtToken: jwtToken);
-  final apiUrl =
-      '${ApiUrlConstants.GetSubscriptionTopics}?userKey=${mobileUserKey}';
-  final response = await http.get(Uri.parse(apiUrl), headers: headers);
-  if (response.statusCode == 200) {
-    final getSubscriptionData = jsonDecode(response.body);
-    final List<dynamic> topicList = json.decode(getSubscriptionData['data']);
-    return topicList.map((topic) => topic['code'].toString()).toList();
-  } else {
-    throw Exception("Failed to fetch Subscription topics");
+  try {
+    final String? userKey = await _sharedPref.read(SessionConstants.UserKey);
+    if (userKey != null) {
+      final mobileUserKey = userKey.replaceAll('"', '');
+      final jwtToken = await usingSharedPref.getJwtToken();
+
+      if (jwtToken != null) {
+        Map<String, String> headers =
+            usingHeaders.createHeaders(jwtToken: jwtToken);
+        final apiUrl =
+            '${ApiUrlConstants.GetSubscriptionTopics}?userKey=$mobileUserKey';
+        final response = await http.get(Uri.parse(apiUrl), headers: headers);
+
+        if (response.statusCode == 200) {
+          final getSubscriptionData = jsonDecode(response.body);
+          final List<dynamic> topicList =
+              json.decode(getSubscriptionData['data']);
+          return topicList.map((topic) => topic['code'].toString()).toList();
+        } else {
+          throw Exception("Failed to fetch Subscription topics");
+        }
+      } else {
+        throw Exception("JWT Token is null");
+      }
+    } else {
+      throw Exception("User key is null");
+    }
+  } catch (e) {
+    print('Error fetching subscription topics: $e');
+    return []; // Return an empty list or handle the error accordingly
   }
 }
 
