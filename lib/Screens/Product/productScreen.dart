@@ -24,7 +24,7 @@ class _TradingScreen extends State<TradingScreen> {
   late PageController _pageController;
   bool isCommunitySelected = true;
   late List<bool> isFavoriteList = [];
-  late List<int> likeCountList = [];
+  // late List<int> likeCountList = [];
   late Future<List<ProductResponseModel>?> productsFuture = fetchDataThree();
   SharedPref _sharedPref = SharedPref();
   UsingSharedPref usingSharedPref = UsingSharedPref();

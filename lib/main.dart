@@ -96,9 +96,12 @@ void main() async {
   final List<String> topics = await fetchSubscriptionTopics();
 
   await PusherBeams.instance.start('b16893bd-70f8-4868-ba42-32e53e665741');
+  Future<List<String?>> name = PusherBeams.instance.getDeviceInterests();
+  print(name);
   for (final topic in topics) {
     // await PusherBeams.instance.addDeviceInterest(topic);
     await PusherBeams.instance.removeDeviceInterest(topic);
+
     // _firebaseMessaging.subscribeToTopic(topic);
     _firebaseMessaging.unsubscribeFromTopic(topic);
   }

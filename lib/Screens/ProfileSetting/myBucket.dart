@@ -18,15 +18,14 @@ class MyBucketScreen extends StatefulWidget {
 
 class _MyBucketScreen extends State<MyBucketScreen> {
   SharedPref _sharedPref = SharedPref();
-  // bool isLiked = true;
-  // bool showReminder = false;
+  late Future<List<myBucketListResponse>?> myBucketList = myBucketdata();
   UsingSharedPref usingSharedPref = UsingSharedPref();
   UsingHeaders usingHeaders = UsingHeaders();
 
   @override
   void initState() {
     super.initState();
-    // myBucketdata();
+    myBucketList = myBucketdata();
   }
 
   @override
@@ -38,12 +37,12 @@ class _MyBucketScreen extends State<MyBucketScreen> {
     try {
       final String userKey = await _sharedPref.read(SessionConstants.UserKey);
       final mobileUserKey = userKey.replaceAll('"', '');
-
       final jwtToken = await usingSharedPref.getJwtToken();
       Map<String, String> headers =
           usingHeaders.createHeaders(jwtToken: jwtToken);
       final String apiUrl =
           '${ApiUrlConstants.MyBucketContent}?userKey=$mobileUserKey';
+      // print(jwtToken);
       final response = await http.get(Uri.parse(apiUrl), headers: headers);
       if (response.statusCode == 200) {
         print("called myBacket api");
@@ -61,6 +60,35 @@ class _MyBucketScreen extends State<MyBucketScreen> {
       }
     } catch (e) {
       throw Exception('Failed to perform request :$e');
+    }
+  }
+
+  Future<void> Isliked(String productId, bool isHeart) async {
+    String userKey = await _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
+
+    print(mobileKey);
+    final String apiUrl = '${ApiUrlConstants.LikeUnlikeProduct}';
+    String action = isHeart ? 'like' : 'unlike';
+    Map<String, dynamic> isLikedData = {
+      'productId': productId,
+      "likeId": "1",
+      "createdby": mobileKey,
+      "action": action,
+    };
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: headers,
+      body: jsonEncode(isLikedData),
+    );
+    print(isLikedData);
+    if (response.statusCode == 200) {
+      print("Liked successfully!");
+    } else {
+      print('Failed to update data: ${response.statusCode}');
     }
   }
 
@@ -92,7 +120,7 @@ class _MyBucketScreen extends State<MyBucketScreen> {
         ),
       ),
       body: FutureBuilder<List<myBucketListResponse>?>(
-          future: myBucketdata(),
+          future: myBucketList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
@@ -107,9 +135,9 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final String isShowReminder = "${data[index].showReminder}";
-
                     DateTime startdate = data[index].startdate;
                     DateTime enddate = data[index].enddate;
+
                     String formattedStartDate =
                         DateFormat('dd-MMM-yyyy').format(startdate);
                     String formattedEndDate =
@@ -154,6 +182,8 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                                           data[index].isHeart =
                                               !data[index].isHeart;
                                         });
+                                        await Isliked(data[index].id.toString(),
+                                            data[index].isHeart);
                                       },
                                       child: Icon(
                                         data[index].isHeart

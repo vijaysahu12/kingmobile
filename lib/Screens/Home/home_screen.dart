@@ -63,6 +63,7 @@ class _Personal extends State<Personal> {
     final jwtToken = await usingSharedPref.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
+    print(jwtToken);
     final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
     print(apiUrl);
     final response = await http.get(Uri.parse(apiUrl), headers: headers);
