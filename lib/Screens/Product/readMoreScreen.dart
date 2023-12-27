@@ -119,7 +119,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final productId = '${widget.product!.data[0].id}';
     final paymentAmount = '${((widget.product!.data[0].price)).toString()}';
     print(responseOfpayment);
-    paymentIsCompleted(productId, responseOfpayment, paymentAmount);
+    // paymentIsCompleted(productId, responseOfpayment, paymentAmount);//
     processPaymentAndAddInterest(productId, responseOfpayment, paymentAmount);
 
     showAlertDialog(context, "Payment Successful",

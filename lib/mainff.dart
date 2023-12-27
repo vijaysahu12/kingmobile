@@ -22,19 +22,33 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  // final List<String> latestSubscriptionList = await fetchSubscriptionTopics();
+
+  // await PusherBeams.instance.start('b16893bd-70f8-4868-ba42-32e53e665741');
+  // List<String?> currentSubscriptionList =
+  //     await PusherBeams.instance.getDeviceInterests();
+  // print(currentSubscriptionList);
+  // for (final topic in latestSubscriptionList) {
+  //   await PusherBeams.instance.addDeviceInterest(topic);
+  //   _firebaseMessaging.unsubscribeFromTopic(topic);
+  // }
+
+  // for (final item in currentSubscriptionList) {
+  //   if (currentSubscriptionList.contains(item) &&
+  //       !latestSubscriptionList.contains(item)) {
+  //     await PusherBeams.instance.removeDeviceInterest(item.toString());
+
+  //     _firebaseMessaging.unsubscribeFromTopic(item.toString());
+  //   }
+  // }
+
+  // List<String?> asd = await PusherBeams.instance.getDeviceInterests();
+  // print(asd);
   await initializePusherBeams();
   await initializeNotifications();
-
   runApp(const MyApp());
 }
-
-GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-SharedPref _sharedPref = SharedPref();
-UsingHeaders usingHeaders = UsingHeaders();
-UsingSharedPref usingSharedPref = UsingSharedPref();
 
 Future<void> initializePusherBeams() async {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -45,9 +59,7 @@ Future<void> initializePusherBeams() async {
       await PusherBeams.instance.getDeviceInterests();
 
   for (final topic in latestSubscriptionList) {
-    // await PusherBeams.instance.addDeviceInterest(topic);
     await PusherBeams.instance.addDeviceInterest(topic);
-    await _firebaseMessaging.unsubscribeFromTopic(topic);
   }
 
   for (final item in currentSubscriptionList) {
@@ -56,8 +68,15 @@ Future<void> initializePusherBeams() async {
       await _firebaseMessaging.unsubscribeFromTopic(item.toString());
     }
   }
-  print(currentSubscriptionList);
 }
+
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+SharedPref _sharedPref = SharedPref();
+UsingHeaders usingHeaders = UsingHeaders();
+UsingSharedPref usingSharedPref = UsingSharedPref();
 
 Future<void> initializeNotifications() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -76,14 +95,12 @@ Future<void> initializeNotifications() async {
   );
 
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    // handleNotificationTap(message);
-    navigateToNotificationsScreen();
-  });
-
-  // int i = 0;
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     handleNotificationTap(message);
     // navigateToNotificationsScreen();
+  });
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    handleNotificationTap(message);
   });
 }
 
@@ -121,7 +138,9 @@ Future<List<String>> fetchSubscriptionTopics() async {
   }
 }
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  handleNotificationTap(message);
+}
 
 void handleNotificationTap(RemoteMessage message) {
   if (message.data.containsKey("pusher")) {
@@ -229,7 +248,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     checkLoginStatus();
-    // initializeNotifications();
+    initializeNotifications();
   }
 
   void checkLoginStatus() async {
