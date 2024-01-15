@@ -47,7 +47,7 @@ Future<void> initializePusherBeams() async {
   for (final topic in latestSubscriptionList) {
     // await PusherBeams.instance.addDeviceInterest(topic);
     await PusherBeams.instance.addDeviceInterest(topic);
-    await _firebaseMessaging.unsubscribeFromTopic(topic);
+    await _firebaseMessaging.subscribeToTopic(topic);
   }
 
   for (final item in currentSubscriptionList) {
@@ -186,8 +186,8 @@ void showNotificationFromTopic(String? title, String? body) async {
   int id = DateTime.now().millisecondsSinceEpoch % 2147483647;
   await flutterLocalNotificationsPlugin.show(
     id,
-    'Default Tisdfsdffdstle',
-    'Default Body',
+    title ?? 'Default Tisdfsdffdstle',
+    body ?? 'Default Body',
     platformChannelSpecifics,
   );
 }

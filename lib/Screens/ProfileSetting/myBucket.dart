@@ -218,7 +218,7 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                                     Text(
                                         "${data[index].daysToGo.toString()} Days to Go End"),
                                     Spacer(),
-                                    if (isShowReminder != true)
+                                    if (isShowReminder == true)
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           padding: EdgeInsets.symmetric(
@@ -233,6 +233,27 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                                         onPressed: () {},
                                         child: Text(
                                           "Renew",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: AppColors.light,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    if (isShowReminder != true)
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          backgroundColor:
+                                              AppColors.primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                        ),
+                                        onPressed: () {},
+                                        child: Text(
+                                          "open",
                                           style: TextStyle(
                                               fontSize: 14,
                                               color: AppColors.light,
