@@ -83,6 +83,8 @@ dependencies:
   device_info_plus: ^9.1.1
   flutter_timezone: ^1.0.8
   async: ^2.11.0
+  otp_autofill: ^3.0.2
+  sms_autofill: ^2.3.0
   
 
 

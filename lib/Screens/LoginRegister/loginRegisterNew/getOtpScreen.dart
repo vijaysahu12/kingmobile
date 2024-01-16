@@ -158,7 +158,6 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   //       //String _emailOrMobile = "+91" + phoneNumberController.text;
   //       String _emailOrMobile = phoneNumberController.text;
   //       String _password = '123456';
-
   //       // if (_emailOrMobile.isEmpty || _password.isEmpty) {
   //       //   setState(() {
   //       //     _useremailError = _emailOrMobile.isEmpty;
@@ -174,9 +173,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
   //       final response = await _httpHelper.getWithOutToken(apiUrl);
   //       if (response.statusCode == 200) {
   //         SharedPref _sharedPref = SharedPref();
-
   //         Map<String, dynamic> jsonResponse = json.decode(response.body);
-
   //         if (jsonResponse.containsKey('statusCode') &&
   //             jsonResponse['statusCode'] == 200) {
   //           _sharedPref.save(

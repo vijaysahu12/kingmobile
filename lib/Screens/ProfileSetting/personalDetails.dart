@@ -89,14 +89,14 @@ class _PersonalDetails extends State<PersonalDetails> {
     }
   }
 
-  handleRadioValueChange(String? value) {
-    if (value != null) {
-      setState(() {
-        selectedGender = value;
-        _sharedPref.save("KingUserProfileGender", selectedGender);
-      });
-    }
-  }
+  // handleRadioValueChange(String? value) {
+  //   if (value != null) {
+  //     setState(() {
+  //       selectedGender = value;
+  //       _sharedPref.save("KingUserProfileGender", selectedGender);
+  //     });
+  //   }
+  // }
 
   // Future<String?> getImei() async {
   //   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -119,75 +119,96 @@ class _PersonalDetails extends State<PersonalDetails> {
   @override
   void initState() {
     super.initState();
+    GetUserDetails();
     _loadUserData();
-    //  GetUserDetails();
   }
 
   Future<List<UserDetailsResponse>?> GetUserDetails() async {
-    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
-    String MobileKey = UserKey.replaceAll('"', '');
-    UsingSharedPref usingSharedPref = UsingSharedPref();
-    final jwtToken = await usingSharedPref.getJwtToken();
-    Map<String, String> headers =
-        usingHeaders.createHeaders(jwtToken: jwtToken);
-    final String apiUrl =
-        '${ApiUrlConstants.GetUserDetails}?mobileUserKey=$MobileKey';
-    final response = await http.get(Uri.parse(apiUrl), headers: headers);
-    if (response.statusCode == 200) {
-      List<UserDetailsResponse>? list;
-      final dynamic GetUserData = json.decode(response.body);
-      if (GetUserData['data'] is List) {
-        List<dynamic> GetUsersData = GetUserData['data'];
-        list = GetUsersData.map(
-            (userInfo) => UserDetailsResponse.fromJson(userInfo)).toList();
+    try {
+      String UserKey = await _sharedPref.read(SessionConstants.UserKey);
+      String MobileKey = UserKey.replaceAll('"', '');
+      UsingSharedPref usingSharedPref = UsingSharedPref();
+      final jwtToken = await usingSharedPref.getJwtToken();
+      Map<String, String> headers =
+          usingHeaders.createHeaders(jwtToken: jwtToken);
+      final String apiUrl =
+          '${ApiUrlConstants.GetUserDetails}?mobileUserKey=$MobileKey';
+      final response = await http.get(Uri.parse(apiUrl), headers: headers);
+
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        List<UserDetailsResponse>? list;
+        final dynamic GetUserData = json.decode(response.body);
+
+        print('GetUserData: $GetUserData');
+
+        if (GetUserData['data'] is Map) {
+          Map<String, dynamic> userDataMap = GetUserData['data'];
+          UserDetailsResponse userDetailsResponse =
+              UserDetailsResponse.fromJson(userDataMap);
+          list = [userDetailsResponse];
+        } else if (GetUserData['data'] is List) {
+          List<dynamic> GetUsersData = GetUserData['data'];
+          list = GetUsersData.map(
+              (userInfo) => UserDetailsResponse.fromJson(userInfo)).toList();
+        }
+
+        return list;
+      } else {
+        print(
+            'Failed to fetch GetUsersData. Status code: ${response.statusCode}');
       }
-      return list;
-    } else {
-      print('failed to fetch GetUsersData');
+    } catch (e) {
+      print('Error fetching user details: $e');
     }
+
     return null;
   }
 
   Future<void> _loadUserData() async {
-    // List<UserDetailsResponse>? userdetailsList = await GetUserDetails();
+    List<UserDetailsResponse>? userdetailsList = await GetUserDetails();
 
-    // if (userdetailsList != null && userdetailsList.isNotEmpty) {
-    //   UserDetailsResponse userDetailsResponse = userdetailsList.first;
-    //   setState(() {
-    //     _userNameController.text = userDetailsResponse.fullName;
-    //     _userEmailController.text = userDetailsResponse.emailId;
-    //     _userMobileController.text = userDetailsResponse.mobile;
-    //     _userCityController.text = userDetailsResponse.city;
-    //     _userDateOfBirthController.text =
-    //         userDetailsResponse.dob.day.toString();
-
-    //     selectedGender = userDetailsResponse.gender.toString();
-    //   });
-    // }
-    _userNameController.text =
-        (await _sharedPref.read("KingUserProfileName") ?? '')
-            .replaceAll('"', '');
-    _userEmailController.text =
-        (await _sharedPref.read("KingUserProfileEmail") ?? '')
-            .replaceAll('"', '');
-    _userMobileController.text =
-        (await _sharedPref.read("KingUserProfileMobile") ?? '')
-            .replaceAll('"', '');
-    _userCityController.text =
-        (await _sharedPref.read("KingUserProfileCity") ?? '')
-            .replaceAll('"', '');
-    _userDateOfBirthController.text =
-        (await _sharedPref.read("KingUserProfileDateOfBirth") ?? '')
-            .replaceAll('"', '');
-
-    String? savedGender =
-        (await _sharedPref.read("KingUserProfileGender") ?? '')
-            .replaceAll('"', '');
-    if (savedGender != null) {
+    if (userdetailsList != null && userdetailsList.isNotEmpty) {
+      UserDetailsResponse userDetailsResponse = userdetailsList.first;
       setState(() {
-        selectedGender = savedGender;
+        _userNameController.text = userDetailsResponse.fullName;
+        _userEmailController.text = userDetailsResponse.emailId;
+        _userMobileController.text = userDetailsResponse.mobile;
+        _userCityController.text = userDetailsResponse.city;
+        _userDateOfBirthController.text = DateFormat('dd-MMM-yyyy')
+            .format(userDetailsResponse.dob)
+            .toString();
+        ;
+
+        selectedGender = userDetailsResponse.gender.toString();
       });
     }
+    // _userNameController.text =
+    //     (await _sharedPref.read("KingUserProfileName") ?? '')
+    //         .replaceAll('"', '');
+    // _userEmailController.text =
+    //     (await _sharedPref.read("KingUserProfileEmail") ?? '')
+    //         .replaceAll('"', '');
+    // _userMobileController.text =
+    //     (await _sharedPref.read("KingUserProfileMobile") ?? '')
+    //         .replaceAll('"', '');
+    // _userCityController.text =
+    //     (await _sharedPref.read("KingUserProfileCity") ?? '')
+    //         .replaceAll('"', '');
+    // _userDateOfBirthController.text =
+    //     (await _sharedPref.read("KingUserProfileDateOfBirth") ?? '')
+    //         .replaceAll('"', '');
+
+    // String? savedGender =
+    //     (await _sharedPref.read("KingUserProfileGender") ?? '')
+    //         .replaceAll('"', '');
+    // if (savedGender != null) {
+    //   setState(() {
+    //     selectedGender = savedGender;
+    //   });
+    // }
   }
 
   Future<void> refreshData() async {

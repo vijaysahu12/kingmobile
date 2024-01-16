@@ -94,6 +94,7 @@ Future<List<String>> fetchSubscriptionTopics() async {
       final mobileUserKey = userKey.replaceAll('"', '');
       final jwtToken = await usingSharedPref.getJwtToken();
 
+      // ignore: unnecessary_null_comparison
       if (jwtToken != null) {
         Map<String, String> headers =
             usingHeaders.createHeaders(jwtToken: jwtToken);

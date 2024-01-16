@@ -3,7 +3,7 @@ class UserDetailsResponse {
   final String emailId;
   final String mobile;
   final String city;
-  bool gender;
+  final String gender;
   DateTime dob;
 
   UserDetailsResponse(
@@ -20,7 +20,7 @@ class UserDetailsResponse {
         city: json['city'] ?? '',
         dob: DateTime.parse(json['dob']),
         emailId: json['emailId'] ?? '',
-        gender: json['gender'] ?? false,
+        gender: json['gender'] ?? '',
         mobile: json['mobile'] ?? '');
   }
 }
