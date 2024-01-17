@@ -40,6 +40,7 @@ class _Personal extends State<Personal> {
 
   @override
   void dispose() {
+    dataFuture = fetchData();
     super.dispose();
   }
 

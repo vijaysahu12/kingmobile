@@ -8,8 +8,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreen.dart';
 
-// import '../../../Helpers/httpRequest.dart';
-// import '../../../Helpers/ApiUrls.dart';
 import '../../../Helpers/sharedPref.dart';
 import '../../Constants/app_color.dart';
 
@@ -112,6 +110,7 @@ class _GetMobileOtp extends State<GetMobileOtp> {
           ),
         );
       },
+      // timeout: const Duration(seconds: 90),
       codeAutoRetrievalTimeout: (String verificationId) {
         print(' $verificationId');
       },

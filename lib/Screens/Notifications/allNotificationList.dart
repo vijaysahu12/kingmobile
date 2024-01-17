@@ -355,7 +355,7 @@ class _AllNotifications extends State<AllNotifications> {
                                               ),
                                             ),
                                             Text(
-                                              category,
+                                              category ?? 'N/A',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: AppColors.purple,

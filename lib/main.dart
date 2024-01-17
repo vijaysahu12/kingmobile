@@ -1,4 +1,5 @@
 import 'dart:convert';
+// import 'dart:io';
 
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,13 +20,17 @@ import 'Screens/Notifications/allNotificationList.dart';
 import 'Screens/all_screens.dart';
 
 void main() async {
+  print(DateTime.now());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
+  await FirebaseAppCheck.instance.activate();
+  print(DateTime.now());
   await initializePusherBeams();
+  print(DateTime.now());
   await initializeNotifications();
 
   runApp(const MyApp());
+  print(DateTime.now());
 }
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -80,7 +85,6 @@ Future<void> initializeNotifications() async {
     navigateToNotificationsScreen();
   });
 
-  // int i = 0;
   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     handleNotificationTap(message);
     // navigateToNotificationsScreen();
@@ -193,6 +197,18 @@ void showNotificationFromTopic(String? title, String? body) async {
   );
 }
 
+// Future getIp() async {
+//   var list = await NetworkInterface.list(
+//       includeLoopback: true, type: InternetAddressType.IPv4);
+//   for (var i = 0; i < list.length; i++) {
+//     if (list[i].name == "wlan0") {
+//       print(list[i].name);
+//       print(list[i].addresses[0].address);
+//       print('get ipp');
+//     }
+//   }
+// }
+
 void showNotificationFromPusher(String? title, String? body) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
@@ -230,7 +246,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     checkLoginStatus();
-    // initializeNotifications();
   }
 
   void checkLoginStatus() async {
