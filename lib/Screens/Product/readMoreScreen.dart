@@ -213,6 +213,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
     print(isInMyBucketString);
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         if (_pageController.page == 1) {

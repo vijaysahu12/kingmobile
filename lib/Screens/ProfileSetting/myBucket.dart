@@ -6,10 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
 
 import '../../Helpers/sharedPref.dart';
+import '../../Models/Response/ProductResponseModel.dart';
 import '../../Models/Response/SingleProductResponse.dart';
 import '../../Models/Response/myBucketListResponse.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
+import '../Product/readMoreScreen.dart';
 
 class MyBucketScreen extends StatefulWidget {
   const MyBucketScreen({super.key});
@@ -22,6 +24,7 @@ class _MyBucketScreen extends State<MyBucketScreen> {
   late Future<List<myBucketListResponse>?> myBucketList = myBucketdata();
   UsingSharedPref usingSharedPref = UsingSharedPref();
   UsingHeaders usingHeaders = UsingHeaders();
+  late List<bool> isFavoriteList = [];
 
   @override
   void initState() {
@@ -32,6 +35,12 @@ class _MyBucketScreen extends State<MyBucketScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void updateParent() {
+    setState(() {
+      fetchDataThree();
+    });
   }
 
   Future<SingleProductResponse?> fetchProductById(int productId) async {
@@ -50,6 +59,32 @@ class _MyBucketScreen extends State<MyBucketScreen> {
       return SingleProductResponse.fromJson(parsedData);
     } else {
       throw Exception('Failed to load product');
+    }
+  }
+
+  Future<List<ProductResponseModel>?> fetchDataThree() async {
+    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
+    String MobileKey = UserKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
+    final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
+    final response = await http.get(Uri.parse(apiUrl), headers: headers);
+    if (response.statusCode == 200) {
+      List<ProductResponseModel>? list;
+      final dynamic parsedData = json.decode(response.body);
+      if (parsedData['data'] is List) {
+        List<dynamic> parsedList = parsedData['data'];
+        list = parsedList
+            .map((val) => ProductResponseModel.fromJson(val))
+            .toList();
+        isFavoriteList = List.generate(list.length, (index) => false);
+        // likeCountList = List.generate(list.length, (index) => 0);
+        print(list);
+      }
+      return list;
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 
@@ -273,7 +308,23 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                                                 BorderRadius.circular(10.0),
                                           ),
                                         ),
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          // String productId = data[index].id as String;
+                                          SingleProductResponse? product =
+                                              await fetchProductById(productId);
+                                          print(productId);
+                                          setState(() {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProductDetailsScreen(
+                                                  product: product,
+                                                  updateParent: updateParent,
+                                                ),
+                                              ),
+                                            );
+                                          });
                                           fetchProductById(productId);
                                         },
                                         child: Text(
