@@ -6,7 +6,7 @@ class myBucketListResponse {
   final DateTime startdate;
   final DateTime enddate;
   final String categoryName;
-  final dynamic showReminder;
+  final bool showReminder;
   bool isHeart;
 
   myBucketListResponse({
@@ -26,7 +26,7 @@ class myBucketListResponse {
       daysToGo: json['daysToGo'] ?? 0,
       name: json['name'] ?? '',
       categoryName: json['categoryName'] ?? '',
-      showReminder: json['showReminder'],
+      showReminder: json['showReminder'] ?? false,
       isHeart: json['isHeart'] ?? false,
       startdate: DateTime.parse(json['startdate']),
       enddate: DateTime.parse(json['enddate']),

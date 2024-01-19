@@ -390,3 +390,26 @@ class ShimmerListViewForNotification extends StatelessWidget {
     );
   }
 }
+
+class ShimmerWidgetForImages extends StatelessWidget {
+  final double height;
+  final double width;
+
+  ShimmerWidgetForImages({required this.height, required this.width});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey, width: 0.5),
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+    );
+  }
+}

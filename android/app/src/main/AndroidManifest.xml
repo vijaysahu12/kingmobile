@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 <uses-permission android:name="android.permission.RECEIVE_SMS" />
+<uses-permission android:name="android.permission.READ_SMS" />
+
 
     <application
         android:label="kraapp"
@@ -35,5 +37,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+            
     </application>
 </manifest>

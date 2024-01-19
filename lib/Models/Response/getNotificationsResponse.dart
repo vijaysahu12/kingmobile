@@ -11,7 +11,7 @@ class NotificationsList {
   final int id;
   final String title;
   final String body;
-  final String category;
+  final Category category;
   final String createdOn;
   final String createdBy;
   final bool isRead;
@@ -29,15 +29,28 @@ class NotificationsList {
   });
 
   factory NotificationsList.fromJson(Map<String, dynamic> json) {
+    final dynamic categoryData = json['category'];
+
+    Category category;
+    if (categoryData is Map<String, dynamic>) {
+      category = Category.fromJson(categoryData);
+    } else if (categoryData is String) {
+      category = Category(id: 0, name: categoryData);
+    } else {
+      // Handle the case where category information is not provided
+      category = Category(id: 0, name: 'Default Category');
+    }
+
     return NotificationsList(
-        id: json['id'] ?? 0,
-        title: json['title'] ?? '',
-        body: json['body'] ?? '',
-        category: json['category'] ?? '',
-        createdOn: json['createdOn'] ?? '',
-        createdBy: json['createdBy'] ?? '',
-        isRead: json['isRead'],
-        isDelete: json['isDelete']);
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      body: json['body'] ?? '',
+      category: category,
+      createdOn: json['createdOn'] ?? '',
+      createdBy: json['createdBy'] ?? '',
+      isRead: json['isRead'],
+      isDelete: json['isDelete'],
+    );
   }
 }
 
@@ -52,8 +65,8 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      id: json['id'],
-      name: json['name'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
     );
   }
 }

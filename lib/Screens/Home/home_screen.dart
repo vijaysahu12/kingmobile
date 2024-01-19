@@ -44,19 +44,6 @@ class _Personal extends State<Personal> {
     super.dispose();
   }
 
-  // Future<List<HomeResponse>> fetchData() async {
-  //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
-  //   if (response.statusCode == 200) {
-  //     final List parsedList = json.decode(response.body);
-  //     List<HomeResponse> list =
-  //         parsedList.map((val) => HomeResponse.fromJson(val)).toList();
-  //     print(list);
-  //     return list;
-  //   } else {
-  //     throw Exception('Failed to load data');
-  //   }
-  // }
-
   Future<List<HomeResponse>?> fetchData() async {
     String UserKey = await _sharedPref.read(SessionConstants.UserKey);
     String MobileKey = UserKey.replaceAll('"', '');
@@ -1078,3 +1065,17 @@ class _Personal extends State<Personal> {
     });
   }
 }
+
+
+ // Future<List<HomeResponse>> fetchData() async {
+  //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
+  //   if (response.statusCode == 200) {
+  //     final List parsedList = json.decode(response.body);
+  //     List<HomeResponse> list =
+  //         parsedList.map((val) => HomeResponse.fromJson(val)).toList();
+  //     print(list);
+  //     return list;
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //   }
+  // }

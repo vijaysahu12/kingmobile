@@ -30,35 +30,36 @@ class _HomeScreen extends State<HomeScreen> {
   final _pageController = PageController();
   DateTime? _currentBackPressTime;
 
+  Future<bool> onWillpopScope() async {
+    if (_currentIndex != 0) {
+      setState(() {
+        _currentIndex = 0;
+        _pageController.animateToPage(
+          _currentIndex,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        );
+      });
+      return false;
+    } else {
+      DateTime now = DateTime.now();
+      if (_currentBackPressTime == null ||
+          now.difference(_currentBackPressTime!) > Duration(seconds: 1)) {
+        _currentBackPressTime = now;
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBarBuilder.buildAppBar(context, _currentIndex),
         // ignore: deprecated_member_use
         body: WillPopScope(
-          onWillPop: () async {
-            if (_currentIndex != 0) {
-              setState(() {
-                _currentIndex = 0;
-                _pageController.animateToPage(
-                  _currentIndex,
-                  duration: const Duration(milliseconds: 100),
-                  curve: Curves.linear,
-                );
-              });
-              return false;
-            } else {
-              DateTime now = DateTime.now();
-              if (_currentBackPressTime == null ||
-                  now.difference(_currentBackPressTime!) >
-                      Duration(seconds: 1)) {
-                _currentBackPressTime = now;
-                return false;
-              } else {
-                return true;
-              }
-            }
-          },
+          onWillPop: onWillpopScope,
           child: PageView(
             children: _pagesView,
             onPageChanged: (index) {

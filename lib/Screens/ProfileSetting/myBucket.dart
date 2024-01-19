@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
 
 import '../../Helpers/sharedPref.dart';
+import '../../Models/Response/SingleProductResponse.dart';
 import '../../Models/Response/myBucketListResponse.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
@@ -31,6 +32,25 @@ class _MyBucketScreen extends State<MyBucketScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<SingleProductResponse?> fetchProductById(int productId) async {
+    String UserKey = await _sharedPref.read("KingUserId");
+    String MobileKey = UserKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
+    print(MobileKey);
+    final String apiUrl =
+        '${ApiUrlConstants.getProductById}?id=$productId&mobileUserKey=$MobileKey';
+    final response = await http.get(Uri.parse(apiUrl), headers: headers);
+    if (response.statusCode == 200) {
+      final dynamic parsedData = json.decode(response.body);
+      print(response.body);
+      return SingleProductResponse.fromJson(parsedData);
+    } else {
+      throw Exception('Failed to load product');
+    }
   }
 
   Future<List<myBucketListResponse>?> myBucketdata() async {
@@ -134,7 +154,9 @@ class _MyBucketScreen extends State<MyBucketScreen> {
               return ListView.builder(
                   itemCount: data.length,
                   itemBuilder: (context, index) {
-                    final String isShowReminder = "${data[index].showReminder}";
+                    final bool isShowReminder = data[index].showReminder;
+                    final int productId = data[index].id;
+
                     DateTime startdate = data[index].startdate;
                     DateTime enddate = data[index].enddate;
 
@@ -251,7 +273,9 @@ class _MyBucketScreen extends State<MyBucketScreen> {
                                                 BorderRadius.circular(10.0),
                                           ),
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          fetchProductById(productId);
+                                        },
                                         child: Text(
                                           "open",
                                           style: TextStyle(

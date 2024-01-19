@@ -22,6 +22,7 @@ import 'Screens/all_screens.dart';
 void main() async {
   print(DateTime.now());
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate();
   print(DateTime.now());

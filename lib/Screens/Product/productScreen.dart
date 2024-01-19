@@ -144,7 +144,7 @@ class _TradingScreen extends State<TradingScreen> {
         usingHeaders.createHeaders(jwtToken: jwtToken);
     print(MobileKey);
     final String apiUrl =
-        'http://192.168.29.246:8083/api/Product/GetProductById?id=$productId&mobileUserKey=$MobileKey';
+        '${ApiUrlConstants.getProductById}?id=$productId&mobileUserKey=$MobileKey';
     final response = await http.get(Uri.parse(apiUrl), headers: headers);
     if (response.statusCode == 200) {
       final dynamic parsedData = json.decode(response.body);
@@ -211,138 +211,102 @@ class _TradingScreen extends State<TradingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
-              decoration: BoxDecoration(
-                  color: AppColors.lightShadow,
-                  borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isCommunitySelected = true;
-                        _pageController.animateToPage(0,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.ease);
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        backgroundColor:
-                            isCommunitySelected ? AppColors.light : null,
-                        padding: EdgeInsets.symmetric(horizontal: 45)),
-                    child: Text(
-                      'Services',
-                      style: TextStyle(
-                          color: isCommunitySelected
-                              ? AppColors.primaryColor
-                              : AppColors.grey,
-                          fontWeight: FontWeight.w700),
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: () async {
+        if (_pageController.page == 1) {
+          _pageController.animateTo(0,
+              duration: const Duration(milliseconds: 300), curve: Curves.ease);
+          return false;
+        }
+        return true;
+      },
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Column(
+            children: [
+              Container(
+                margin:
+                    EdgeInsets.only(top: 10, bottom: 2, left: 18, right: 18),
+                decoration: BoxDecoration(
+                    color: AppColors.lightShadow,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isCommunitySelected = true;
+                          _pageController.animateToPage(0,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          backgroundColor:
+                              isCommunitySelected ? AppColors.light : null,
+                          padding: EdgeInsets.symmetric(horizontal: 45)),
+                      child: Text(
+                        'Services',
+                        style: TextStyle(
+                            color: isCommunitySelected
+                                ? AppColors.primaryColor
+                                : AppColors.grey,
+                            fontWeight: FontWeight.w700),
+                      ),
                     ),
-                  ),
-                  Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isCommunitySelected = false;
-                        _pageController.animateToPage(1,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.ease);
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        backgroundColor:
-                            !isCommunitySelected ? AppColors.light : null,
-                        padding: EdgeInsets.symmetric(horizontal: 45)),
-                    child: Text(
-                      'Algo Trading',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: !isCommunitySelected
-                              ? AppColors.primaryColor
-                              : AppColors.grey),
+                    Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isCommunitySelected = false;
+                          _pageController.animateToPage(1,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          backgroundColor:
+                              !isCommunitySelected ? AppColors.light : null,
+                          padding: EdgeInsets.symmetric(horizontal: 45)),
+                      child: Text(
+                        'Algo Trading',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: !isCommunitySelected
+                                ? AppColors.primaryColor
+                                : AppColors.grey),
+                      ),
                     ),
-                  ),
-                  Spacer(),
-                ],
+                    Spacer(),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    isCommunitySelected = index == 0;
-                  });
-                },
-                children: [
-                  FutureBuilder<List<ProductResponseModel>?>(
-                    future: productsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          snapshot.hasError) {
-                        return ShimmerListView(itemCount: 5);
-                      } else {
-                        List<ProductResponseModel> data = snapshot.data!;
-                        return RefreshHelper.buildRefreshIndicator(
-                          onRefresh: () async {
-                            setState(() {
-                              productsFuture = fetchDataThree();
-                            });
-                          },
-                          child: ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 2),
-                                width: MediaQuery.of(context).size.width,
-                                height: 200,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: AppColors.grey, width: 0.5),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Image.asset(
-                                      'images/cr_1.jpg',
-                                      height: 130,
-                                      width: 300,
-                                      fit:
-                                          BoxFit.cover, // Adjust this as needed
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  FutureBuilder<List<ProductResponseModel>?>(
-                    future: productsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          snapshot.hasError) {
-                        return ShimmerListViewForListofItems(itemCount: 7);
-                      } else {
-                        List<ProductResponseModel> data = snapshot.data!;
-                        return Container(
-                          height: constraints.maxHeight,
-                          child: RefreshHelper.buildRefreshIndicator(
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      isCommunitySelected = index == 0;
+                    });
+                  },
+                  children: [
+                    FutureBuilder<List<ProductResponseModel>?>(
+                      future: productsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                                ConnectionState.waiting ||
+                            snapshot.hasError) {
+                          return ShimmerListView(itemCount: 5);
+                        } else {
+                          List<ProductResponseModel> data = snapshot.data!;
+                          return RefreshHelper.buildRefreshIndicator(
                             onRefresh: () async {
                               setState(() {
                                 productsFuture = fetchDataThree();
@@ -351,269 +315,346 @@ class _TradingScreen extends State<TradingScreen> {
                             child: ListView.builder(
                               itemCount: data.length,
                               itemBuilder: (context, index) {
-                                return Builder(
-                                  builder: (context) {
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        String productId = data[index].id;
-                                        SingleProductResponse? product =
-                                            await fetchProductById(productId);
-                                        print(product);
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ProductDetailsScreen(
-                                              product: product,
-                                              updateParent: updateParent,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Card(
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
-                                        color: AppColors.lightShadow,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                          side: BorderSide(
-                                              color: AppColors.grey,
-                                              width: 0.2),
-                                        ),
-                                        elevation: 5,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 3),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                margin:
-                                                    const EdgeInsets.all(5.0),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color: AppColors.grey,
-                                                      width: 0.2),
-                                                ),
-                                                child: Image.asset(
-                                                  // data[index].image != null &&
-                                                  //         data[index].image.isNotEmpty
-                                                  //     ? data[index]['image']
-                                                  //     :
-                                                  //
-                                                  'images/cr_1.jpg',
-                                                  height: 100,
-                                                  width: 100,
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Flexible(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                child: Text(
-                                                                  data[index]
-                                                                      .name,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: AppColors
-                                                                        .primaryColor,
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            String productId =
-                                                                data[index].id;
-                                                            setState(() {
-                                                              if (data[index]
-                                                                  .userHasHeart) {
-                                                                data[index]
-                                                                    .heartsCount--;
-                                                                data[index]
-                                                                        .userHasHeart =
-                                                                    false;
-                                                              } else {
-                                                                data[index]
-                                                                    .heartsCount++;
-                                                                data[index]
-                                                                        .userHasHeart =
-                                                                    true;
-                                                              }
-                                                              Isliked(
-                                                                  productId,
-                                                                  data[index]
-                                                                      .userHasHeart);
-                                                            });
-                                                          },
-                                                          child: Column(
-                                                            children: [
-                                                              Icon(
-                                                                data[
-                                                                            index]
-                                                                        .userHasHeart
-                                                                    ? Icons
-                                                                        .favorite
-                                                                    : Icons
-                                                                        .favorite_border,
-                                                                color: data[index]
-                                                                        .userHasHeart
-                                                                    ? Colors.red
-                                                                    : null,
-                                                              ),
-                                                              Text(
-                                                                  '${data[index].heartsCount.toStringAsFixed(0)}'),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: Text(
-                                                            data[index]
-                                                                .description,
-                                                            style: TextStyle(
-                                                              fontSize: 12,
-                                                              color: AppColors
-                                                                  .grey,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 30,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Column(
-                                                          children: [
-                                                            RatingBar.builder(
-                                                              initialRating: double
-                                                                  .parse(data[
-                                                                          index]
-                                                                      .raiting
-                                                                      .toString()),
-                                                              itemBuilder:
-                                                                  (context,
-                                                                          _) =>
-                                                                      Icon(
-                                                                Icons.star,
-                                                                color: Colors
-                                                                    .amber,
-                                                              ),
-                                                              ignoreGestures:
-                                                                  true,
-                                                              itemSize: 18,
-                                                              onRatingUpdate:
-                                                                  (double
-                                                                      value) {},
-                                                            )
-                                                          ],
-                                                        ),
-                                                        Spacer(),
-                                                        TextButton(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          25),
-                                                            ),
-                                                          ),
-                                                          onPressed: () async {
-                                                            String productId =
-                                                                data[index].id;
-                                                            SingleProductResponse?
-                                                                product =
-                                                                await fetchProductById(
-                                                                    productId);
-
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          ProductDetailsScreen(
-                                                                    product:
-                                                                        product,
-                                                                    updateParent:
-                                                                        updateParent,
-                                                                  ),
-                                                                ));
-                                                          },
-                                                          child: Text(
-                                                            'Read More...',
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .primaryColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                return Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 2),
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 200,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: AppColors.grey, width: 0.5),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.asset(
+                                        'images/cr_1.jpg',
+                                        height: 130,
+                                        width: 300,
+                                        fit: BoxFit
+                                            .cover, // Adjust this as needed
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  ),
                                 );
                               },
                             ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ],
+                          );
+                        }
+                      },
+                    ),
+                    FutureBuilder<List<ProductResponseModel>?>(
+                      future: productsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                                ConnectionState.waiting ||
+                            snapshot.hasError) {
+                          return ShimmerListViewForListofItems(itemCount: 7);
+                        } else {
+                          List<ProductResponseModel> data = snapshot.data!;
+
+                          return Container(
+                            height: constraints.maxHeight,
+                            child: RefreshHelper.buildRefreshIndicator(
+                              onRefresh: () async {
+                                setState(() {
+                                  productsFuture = fetchDataThree();
+                                });
+                              },
+                              child: ListView.builder(
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  String formattedRating =
+                                      data[index].overAllRating.toString();
+                                  if (formattedRating.contains('.') &&
+                                      formattedRating.split('.')[1].length >
+                                          1) {
+                                    formattedRating = formattedRating.substring(
+                                        0, formattedRating.indexOf('.') + 2);
+                                  }
+
+                                  return Builder(
+                                    builder: (context) {
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          String productId = data[index].id;
+                                          SingleProductResponse? product =
+                                              await fetchProductById(productId);
+                                          print(product);
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProductDetailsScreen(
+                                                product: product,
+                                                updateParent: updateParent,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Card(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          color: AppColors.lightShadow,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                            side: BorderSide(
+                                                color: AppColors.grey,
+                                                width: 0.2),
+                                          ),
+                                          elevation: 5,
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 3),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  margin:
+                                                      const EdgeInsets.all(5.0),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: AppColors.grey,
+                                                        width: 0.2),
+                                                  ),
+                                                  child: Image.asset(
+                                                    // data[index].image != null &&
+                                                    //         data[index].image.isNotEmpty
+                                                    //     ? data[index]['image']
+                                                    //     :
+                                                    //
+                                                    'images/cr_1.jpg',
+                                                    height: 100,
+                                                    width: 100,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Flexible(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  child: Text(
+                                                                    data[index]
+                                                                        .name,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: AppColors
+                                                                          .primaryColor,
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              String productId =
+                                                                  data[index]
+                                                                      .id;
+                                                              setState(() {
+                                                                if (data[index]
+                                                                    .userHasHeart) {
+                                                                  data[index]
+                                                                      .heartsCount--;
+                                                                  data[index]
+                                                                          .userHasHeart =
+                                                                      false;
+                                                                } else {
+                                                                  data[index]
+                                                                      .heartsCount++;
+                                                                  data[index]
+                                                                          .userHasHeart =
+                                                                      true;
+                                                                }
+                                                                Isliked(
+                                                                    productId,
+                                                                    data[index]
+                                                                        .userHasHeart);
+                                                              });
+                                                            },
+                                                            child: Column(
+                                                              children: [
+                                                                Icon(
+                                                                  data[index].userHasHeart
+                                                                      ? Icons
+                                                                          .favorite
+                                                                      : Icons
+                                                                          .favorite_border,
+                                                                  color: data[index]
+                                                                          .userHasHeart
+                                                                      ? Colors
+                                                                          .red
+                                                                      : null,
+                                                                ),
+                                                                Text(
+                                                                    '${data[index].heartsCount.toStringAsFixed(0)}'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              data[index]
+                                                                  .description,
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: AppColors
+                                                                    .grey,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 30,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Column(
+                                                            children: [
+                                                              RatingBar.builder(
+                                                                initialRating: double
+                                                                    .parse(data[
+                                                                            index]
+                                                                        .overAllRating
+                                                                        .toString()),
+                                                                itemBuilder:
+                                                                    (context,
+                                                                            _) =>
+                                                                        Icon(
+                                                                  Icons.star,
+                                                                  color: Colors
+                                                                      .amber,
+                                                                ),
+                                                                ignoreGestures:
+                                                                    true,
+                                                                allowHalfRating:
+                                                                    true,
+                                                                itemSize: 18,
+                                                                onRatingUpdate:
+                                                                    (double
+                                                                        value) {},
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Text(
+                                                            formattedRating,
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 12),
+                                                          ),
+                                                          Spacer(),
+                                                          TextButton(
+                                                            style: TextButton
+                                                                .styleFrom(
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            25),
+                                                              ),
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              String productId =
+                                                                  data[index]
+                                                                      .id;
+                                                              SingleProductResponse?
+                                                                  product =
+                                                                  await fetchProductById(
+                                                                      productId);
+
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            ProductDetailsScreen(
+                                                                      product:
+                                                                          product,
+                                                                      updateParent:
+                                                                          updateParent,
+                                                                    ),
+                                                                  ));
+                                                            },
+                                                            child: Text(
+                                                              'Read More...',
+                                                              style: TextStyle(
+                                                                  color: AppColors
+                                                                      .primaryColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     );
   }
 }

@@ -19,6 +19,7 @@ class ApiUrlConstants {
       baseUrl + 'Account/GetSubscriptionTopics';
   static String ManageUserDetails = baseUrl + 'Account/ManageUserDetails';
   static String GetUserDetails = baseUrl + 'Account/GetUserDetails';
+  static String RateProduct = baseUrl + 'Product/RateProduct';
 }
 
 class SessionConstants {

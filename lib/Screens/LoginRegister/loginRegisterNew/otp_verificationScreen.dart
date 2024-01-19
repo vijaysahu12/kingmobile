@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
@@ -37,9 +38,11 @@ class OtpVerificationScreen extends StatefulWidget {
 class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   List<TextEditingController> _otpControllers =
       List.generate(6, (index) => TextEditingController());
+  // TextEditingController _smsController = TextEditingController();
   // ignore: unused_field
   String _enteredOTP = '';
   String? selectedGender;
+  String _smsCode = "";
   final _formKey = new GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -49,6 +52,10 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   SharedPref _sharedPref = SharedPref();
   UsingSharedPref usingSharedPref = UsingSharedPref();
   UsingHeaders usingHeaders = UsingHeaders();
+
+  void _handleAutoFilledOtp(String otp) {
+    signInWithOtp(context, otp);
+  }
 
   void _otpChanged(int index, String value) {
     if (value.isNotEmpty) {
@@ -69,6 +76,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
       // Clear the current field
       _otpControllers[index].text = '';
     }
+    _handleAutoFilledOtp(_enteredOTP);
   }
 
   // FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -79,10 +87,29 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   //   });
   // }
 
+  void _requestSmsPermission() async {
+    var status = await Permission.sms.status;
+    if (!status.isGranted) {
+      await Permission.sms.request();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _listenForSms();
     _userData();
+  }
+
+  void _listenForSms() async {
+    // _requestSmsPermission();
+    await SmsAutoFill().listenForCode;
+  }
+
+  @override
+  void dispose() {
+    SmsAutoFill().unregisterListener();
+    super.dispose();
   }
 
   void _userData() async {
@@ -126,11 +153,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
     try {
-      // PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      //     verificationId: widget.verificationId, smsCode: smsCode);
-      // UserCredential userCredential =
-      //     await FirebaseAuth.instance.signInWithCredential(credential);
-      // print(userCredential);
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: widget.verificationId, smsCode: smsCode);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      print(userCredential);
       print('OTP verification successful!');
       String deviceType = widget.deviceType;
       String? firebaseToken = widget.fcmToken;
@@ -673,28 +700,25 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(6, (index) {
-                    return Container(
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: AppColors.lightShadow,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: TextField(
-                        controller: _otpControllers[index],
-                        textAlign: TextAlign.center,
-                        onChanged: (value) => _otpChanged(index, value),
-                        keyboardType: TextInputType.number,
-                        maxLength: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          counterText: '',
-                        ),
-                      ),
-                    );
-                  }),
+                child: PinFieldAutoFill(
+                  decoration: UnderlineDecoration(
+                    textStyle: TextStyle(fontSize: 20, color: Colors.black),
+                    colorBuilder:
+                        FixedColorBuilder(Colors.black.withOpacity(0.3)),
+                  ),
+                  currentCode: _smsCode,
+                  // controller: _smsController,
+                  onCodeSubmitted: (code) {},
+                  onCodeChanged: (code) {
+                    setState(() {
+                      _smsCode = code ?? ""; // Update the _smsCode variable
+                    });
+                    if (code?.length == 6) {
+                      print("Auto-filled OTP: $_smsCode");
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      signInWithOtp(context, _smsCode);
+                    }
+                  },
                 ),
               ),
               SizedBox(

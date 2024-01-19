@@ -356,6 +356,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                             ),
                             child: TextField(
                               controller: _userNameController,
+                              maxLength: 25,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -364,6 +365,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'Name',
+                                counterText: '',
                                 hintStyle: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

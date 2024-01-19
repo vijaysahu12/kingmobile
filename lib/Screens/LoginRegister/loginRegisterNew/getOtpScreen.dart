@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreen.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 import '../../../Helpers/sharedPref.dart';
 import '../../Constants/app_color.dart';
@@ -116,99 +117,6 @@ class _GetMobileOtp extends State<GetMobileOtp> {
       },
     );
   }
-
-  // signInWithOtp() async {
-  //   //final response = _accountService.login( phoneNumberController.text, countryCodeController.text);
-  //   String _emailOrMobile = phoneNumberController.text;
-  //   //String _countryCode = '91';
-  //   String _country = selectedCountry.phoneCode;
-  //   HttpRequestHelper.checkInternetConnection(context);
-  //   final apiUrl = ApiUrlConstants.otpLogin +
-  //       '?mobileNumber=$_emailOrMobile&countryCode=$_country';
-  //   // final response = await http.get(Uri.parse(apiUrl));
-  //   final response = await _httpHelper.getWithOutToken(apiUrl);
-  //   if (response.statusCode == 200) {
-  //     SharedPref _sharedPref = SharedPref();
-  //     Map<String, dynamic> jsonResponse = json.decode(response.body);
-  //     if (jsonResponse.containsKey('statusCode') &&
-  //         jsonResponse['statusCode'] == 200) {
-  //       _sharedPref.save("UserProfileMobile", _emailOrMobile);
-  //       _sharedPref.save("UserProfileMobileOTP", jsonResponse['message']);
-  //       print(response.body);
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => OtpVerificationScreen(
-  //             verificationId: 'verificationId',
-  //             resendToken: 1,
-  //           ),
-  //         ),
-  //       );
-  //     } else {
-  //       //ToDo: Try Again invalid mobile number
-  //     }
-  //   }
-  // }
-
-  // signInWithoutMobileOtp() async {
-  //   if (true) {
-  //     print("login button is clicked");
-  //     if (true) {
-  //       //String _emailOrMobile = "+91" + phoneNumberController.text;
-  //       String _emailOrMobile = phoneNumberController.text;
-  //       String _password = '123456';
-  //       // if (_emailOrMobile.isEmpty || _password.isEmpty) {
-  //       //   setState(() {
-  //       //     _useremailError = _emailOrMobile.isEmpty;
-  //       //     _userPassword = _password.isEmpty;
-  //       //   });
-  //       //   return;
-  //       // }
-  //       HttpRequestHelper.checkInternetConnection(context);
-
-  //       final apiUrl = ApiUrlConstants.login +
-  //           '?userName=$_emailOrMobile&password=$_password';
-  //       // final response = await http.get(Uri.parse(apiUrl));
-  //       final response = await _httpHelper.getWithOutToken(apiUrl);
-  //       if (response.statusCode == 200) {
-  //         SharedPref _sharedPref = SharedPref();
-  //         Map<String, dynamic> jsonResponse = json.decode(response.body);
-  //         if (jsonResponse.containsKey('statusCode') &&
-  //             jsonResponse['statusCode'] == 200) {
-  //           _sharedPref.save(
-  //               SessionConstants.UserKey, jsonResponse['data']["publicKey"]);
-  //           _sharedPref.save(
-  //               SessionConstants.Token, jsonResponse['data']["token"]);
-  //           _sharedPref.save(SessionConstants.UserProfileImage,
-  //               jsonResponse['data']["image"]);
-
-  //           print(jsonResponse['data']);
-  //         } else {
-  //           String errorMessage = jsonResponse['message'];
-  //           showDialog(
-  //             context: context,
-  //             builder: (BuildContext context) {
-  //               return AlertDialog(
-  //                 title: Text('Enter valid Mobile'),
-  //                 content: Text(errorMessage),
-  //                 actions: <Widget>[
-  //                   TextButton(
-  //                     child: Text('OK'),
-  //                     onPressed: () {
-  //                       Navigator.of(context).pop();
-  //                     },
-  //                   ),
-  //                 ],
-  //               );
-  //             },
-  //           );
-  //         }
-  //       } else {
-  //         print('API Request Failed with status code: ${response.statusCode}');
-  //       }
-  //     }
-  //   }
-  // }
 
   Future<String?> getDeviceType() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -331,6 +239,8 @@ class _GetMobileOtp extends State<GetMobileOtp> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
+                        final signature = await SmsAutoFill().getAppSignature;
+                        print(signature);
                         signInWithMobile(context);
                       },
                       style: ElevatedButton.styleFrom(
@@ -415,3 +325,98 @@ class _GetMobileOtp extends State<GetMobileOtp> {
     );
   }
 }
+
+
+
+ // signInWithOtp() async {
+  //   //final response = _accountService.login( phoneNumberController.text, countryCodeController.text);
+  //   String _emailOrMobile = phoneNumberController.text;
+  //   //String _countryCode = '91';
+  //   String _country = selectedCountry.phoneCode;
+  //   HttpRequestHelper.checkInternetConnection(context);
+  //   final apiUrl = ApiUrlConstants.otpLogin +
+  //       '?mobileNumber=$_emailOrMobile&countryCode=$_country';
+  //   // final response = await http.get(Uri.parse(apiUrl));
+  //   final response = await _httpHelper.getWithOutToken(apiUrl);
+  //   if (response.statusCode == 200) {
+  //     SharedPref _sharedPref = SharedPref();
+  //     Map<String, dynamic> jsonResponse = json.decode(response.body);
+  //     if (jsonResponse.containsKey('statusCode') &&
+  //         jsonResponse['statusCode'] == 200) {
+  //       _sharedPref.save("UserProfileMobile", _emailOrMobile);
+  //       _sharedPref.save("UserProfileMobileOTP", jsonResponse['message']);
+  //       print(response.body);
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => OtpVerificationScreen(
+  //             verificationId: 'verificationId',
+  //             resendToken: 1,
+  //           ),
+  //         ),
+  //       );
+  //     } else {
+  //       //ToDo: Try Again invalid mobile number
+  //     }
+  //   }
+  // }
+
+  // signInWithoutMobileOtp() async {
+  //   if (true) {
+  //     print("login button is clicked");
+  //     if (true) {
+  //       //String _emailOrMobile = "+91" + phoneNumberController.text;
+  //       String _emailOrMobile = phoneNumberController.text;
+  //       String _password = '123456';
+  //       // if (_emailOrMobile.isEmpty || _password.isEmpty) {
+  //       //   setState(() {
+  //       //     _useremailError = _emailOrMobile.isEmpty;
+  //       //     _userPassword = _password.isEmpty;
+  //       //   });
+  //       //   return;
+  //       // }
+  //       HttpRequestHelper.checkInternetConnection(context);
+
+  //       final apiUrl = ApiUrlConstants.login +
+  //           '?userName=$_emailOrMobile&password=$_password';
+  //       // final response = await http.get(Uri.parse(apiUrl));
+  //       final response = await _httpHelper.getWithOutToken(apiUrl);
+  //       if (response.statusCode == 200) {
+  //         SharedPref _sharedPref = SharedPref();
+  //         Map<String, dynamic> jsonResponse = json.decode(response.body);
+  //         if (jsonResponse.containsKey('statusCode') &&
+  //             jsonResponse['statusCode'] == 200) {
+  //           _sharedPref.save(
+  //               SessionConstants.UserKey, jsonResponse['data']["publicKey"]);
+  //           _sharedPref.save(
+  //               SessionConstants.Token, jsonResponse['data']["token"]);
+  //           _sharedPref.save(SessionConstants.UserProfileImage,
+  //               jsonResponse['data']["image"]);
+
+  //           print(jsonResponse['data']);
+  //         } else {
+  //           String errorMessage = jsonResponse['message'];
+  //           showDialog(
+  //             context: context,
+  //             builder: (BuildContext context) {
+  //               return AlertDialog(
+  //                 title: Text('Enter valid Mobile'),
+  //                 content: Text(errorMessage),
+  //                 actions: <Widget>[
+  //                   TextButton(
+  //                     child: Text('OK'),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                     },
+  //                   ),
+  //                 ],
+  //               );
+  //             },
+  //           );
+  //         }
+  //       } else {
+  //         print('API Request Failed with status code: ${response.statusCode}');
+  //       }
+  //     }
+  //   }
+  // }

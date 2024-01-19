@@ -30,7 +30,8 @@ class Product {
   final bool isInMyBucket;
   final bool isInValidity;
   final double price;
-  final String rating;
+  // final double overAllRating;
+  final String userRating;
   late bool isHeart;
   final List<ExtraBenefit> extraBenefits;
   final List<ContentResponse> content;
@@ -45,7 +46,8 @@ class Product {
     required this.subscriptionData,
     required this.isHeart,
     required this.price,
-    required this.rating,
+    // required this.overAllRating,
+    required this.userRating,
     required this.extraBenefits,
     required this.content,
   });
@@ -71,7 +73,9 @@ class Product {
         description: json['description'] ?? '',
         category: json['category'] ?? '',
         price: json['price']?.toDouble() ?? 0.0,
-        rating: json['rating'] ?? '',
+        // overAllRating: json['overAllRating']?.toDouble ?? 0,
+        userRating:
+            json['userRating'] != null ? json['userRating'].toString() : '',
         isInValidity: json['isInValidity'] ?? false,
         isInMyBucket: json['isInMyBucket'] ?? false,
         subscriptionData: json['subscriptionData'] ?? '',

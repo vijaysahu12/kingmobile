@@ -4,7 +4,8 @@ class ProductResponseModel {
   String name;
   String category;
   String description;
-  String raiting;
+  String overAllRating;
+  String userRating;
   bool userHasHeart;
   double heartsCount;
   bool liked;
@@ -17,7 +18,8 @@ class ProductResponseModel {
       required this.description,
       required this.userHasHeart,
       required this.heartsCount,
-      required this.raiting,
+      required this.overAllRating,
+      required this.userRating,
       required this.liked,
       required this.price});
 
@@ -42,7 +44,10 @@ class ProductResponseModel {
       description: json['description'] ?? '',
       userHasHeart: json['userHasHeart'] ?? '',
       heartsCount: (json['heartsCount'] ?? 0).toDouble(),
-      raiting: json['rating'] != null ? json['rating'].toString() : '',
+      overAllRating:
+          json['overAllRating'] != null ? json['overAllRating'].toString() : '',
+      userRating:
+          json['userRating'] != null ? json['userRating'].toString() : '',
       price: (json['price'] ?? 0).toDouble(), // Handle conversion to double
     );
   }
