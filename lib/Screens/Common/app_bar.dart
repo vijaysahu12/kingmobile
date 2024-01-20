@@ -11,6 +11,7 @@ import '../Notifications/allNotificationList.dart';
 
 SharedPref _sharedPref = SharedPref();
 UsingHeaders usingHeaders = UsingHeaders();
+
 Future<int?> NotificationList() async {
   final String userKey = await _sharedPref.read(SessionConstants.UserKey);
   String mobileKey = userKey.replaceAll('"', '');
@@ -41,7 +42,7 @@ Future<int?> NotificationList() async {
       print(parsedCount);
       return parsedCount;
     }
-    return null;
+    return 0;
   } else {
     print('Request failed with status: ${response.statusCode}');
     throw Exception('Failed to load notifications');
@@ -51,7 +52,11 @@ Future<int?> NotificationList() async {
 @override
 void initState() {
   initState();
-  NotificationList();
+}
+
+@override
+void dispose() {
+  dispose();
 }
 
 class AppBarBuilder {

@@ -11,6 +11,7 @@ import 'package:kraapp/Screens/Common/shimmerScreen.dart';
 import '../../Helpers/ApiUrls.dart';
 
 import '../../Helpers/sharedPref.dart';
+import '../Common/app_bar.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
@@ -73,6 +74,7 @@ class _Personal extends State<Personal> {
   Future<void> refreshData() async {
     setState(() {
       dataFuture = fetchData();
+      NotificationList();
     });
   }
 

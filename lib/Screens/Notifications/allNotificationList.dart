@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
+import '../Common/app_bar.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
@@ -32,6 +33,7 @@ class _AllNotifications extends State<AllNotifications> {
   PageController pageController = PageController();
   int selectedCategoryIndex = 0;
   late ScrollController buttonsScrollController;
+  Set<int> tappedNotificationIds = Set<int>();
 
   Future<void> fetchData() async {
     String userKey = await _sharedPref.read("KingUserId");
@@ -196,10 +198,24 @@ class _AllNotifications extends State<AllNotifications> {
     final response = await http.post(Uri.parse(apiUrl), headers: headers);
 
     if (response.statusCode == 200) {
-      print("Notification is Marked");
+      print("Notification is Read");
     } else {
       print("Failder to mark");
     }
+  }
+
+  Future<void> updateUnreadCount() async {
+    setState(() {
+      NotificationList();
+      unReadCountNotificationList();
+    });
+  }
+
+  Future<void> onRefresh() async {
+    setState(() {
+      fetchData();
+      unReadCountNotificationList();
+    });
   }
 
   @override
@@ -237,6 +253,7 @@ class _AllNotifications extends State<AllNotifications> {
           ],
         ),
       ),
+      // ignore: deprecated_member_use
       body: Column(
         children: [
           FutureBuilder<List<Category>?>(
@@ -328,17 +345,28 @@ class _AllNotifications extends State<AllNotifications> {
                               final category = Items[index]['category'];
                               final ids = Items[index]['id'];
                               final isRead = Items[index]['isRead'];
+                              bool isTapped =
+                                  tappedNotificationIds.contains(ids);
                               return GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   setState(() {
-                                    markNotificationAsRead(ids);
+                                    if (isTapped) {
+                                      tappedNotificationIds.remove(ids);
+                                    } else {
+                                      tappedNotificationIds.add(ids);
+                                      markNotificationAsRead(ids);
+                                      unReadCountNotificationList();
+                                      updateUnreadCount(); // Call the new method
+                                    }
                                   });
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: isRead
+                                    color: isTapped
                                         ? AppColors.light
-                                        : AppColors.lightShadow,
+                                        : (isRead
+                                            ? AppColors.light
+                                            : AppColors.lightShadow),
                                     border: Border(
                                       bottom: BorderSide(
                                         color: AppColors.cyan,

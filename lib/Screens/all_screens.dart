@@ -28,28 +28,20 @@ class _HomeScreen extends State<HomeScreen> {
     PersonalInformation()
   ];
   final _pageController = PageController();
-  DateTime? _currentBackPressTime;
 
   Future<bool> onWillpopScope() async {
-    if (_currentIndex != 0) {
+    if (_currentIndex > 0) {
       setState(() {
-        _currentIndex = 0;
+        _currentIndex--;
         _pageController.animateToPage(
           _currentIndex,
-          duration: const Duration(milliseconds: 100),
+          duration: const Duration(milliseconds: 50),
           curve: Curves.linear,
         );
       });
       return false;
     } else {
-      DateTime now = DateTime.now();
-      if (_currentBackPressTime == null ||
-          now.difference(_currentBackPressTime!) > Duration(seconds: 1)) {
-        _currentBackPressTime = now;
-        return false;
-      } else {
-        return true;
-      }
+      return true;
     }
   }
 
