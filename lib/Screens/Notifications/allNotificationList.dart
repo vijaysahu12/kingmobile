@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
-import '../Common/app_bar.dart';
+// import '../Common/app_bar.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
@@ -204,13 +204,6 @@ class _AllNotifications extends State<AllNotifications> {
     }
   }
 
-  Future<void> updateUnreadCount() async {
-    setState(() {
-      NotificationList();
-      unReadCountNotificationList();
-    });
-  }
-
   Future<void> onRefresh() async {
     setState(() {
       fetchData();
@@ -338,7 +331,6 @@ class _AllNotifications extends State<AllNotifications> {
                           itemCount:
                               isLoadingMore ? Items.length + 1 : Items.length,
                           itemBuilder: (context, index) {
-                            // if (isLoadingMore)
                             if (index < Items.length) {
                               final title = Items[index]['title'];
                               final body = Items[index]['body'];
@@ -349,16 +341,21 @@ class _AllNotifications extends State<AllNotifications> {
                                   tappedNotificationIds.contains(ids);
                               return GestureDetector(
                                 onTap: () async {
+                                  // markNotificationAsRead(ids);
+                                  await markNotificationAsRead(ids);
+
                                   setState(() {
                                     if (isTapped) {
                                       tappedNotificationIds.remove(ids);
                                     } else {
                                       tappedNotificationIds.add(ids);
-                                      markNotificationAsRead(ids);
-                                      unReadCountNotificationList();
-                                      updateUnreadCount(); // Call the new method
                                     }
+                                    print('hai');
+
+                                    // unReadCountNotificationList();
                                   });
+                                  print('hello');
+                                  unReadCountNotificationList();
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(

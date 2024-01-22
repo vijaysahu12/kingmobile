@@ -4,6 +4,7 @@ import 'dart:io';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
@@ -357,6 +358,11 @@ class _PersonalDetails extends State<PersonalDetails> {
                             child: TextField(
                               controller: _userNameController,
                               maxLength: 25,
+                              keyboardType: TextInputType.name,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z]')),
+                              ],
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -594,6 +600,10 @@ class _PersonalDetails extends State<PersonalDetails> {
                                       ),
                                       child: TextField(
                                         controller: _userCityController,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r'[a-zA-Z]')),
+                                        ],
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,

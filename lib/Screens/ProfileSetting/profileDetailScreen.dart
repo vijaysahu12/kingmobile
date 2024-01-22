@@ -307,7 +307,93 @@ class _PersonalInformation extends State<PersonalInformation> {
               height: 10,
             ),
             GestureDetector(
-              onTap: () => AccountService().logOut(context),
+              onTap: () => {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Center(
+                        child: Dialog(
+                          backgroundColor: AppColors.lightShadow,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Confirm Logging Out?",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                          color: AppColors.dark),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Are you sure you want to logout.?',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.grey,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.blue,
+                                      ),
+                                      onPressed: () {
+                                        AccountService().logOut(context);
+                                      },
+                                      child: Text(
+                                        "Confirm",
+                                        style: TextStyle(
+                                            color: AppColors.lightShadow,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.blue,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                            color: AppColors.light,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+
+                // AccountService().logOut(context),
+              },
               // _sharedPref.remove("KingUserToken");
               // Navigator.pushAndRemoveUntil(
               //     context,
