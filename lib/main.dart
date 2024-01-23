@@ -251,6 +251,7 @@ class _MyAppState extends State<MyApp> {
 
   void checkLoginStatus() async {
     String token = await _sharedPref.read("KingUserToken");
+
     setState(() {
       isLoggedIn = token.isNotEmpty;
     });
