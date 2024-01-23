@@ -1,16 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/ProfileSetting/myBucket.dart';
 
 import 'package:kraapp/Screens/ProfileSetting/notifications.dart';
 import 'package:kraapp/Screens/ProfileSetting/personalDetails.dart';
 import 'package:kraapp/Screens/ProfileSetting/settings.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:kraapp/Services/AccountService.dart';
 import 'package:sliding_switch/sliding_switch.dart';
 
+import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
+import '../../Models/Response/UserDetailsResponse.dart';
+import '../Common/app_bar.dart';
 import '../Common/refreshtwo.dart';
+import '../Common/useSharedPref.dart';
 // import '../Common/refresh.dart';
 
 class PersonalInformation extends StatefulWidget {
@@ -30,6 +37,58 @@ class _PersonalInformation extends State<PersonalInformation> {
   void initState() {
     super.initState();
     _loadData();
+  }
+
+  Future<List<UserDetailsResponse>?> GetUserDetails() async {
+    try {
+      String userKey = await _sharedPref.read(SessionConstants.UserKey);
+      String mobileKey = userKey.replaceAll('"', '');
+      UsingSharedPref usingSharedPref = UsingSharedPref();
+      final jwtToken = await usingSharedPref.getJwtToken();
+      Map<String, String> headers =
+          usingHeaders.createHeaders(jwtToken: jwtToken);
+      final String apiUrl =
+          '${ApiUrlConstants.GetUserDetails}?mobileUserKey=$mobileKey';
+      final response = await http.get(Uri.parse(apiUrl), headers: headers);
+
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final dynamic getUserData = json.decode(response.body);
+
+        print('GetUserData: $getUserData');
+
+        if (getUserData == null) {
+          print('API response is null');
+          return null;
+        }
+        if (getUserData.containsKey('data')) {
+          if (getUserData['data'] is Map) {
+            Map<String, dynamic> userDataMap = getUserData['data'];
+            UserDetailsResponse userDetailsResponse =
+                UserDetailsResponse.fromJson(userDataMap);
+            return [userDetailsResponse];
+          } else if (getUserData['data'] is List) {
+            List<dynamic> getUsersData = getUserData['data'];
+            List<UserDetailsResponse> list = getUsersData
+                .map((userInfo) => UserDetailsResponse.fromJson(userInfo))
+                .toList();
+            return list;
+          }
+        } else {
+          print('API response does not contain a data field');
+          return null;
+        }
+      } else {
+        print(
+            'Failed to fetch GetUsersData. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching user details: $e');
+    }
+
+    return null;
   }
 
   Future<void> _loadData() async {
@@ -75,12 +134,33 @@ class _PersonalInformation extends State<PersonalInformation> {
                       SizedBox(
                         width: 10,
                       ),
-                      CircleAvatar(
-                        backgroundImage: AssetImage(
-                          'images/person_logo.png',
-                        ),
-                        radius: 25,
-                        backgroundColor: AppColors.lightShadow,
+                      FutureBuilder<List<UserDetailsResponse>?>(
+                        future: GetUserDetails(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (snapshot.hasData &&
+                              snapshot.data != null) {
+                            List<UserDetailsResponse>? userDetails =
+                                snapshot.data;
+                            String base64Image = userDetails![0].profileImage;
+
+                            return CircleAvatar(
+                              radius: 25,
+                              backgroundImage:
+                                  MemoryImage(base64Decode(base64Image)),
+                              backgroundColor: AppColors.lightShadow,
+                            );
+                          } else {
+                            return CircleAvatar(
+                              radius: 25,
+                              backgroundImage: AssetImage(
+                                'images/person_logo.png',
+                              ),
+                              backgroundColor: AppColors.light,
+                            );
+                          }
+                        },
                       ),
                       SizedBox(
                         width: 15,

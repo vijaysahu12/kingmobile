@@ -4,23 +4,31 @@ class UserDetailsResponse {
   final String mobile;
   final String city;
   final String gender;
-  DateTime dob;
+  final DateTime dob;
+  final String publicKey;
+  final String profileImage;
 
-  UserDetailsResponse(
-      {required this.fullName,
-      required this.city,
-      required this.dob,
-      required this.emailId,
-      required this.gender,
-      required this.mobile});
+  UserDetailsResponse({
+    required this.fullName,
+    required this.emailId,
+    required this.mobile,
+    required this.city,
+    required this.gender,
+    required this.dob,
+    required this.publicKey,
+    required this.profileImage,
+  });
 
   factory UserDetailsResponse.fromJson(Map<String, dynamic> json) {
     return UserDetailsResponse(
-        fullName: json['fullName'] ?? '',
-        city: json['city'] ?? '',
-        dob: DateTime.parse(json['dob']),
-        emailId: json['emailId'] ?? '',
-        gender: json['gender'] ?? '',
-        mobile: json['mobile'] ?? '');
+      fullName: json['fullName'] ?? '',
+      emailId: json['emailId'] ?? '',
+      mobile: json['mobile'] ?? '',
+      city: json['city'] ?? '',
+      gender: json['gender'] ?? '',
+      dob: json['dob'] != null ? DateTime.parse(json['dob']) : DateTime.now(),
+      publicKey: json['publicKey'] ?? '',
+      profileImage: json['profileImage'] ?? '',
+    );
   }
 }

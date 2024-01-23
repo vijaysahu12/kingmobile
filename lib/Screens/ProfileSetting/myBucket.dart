@@ -9,6 +9,7 @@ import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/ProductResponseModel.dart';
 import '../../Models/Response/SingleProductResponse.dart';
 import '../../Models/Response/myBucketListResponse.dart';
+import '../Common/refreshtwo.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 import '../Product/readMoreScreen.dart';
@@ -147,6 +148,12 @@ class _MyBucketScreen extends State<MyBucketScreen> {
     }
   }
 
+  Future<void> refreshScreen() async {
+    setState(() {
+      myBucketdata();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,167 +193,173 @@ class _MyBucketScreen extends State<MyBucketScreen> {
             } else {
               List<myBucketListResponse>? data = snapshot.data!;
 
-              return ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    final bool isShowReminder = data[index].showReminder;
-                    final int productId = data[index].id;
+              return RefreshHelper.buildRefreshIndicator(
+                onRefresh: refreshScreen,
+                child: ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      final bool isShowReminder = data[index].showReminder;
+                      final int productId = data[index].id;
 
-                    DateTime startdate = data[index].startdate;
-                    DateTime enddate = data[index].enddate;
+                      DateTime startdate = data[index].startdate;
+                      DateTime enddate = data[index].enddate;
 
-                    String formattedStartDate =
-                        DateFormat('dd-MMM-yyyy').format(startdate);
-                    String formattedEndDate =
-                        DateFormat('dd-MMM-yyyy').format(enddate);
-                    return Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: AppColors.cyan,
-                          borderRadius: BorderRadius.circular(15)),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.asset(
-                              "images/cr_3.jpg",
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
+                      String formattedStartDate =
+                          DateFormat('dd-MMM-yyyy').format(startdate);
+                      String formattedEndDate =
+                          DateFormat('dd-MMM-yyyy').format(enddate);
+                      return Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: AppColors.cyan,
+                            borderRadius: BorderRadius.circular(15)),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.asset(
+                                "images/cr_3.jpg",
+                                height: 100,
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "${data[index].name}",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        setState(() {
-                                          data[index].isHeart =
-                                              !data[index].isHeart;
-                                        });
-                                        await Isliked(data[index].id.toString(),
-                                            data[index].isHeart);
-                                      },
-                                      child: Icon(
-                                        data[index].isHeart
-                                            ? Icons.favorite
-                                            : Icons.favorite_border_rounded,
-                                        color: data[index].isHeart
-                                            ? Colors.red
-                                            : null,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text("${data[index].categoryName}")
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(formattedStartDate),
-                                    SizedBox(
-                                      width: 50,
-                                    ),
-                                    Text(formattedEndDate),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                        "${data[index].daysToGo.toString()} Days to Go End"),
-                                    Spacer(),
-                                    if (isShowReminder == true)
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15),
-                                          backgroundColor:
-                                              AppColors.primaryColor,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                        ),
-                                        onPressed: () {},
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
                                         child: Text(
-                                          "Renew",
+                                          "${data[index].name}",
                                           style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors.light,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    if (isShowReminder != true)
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15),
-                                          backgroundColor:
-                                              AppColors.primaryColor,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
                                           ),
                                         ),
-                                        onPressed: () async {
-                                          // String productId = data[index].id as String;
-                                          SingleProductResponse? product =
-                                              await fetchProductById(productId);
-                                          print(productId);
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
                                           setState(() {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProductDetailsScreen(
-                                                  product: product,
-                                                  updateParent: updateParent,
-                                                ),
-                                              ),
-                                            );
+                                            data[index].isHeart =
+                                                !data[index].isHeart;
                                           });
-                                          fetchProductById(productId);
+                                          await Isliked(
+                                              data[index].id.toString(),
+                                              data[index].isHeart);
                                         },
-                                        child: Text(
-                                          "open",
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors.light,
-                                              fontWeight: FontWeight.bold),
+                                        child: Icon(
+                                          data[index].isHeart
+                                              ? Icons.favorite
+                                              : Icons.favorite_border_rounded,
+                                          color: data[index].isHeart
+                                              ? Colors.red
+                                              : null,
                                         ),
                                       ),
-                                    SizedBox(
-                                      width: 10,
-                                    )
-                                  ],
-                                ),
-                              ],
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text("${data[index].categoryName}")
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(formattedStartDate),
+                                      SizedBox(
+                                        width: 50,
+                                      ),
+                                      Text(formattedEndDate),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          "${data[index].daysToGo.toString()} Days to Go End"),
+                                      Spacer(),
+                                      if (isShowReminder == true)
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            backgroundColor:
+                                                AppColors.primaryColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                          ),
+                                          onPressed: () {},
+                                          child: Text(
+                                            "Renew",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: AppColors.light,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      if (isShowReminder != true)
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            backgroundColor:
+                                                AppColors.primaryColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            // String productId = data[index].id as String;
+                                            SingleProductResponse? product =
+                                                await fetchProductById(
+                                                    productId);
+                                            print(productId);
+                                            setState(() {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProductDetailsScreen(
+                                                    product: product,
+                                                    updateParent: updateParent,
+                                                  ),
+                                                ),
+                                              );
+                                            });
+                                            fetchProductById(productId);
+                                          },
+                                          child: Text(
+                                            "open",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: AppColors.light,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      SizedBox(
+                                        width: 10,
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  });
+                          ],
+                        ),
+                      );
+                    }),
+              );
             }
           }),
     );

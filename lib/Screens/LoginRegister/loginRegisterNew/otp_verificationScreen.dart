@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -87,12 +88,12 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   //   });
   // }
 
-  void _requestSmsPermission() async {
-    var status = await Permission.sms.status;
-    if (!status.isGranted) {
-      await Permission.sms.request();
-    }
-  }
+  // void _requestSmsPermission() async {
+  //   var status = await Permission.sms.status;
+  //   if (!status.isGranted) {
+  //     await Permission.sms.request();
+  //   }
+  // }
 
   @override
   void initState() {
@@ -120,17 +121,21 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   }
 
   Future<void> postUserData() async {
+    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
+    String MobileKey = UserKey.replaceAll('"', '');
     final jwtToken = await usingSharedPref.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.ManageUserDetails}';
     Map<String, String> userData = {
-      "fullName": _nameController.text,
-      "emailId": _emailController.text,
-      "mobile": _mobileController.text,
-      "city": _cityController.text,
-      "gender": selectedGender.toString(),
-      "dob": "08-08-20"
+      "PublicKey": MobileKey,
+      "FullName": _nameController.text,
+      "EmailId": _emailController.text,
+      "Mobile": _mobileController.text,
+      "City": _cityController.text,
+      "Gender": selectedGender.toString(),
+      "Dob": "08-08-20",
+      "ProfileImage": "Null"
     };
     print(userData);
     try {
@@ -141,7 +146,13 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
       );
 
       if (response.statusCode == 200) {
-        print("Data is updated successfully!");
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        if (responseBody['statusCode'] == 200) {
+          print("Data is updated successfully!");
+        } else {
+          print(
+              'Failed to update data: ${responseBody['statusCode']}, ${responseBody['message']}');
+        }
       } else {
         print('Failed to update data: ${response.statusCode}');
       }
@@ -153,11 +164,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
     try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: widget.verificationId, smsCode: smsCode);
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      print(userCredential);
+      // PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      //     verificationId: widget.verificationId, smsCode: smsCode);
+      // UserCredential userCredential =
+      //     await FirebaseAuth.instance.signInWithCredential(credential);
+      // print(userCredential);
       print('OTP verification successful!');
       String deviceType = widget.deviceType;
       String? firebaseToken = widget.fcmToken;
@@ -219,6 +230,10 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                 ),
                                 child: TextFormField(
                                   controller: _nameController,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[a-zA-Z]')),
+                                  ],
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -402,6 +417,10 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
                                   // ),
                                 ),
                                 child: TextFormField(
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[a-zA-Z]')),
+                                  ],
                                   controller: _cityController,
                                   style: TextStyle(
                                     fontSize: 12,

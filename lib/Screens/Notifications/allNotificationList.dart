@@ -8,6 +8,7 @@ import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
 // import '../Common/app_bar.dart';
+import '../../notificationCountfunctions.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
@@ -149,39 +150,39 @@ class _AllNotifications extends State<AllNotifications> {
     }
   }
 
-  Future<int?> unReadCountNotificationList() async {
-    String userKey = await _sharedPref.read("KingUserId");
-    String mobileKey = userKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
-    Map<String, String> headers =
-        usingHeaders.createHeaders(jwtToken: jwtToken);
-    final String apiUrl = '${ApiUrlConstants.GetNotifications}';
-    final Map<String, dynamic> requestBody = {
-      "id": 0,
-      "pageSize": 200,
-      "pageNumber": 1,
-      "requestedBy": mobileKey
-    };
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: headers,
-      body: jsonEncode(requestBody),
-    );
-    if (response.statusCode == 200) {
-      final dynamic unReadCount = await jsonDecode(response.body);
-      if (unReadCount.containsKey('data') &&
-          unReadCount['data'] != null &&
-          unReadCount['data']['unReadCount'] != null) {
-        final int parsedCount = unReadCount['data']['unReadCount'];
-        print(parsedCount);
-        return parsedCount;
-      }
-      return null;
-    } else {
-      print('Request failed with status: ${response.statusCode}');
-      throw Exception('Failed to load notifications');
-    }
-  }
+  // Future<int?> unReadCountNotificationList() async {
+  //   String userKey = await _sharedPref.read("KingUserId");
+  //   String mobileKey = userKey.replaceAll('"', '');
+  //   final jwtToken = await usingSharedPref.getJwtToken();
+  //   Map<String, String> headers =
+  //       usingHeaders.createHeaders(jwtToken: jwtToken);
+  //   final String apiUrl = '${ApiUrlConstants.GetNotifications}';
+  //   final Map<String, dynamic> requestBody = {
+  //     "id": 0,
+  //     "pageSize": 10,
+  //     "pageNumber": 1,
+  //     "requestedBy": mobileKey
+  //   };
+  //   final response = await http.post(
+  //     Uri.parse(apiUrl),
+  //     headers: headers,
+  //     body: jsonEncode(requestBody),
+  //   );
+  //   if (response.statusCode == 200) {
+  //     final dynamic unReadCount = await jsonDecode(response.body);
+  //     if (unReadCount.containsKey('data') &&
+  //         unReadCount['data'] != null &&
+  //         unReadCount['data']['unReadCount'] != null) {
+  //       final int parsedCount = unReadCount['data']['unReadCount'];
+  //       print(parsedCount);
+  //       return parsedCount;
+  //     }
+  //     return null;
+  //   } else {
+  //     print('Request failed with status: ${response.statusCode}');
+  //     throw Exception('Failed to load notifications');
+  //   }
+  // }
 
   List<Category> _parseCategories(String categoriesJson) {
     List<dynamic> parsedList = json.decode(categoriesJson);
@@ -207,7 +208,7 @@ class _AllNotifications extends State<AllNotifications> {
   Future<void> onRefresh() async {
     setState(() {
       fetchData();
-      unReadCountNotificationList();
+      NotificationList();
     });
   }
 
@@ -355,7 +356,7 @@ class _AllNotifications extends State<AllNotifications> {
                                     // unReadCountNotificationList();
                                   });
                                   print('hello');
-                                  unReadCountNotificationList();
+                                  NotificationList();
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(

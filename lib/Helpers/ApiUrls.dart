@@ -1,5 +1,5 @@
 class ApiUrlConstants {
-  static String baseUrl = 'http://mobile.kingresearch.co.in/api/';
+  static String baseUrl = 'http://192.168.29.246:8083/api/';
   // static String baseUrl = 'http://mobile.kingresearch.co.in/api/';
   static String login = baseUrl + "Account/login";
   static String getProducts = baseUrl + 'Product/GetProducts/';
@@ -21,6 +21,7 @@ class ApiUrlConstants {
   static String ManageUserDetails = baseUrl + 'Account/ManageUserDetails';
   static String GetUserDetails = baseUrl + 'Account/GetUserDetails';
   static String RateProduct = baseUrl + 'Product/RateProduct';
+  static String GetTopGainers = baseUrl + 'Product/GetTopGainers';
 }
 
 class SessionConstants {

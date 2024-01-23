@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:kraapp/Models/Response/GetTopGainers.dart';
 import 'package:kraapp/Models/Response/HomeResponse.dart';
 import 'package:kraapp/Screens/Common/shimmerScreen.dart';
 
@@ -11,7 +12,7 @@ import 'package:kraapp/Screens/Common/shimmerScreen.dart';
 import '../../Helpers/ApiUrls.dart';
 
 import '../../Helpers/sharedPref.dart';
-import '../Common/app_bar.dart';
+// import '../Common/app_bar.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
@@ -35,7 +36,7 @@ class _Personal extends State<Personal> {
   void initState() {
     print("Home Screen");
 
-    dataFuture = fetchData();
+    // dataFuture = fetchData();
     super.initState();
   }
 
@@ -71,10 +72,33 @@ class _Personal extends State<Personal> {
     }
   }
 
+  Future<List<GetTopGainers>?> getTopUsersData(String type) async {
+    UsingSharedPref usingSharedPref = UsingSharedPref();
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
+    print(jwtToken);
+    final String apiUrl = '${ApiUrlConstants.GetTopGainers}/$type';
+    final response = await http.get(Uri.parse(apiUrl), headers: headers);
+    if (response.statusCode == 200) {
+      List<GetTopGainers>? list;
+      final dynamic getTopGainersInfo = json.decode(response.body);
+      if (getTopGainersInfo['data'] is List) {
+        List<dynamic> getTopGainersList = getTopGainersInfo['data'];
+        list = getTopGainersList
+            .map((val) => GetTopGainers.fromJson(val))
+            .toList();
+      }
+      return list;
+    } else {
+      throw Exception("failed fetch data from api");
+    }
+  }
+
   Future<void> refreshData() async {
     setState(() {
       dataFuture = fetchData();
-      NotificationList();
+      // NotificationList();
     });
   }
 
@@ -82,9 +106,9 @@ class _Personal extends State<Personal> {
   Key carouselKey = UniqueKey();
 
   final List<String> imagePaths = [
-    'images/cr_1.jpg',
-    'images/cr_2.jpg',
-    'images/cr_3.jpg'
+    // 'images/cr_1.jpg',
+    // 'images/cr_2.jpg',
+    // 'images/cr_3.jpg'
   ];
 
   @override
@@ -123,7 +147,7 @@ class _Personal extends State<Personal> {
                       initialPage: _currentIndex,
                       enableInfiniteScroll: true,
                       reverse: true,
-                      autoPlayInterval: Duration(seconds: 8),
+                      autoPlayInterval: Duration(seconds: 800),
                       autoPlayAnimationDuration: Duration(microseconds: 800),
                       autoPlayCurve: Curves.fastOutSlowIn,
                       enlargeCenterPage: true,
@@ -456,13 +480,13 @@ class _Personal extends State<Personal> {
             SizedBox(
               height: 10,
             ),
-            FutureBuilder<List<HomeResponse>?>(
-              future: dataFuture,
+            FutureBuilder<List<GetTopGainers>?>(
+              future: getTopUsersData('g'),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ShimmerListViewForHome(itemCount: 1);
                 } else if (snapshot.hasData && snapshot.data != null) {
-                  List<HomeResponse> data = snapshot.data!;
+                  List<GetTopGainers> data = snapshot.data!;
                   return Column(
                     children: [
                       Padding(
@@ -520,6 +544,7 @@ class _Personal extends State<Personal> {
                                         child: TextButton(
                                           onPressed: () {
                                             setState(() {
+                                              getTopUsersData('g');
                                               selectedMarketButton = 'Gainers';
                                             });
                                           },
@@ -554,6 +579,7 @@ class _Personal extends State<Personal> {
                                         child: TextButton(
                                           onPressed: () {
                                             setState(() {
+                                              getTopUsersData('l');
                                               selectedMarketButton = 'Losers';
                                             });
                                           },
@@ -672,7 +698,7 @@ class _Personal extends State<Personal> {
                                                             width: 5,
                                                           ),
                                                           Text(
-                                                            'Bajaj Finance',
+                                                            product.stockName,
                                                             style: TextStyle(
                                                               fontSize: 10,
                                                               fontFamily:
@@ -686,7 +712,7 @@ class _Personal extends State<Personal> {
                                                           Text(
                                                             // product['price']
                                                             //     .toString(),
-                                                            product.price
+                                                            product.ltp
                                                                 .toString(),
                                                             style: TextStyle(
                                                               fontSize: 10,
@@ -708,7 +734,7 @@ class _Personal extends State<Personal> {
                                                             width: 5,
                                                           ),
                                                           Text(
-                                                            'NSE',
+                                                            product.exchange,
                                                             style: TextStyle(
                                                               color: AppColors
                                                                   .grey,

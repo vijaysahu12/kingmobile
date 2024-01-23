@@ -9,6 +9,7 @@ import 'package:kraapp/Models/Response/SingleProductResponse.dart';
 import 'package:kraapp/Screens/Common/refreshtwo.dart';
 
 import 'package:kraapp/Screens/Constants/app_color.dart';
+import 'package:kraapp/Screens/Product/talkToMeInstantly.dart';
 import 'package:pusher_beams/pusher_beams.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -123,8 +124,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     // paymentIsCompleted(productId, responseOfpayment, paymentAmount);//
     processPaymentAndAddInterest(productId, responseOfpayment, paymentAmount);
 
-    showAlertDialog(context, "Payment Successful",
-        "Payment ID: ${responseOfpayment.paymentId}");
+    setState(() {
+      widget.product!;
+
+      showAlertDialog(context, "Payment Successful",
+          "Payment ID: ${responseOfpayment.paymentId}");
+    });
   }
 
   void paymentFailureResponse(PaymentFailureResponse response) {
@@ -140,7 +145,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void showAlertDialog(BuildContext context, String title, String message) {
     Widget continueButton = ElevatedButton(
       child: const Text("Continue"),
-      onPressed: () {},
+      onPressed: () {
+        _pageController.animateToPage(
+          1,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+        Navigator.pop(context);
+      },
     );
 
     AlertDialog alert = AlertDialog(
@@ -738,8 +750,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             Column(
                               children: [
-                                Image.asset(
-                                  "images/cloudQuestion.jpg",
+                                Image.network(
+                                  "http://192.168.29.246:8083/api/Product/GetImage?imageName=cloud.jpg",
                                   height: 50,
                                   width: 50,
                                 )
@@ -768,7 +780,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 Row(
                                   children: [
                                     GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TalkToMeInstantly(),
+                                          ),
+                                        );
+                                      },
                                       child: Text(
                                         'Talk to me instantly',
                                         style: TextStyle(
@@ -937,7 +957,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             Flexible(
                               child: Text(
-                                "* Amount payble is inclusive of taxes Terms & Conditions apply ",
+                                "* Amount payable is inclusive of taxes Terms & Conditions apply ",
                                 style: TextStyle(
                                     fontFamily: "poppins",
                                     fontSize: 11,
