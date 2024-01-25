@@ -5,7 +5,6 @@ import 'package:kraapp/Screens/Common/useSharedPref.dart';
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/UserDetailsResponse.dart';
-import '../../notificationCountfunctions.dart';
 import '../Constants/app_color.dart';
 import '../Notifications/allNotificationList.dart';
 // import '../Notifications/notificationsList.dart';
@@ -14,39 +13,42 @@ import '../Notifications/allNotificationList.dart';
 SharedPref _sharedPref = SharedPref();
 UsingHeaders usingHeaders = UsingHeaders();
 
-// Future<int?> NotificationList() async {
-//   final String userKey = await _sharedPref.read(SessionConstants.UserKey);
-//   String mobileKey = userKey.replaceAll('"', '');
-//   UsingSharedPref usingSharedPref = UsingSharedPref();
-//   final jwtToken = await usingSharedPref.getJwtToken();
-//   Map<String, String> headers = usingHeaders.createHeaders(jwtToken: jwtToken);
-//   final String apiUrl = '${ApiUrlConstants.GetNotifications}';
-//   final Map<String, dynamic> requestBody = {
-//     "id": 0,
-//     "pageSize": 100,
-//     "pageNumber": 1,
-//     "requestedBy": mobileKey
-//   };
-//   final response = await http.post(
-//     Uri.parse(apiUrl),
-//     headers: headers,
-//     body: jsonEncode(requestBody),
-//   );
-//   if (response.statusCode == 200) {
-//     final dynamic jsonResponse = await jsonDecode(response.body);
-//     if (jsonResponse.containsKey('data') &&
-//         jsonResponse['data'] != null &&
-//         jsonResponse['data']['unReadCount'] != null) {
-//       final int parsedCount = jsonResponse['data']['unReadCount'] as int;
-//       print(parsedCount);
-//       return parsedCount;
-//     }
-//     return 0;
-//   } else {
-//     print('Request failed with status: ${response.statusCode}');
-//     throw Exception('Failed to load notifications');
-//   }
-// }
+Future<int?> NotificationList() async {
+  final String userKey = await _sharedPref.read(SessionConstants.UserKey);
+  String mobileKey = userKey.replaceAll('"', '');
+  UsingSharedPref usingSharedPref = UsingSharedPref();
+  final jwtToken = await usingSharedPref.getJwtToken();
+  Map<String, String> headers = usingHeaders.createHeaders(jwtToken: jwtToken);
+  final String apiUrl = '${ApiUrlConstants.GetNotifications}';
+  final Map<String, dynamic> requestBody = {
+    "id": 0,
+    "pageSize": 10,
+    "pageNumber": 1,
+    "requestedBy": mobileKey
+  };
+
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: headers,
+    body: jsonEncode(requestBody),
+  );
+
+  if (response.statusCode == 200) {
+    final dynamic jsonResponse = await jsonDecode(response.body);
+
+    if (jsonResponse.containsKey('data') &&
+        jsonResponse['data'] != null &&
+        jsonResponse['data']['unReadCount'] != null) {
+      final int parsedCount = jsonResponse['data']['unReadCount'] as int;
+      print(parsedCount);
+      return parsedCount;
+    }
+    return 0;
+  } else {
+    print('Request failed with status: ${response.statusCode}');
+    throw Exception('Failed to load notifications');
+  }
+}
 
 Future<List<UserDetailsResponse>?> GetUserDetails() async {
   try {
@@ -102,7 +104,6 @@ Future<List<UserDetailsResponse>?> GetUserDetails() async {
 
 @override
 void initState() {
-  NotificationList();
   initState();
 }
 
@@ -141,13 +142,11 @@ class AppBarBuilder {
                         } else if (snapshot.hasData && snapshot.data != null) {
                           List<UserDetailsResponse>? userDetails =
                               snapshot.data;
-                          String base64Image = userDetails![0].profileImage ??
-                              'https://th.bing.com/th?id=OIP.jixXH_Els1MXBRmKFdMQPAHaHa&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2';
+                          String imgurl = userDetails![0].profileImage;
 
                           return CircleAvatar(
                             radius: 25,
-                            backgroundImage:
-                                MemoryImage(base64Decode(base64Image)),
+                            backgroundImage: NetworkImage('$imgurl'),
                             backgroundColor: AppColors.lightShadow,
                           );
                         } else {
@@ -171,49 +170,55 @@ class AppBarBuilder {
                       ),
                     ),
                     Spacer(),
-                    IconButton(
-                        onPressed: () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AllNotifications()),
-                          );
-                        },
-                        icon: Stack(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.notifications,
-                                color: AppColors.light,
-                                size: 25,
-                              ),
-                              onPressed: () {
+                    FutureBuilder(
+                        future: NotificationList(),
+                        builder: (context, snapshot) {
+                          int? unreadCount = snapshot.data;
+                          return IconButton(
+                              onPressed: () async {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => AllNotifications()),
                                 );
                               },
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Container(
-                                padding: EdgeInsets.all(0),
-                                child: Center(
-                                  child: Text(
-                                    '15',
-                                    style: TextStyle(
-                                      color: AppColors.green,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w900,
+                              icon: Stack(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.notifications,
+                                      color: AppColors.light,
+                                      size: 25,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AllNotifications()),
+                                      );
+                                    },
+                                  ),
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: Container(
+                                      padding: EdgeInsets.all(0),
+                                      child: Center(
+                                        child: Text(
+                                          unreadCount.toString(),
+                                          style: TextStyle(
+                                            color: AppColors.green,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )),
+                                ],
+                              ));
+                        }),
                   ],
                 );
               },

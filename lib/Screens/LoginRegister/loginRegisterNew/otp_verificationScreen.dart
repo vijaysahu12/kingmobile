@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/userDataDialog.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
 import 'package:kraapp/Screens/Common/refreshtwo.dart';
-import 'package:kraapp/Screens/all_screens.dart';
+// import 'package:kraapp/Screens/all_screens.dart';
 
 import '../../../Helpers/sharedPref.dart';
 import '../../../Models/Response/OtpVerficationResponse.dart';
@@ -162,11 +162,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
     try {
-      // PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      //     verificationId: widget.verificationId, smsCode: smsCode);
-      // UserCredential userCredential =
-      //     await FirebaseAuth.instance.signInWithCredential(credential);
-      // print(userCredential);
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: widget.verificationId, smsCode: smsCode);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      print(userCredential);
       print('OTP verification successful!');
       String deviceType = widget.deviceType;
       String? firebaseToken = widget.fcmToken;

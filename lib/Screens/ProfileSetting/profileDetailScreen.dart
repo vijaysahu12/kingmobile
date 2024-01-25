@@ -143,12 +143,11 @@ class _PersonalInformation extends State<PersonalInformation> {
                               snapshot.data != null) {
                             List<UserDetailsResponse>? userDetails =
                                 snapshot.data;
-                            String base64Image = userDetails![0].profileImage;
+                            String ImageUrl = userDetails![0].profileImage;
 
                             return CircleAvatar(
                               radius: 25,
-                              backgroundImage:
-                                  MemoryImage(base64Decode(base64Image)),
+                              backgroundImage: NetworkImage(ImageUrl),
                               backgroundColor: AppColors.lightShadow,
                             );
                           } else {

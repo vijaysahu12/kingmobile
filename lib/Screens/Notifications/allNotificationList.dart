@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 // import 'package:kraapp/Models/Response/getNotificationsResponse.dart';
@@ -8,7 +7,7 @@ import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
 // import '../Common/app_bar.dart';
-import '../../notificationCountfunctions.dart';
+// import '../../notificationCountfunctions.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
@@ -34,9 +33,11 @@ class _AllNotifications extends State<AllNotifications> {
   PageController pageController = PageController();
   int selectedCategoryIndex = 0;
   late ScrollController buttonsScrollController;
+
   Set<int> tappedNotificationIds = Set<int>();
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
     final jwtToken = await usingSharedPref.getJwtToken();
@@ -54,7 +55,7 @@ class _AllNotifications extends State<AllNotifications> {
       headers: headers,
       body: jsonEncode(requestBody),
     );
-
+    if (!mounted) return;
     if (response.statusCode == 200) {
       final dynamic data = jsonDecode(response.body);
       final dynamic notificationData = data['data']['notification'];
@@ -68,7 +69,7 @@ class _AllNotifications extends State<AllNotifications> {
         print('Notification data is invalid or null');
       }
     } else {
-      print('Failed to fetch data: ${response.statusCode}');
+      print('Failed to fetch notification data: ${response.statusCode}');
     }
   }
 
@@ -82,6 +83,12 @@ class _AllNotifications extends State<AllNotifications> {
         categories = result;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    fetchData();
   }
 
   void _scrollListener() {
@@ -150,39 +157,39 @@ class _AllNotifications extends State<AllNotifications> {
     }
   }
 
-  // Future<int?> unReadCountNotificationList() async {
-  //   String userKey = await _sharedPref.read("KingUserId");
-  //   String mobileKey = userKey.replaceAll('"', '');
-  //   final jwtToken = await usingSharedPref.getJwtToken();
-  //   Map<String, String> headers =
-  //       usingHeaders.createHeaders(jwtToken: jwtToken);
-  //   final String apiUrl = '${ApiUrlConstants.GetNotifications}';
-  //   final Map<String, dynamic> requestBody = {
-  //     "id": 0,
-  //     "pageSize": 10,
-  //     "pageNumber": 1,
-  //     "requestedBy": mobileKey
-  //   };
-  //   final response = await http.post(
-  //     Uri.parse(apiUrl),
-  //     headers: headers,
-  //     body: jsonEncode(requestBody),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     final dynamic unReadCount = await jsonDecode(response.body);
-  //     if (unReadCount.containsKey('data') &&
-  //         unReadCount['data'] != null &&
-  //         unReadCount['data']['unReadCount'] != null) {
-  //       final int parsedCount = unReadCount['data']['unReadCount'];
-  //       print(parsedCount);
-  //       return parsedCount;
-  //     }
-  //     return null;
-  //   } else {
-  //     print('Request failed with status: ${response.statusCode}');
-  //     throw Exception('Failed to load notifications');
-  //   }
-  // }
+  Future<int?> unReadCountNotificationList() async {
+    String userKey = await _sharedPref.read("KingUserId");
+    String mobileKey = userKey.replaceAll('"', '');
+    final jwtToken = await usingSharedPref.getJwtToken();
+    Map<String, String> headers =
+        usingHeaders.createHeaders(jwtToken: jwtToken);
+    final String apiUrl = '${ApiUrlConstants.GetNotifications}';
+    final Map<String, dynamic> requestBody = {
+      "id": 0,
+      "pageSize": 10,
+      "pageNumber": 1,
+      "requestedBy": mobileKey
+    };
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: headers,
+      body: jsonEncode(requestBody),
+    );
+    if (response.statusCode == 200) {
+      final dynamic unReadCount = await jsonDecode(response.body);
+      if (unReadCount.containsKey('data') &&
+          unReadCount['data'] != null &&
+          unReadCount['data']['unReadCount'] != null) {
+        final int parsedCount = unReadCount['data']['unReadCount'];
+        print(parsedCount);
+        return parsedCount;
+      }
+      return null;
+    } else {
+      print('Request failed with status: ${response.statusCode}');
+      throw Exception('Failed to load notifications');
+    }
+  }
 
   List<Category> _parseCategories(String categoriesJson) {
     List<dynamic> parsedList = json.decode(categoriesJson);
@@ -207,9 +214,10 @@ class _AllNotifications extends State<AllNotifications> {
 
   Future<void> onRefresh() async {
     setState(() {
-      fetchData();
-      NotificationList();
+      page = 0;
+      Items.clear();
     });
+    await fetchData();
   }
 
   @override
@@ -226,26 +234,16 @@ class _AllNotifications extends State<AllNotifications> {
             color: AppColors.light,
           ),
         ),
-        title: Row(
-          children: [
-            Text(
-              "Notifications",
-              style: TextStyle(
-                  fontSize: 18,
-                  color: AppColors.light,
-                  fontWeight: FontWeight.bold),
-            ),
-            Spacer(),
-            // IconButton(
-            //     onPressed: () {
-            //       // _showNotificationPopup(context);
-            //     },
-            //     icon: Icon(
-            //       Icons.more_vert_rounded,
-            //       color: AppColors.light,
-            //     ))
-          ],
-        ),
+        title: Row(children: [
+          Text(
+            "Notifications",
+            style: TextStyle(
+                fontSize: 18,
+                color: AppColors.light,
+                fontWeight: FontWeight.bold),
+          ),
+          Spacer(),
+        ]),
       ),
       // ignore: deprecated_member_use
       body: Column(
@@ -273,6 +271,8 @@ class _AllNotifications extends State<AllNotifications> {
                             setState(() {
                               selectedCategoryId = category.id;
                               selectedCategoryIndex = index;
+                              page = 0;
+                              Items.clear();
                               pageController.animateToPage(
                                 selectedCategoryIndex,
                                 duration: Duration(milliseconds: 300),
@@ -306,7 +306,9 @@ class _AllNotifications extends State<AllNotifications> {
                   ),
                 );
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Container(
+                  color: Colors.transparent,
+                );
               }
             },
           ),
@@ -327,124 +329,121 @@ class _AllNotifications extends State<AllNotifications> {
                         fetchData();
                       },
                       itemBuilder: (context, index) {
-                        return ListView.builder(
-                          controller: scrollContoller,
-                          itemCount:
-                              isLoadingMore ? Items.length + 1 : Items.length,
-                          itemBuilder: (context, index) {
-                            if (index < Items.length) {
-                              final title = Items[index]['title'];
-                              final body = Items[index]['body'];
-                              final category = Items[index]['category'];
-                              final ids = Items[index]['id'];
-                              final isRead = Items[index]['isRead'];
-                              bool isTapped =
-                                  tappedNotificationIds.contains(ids);
-                              return GestureDetector(
-                                onTap: () async {
-                                  // markNotificationAsRead(ids);
-                                  await markNotificationAsRead(ids);
-
-                                  setState(() {
-                                    if (isTapped) {
-                                      tappedNotificationIds.remove(ids);
-                                    } else {
-                                      tappedNotificationIds.add(ids);
-                                    }
-                                    print('hai');
-
-                                    // unReadCountNotificationList();
-                                  });
-                                  print('hello');
-                                  NotificationList();
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: isTapped
-                                        ? AppColors.light
-                                        : (isRead
-                                            ? AppColors.light
-                                            : AppColors.lightShadow),
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: AppColors.cyan,
-                                        width: 0.4,
+                        return RefreshIndicator(
+                          onRefresh: onRefresh,
+                          child: ListView.builder(
+                            controller: scrollContoller,
+                            itemCount:
+                                isLoadingMore ? Items.length + 1 : Items.length,
+                            itemBuilder: (context, index) {
+                              if (index < Items.length) {
+                                final title = Items[index]['title'];
+                                final body = Items[index]['body'];
+                                final category = Items[index]['category'];
+                                final ids = Items[index]['id'];
+                                final isRead = Items[index]['isRead'];
+                                bool isTapped =
+                                    tappedNotificationIds.contains(ids);
+                                return GestureDetector(
+                                  onTap: () async {
+                                    await markNotificationAsRead(ids);
+                                    setState(() {
+                                      if (!tappedNotificationIds
+                                          .contains(ids)) {
+                                        tappedNotificationIds.add(ids);
+                                      }
+                                    });
+                                    fetchData();
+                                    unReadCountNotificationList();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: isTapped
+                                          ? AppColors.light
+                                          : (isRead
+                                              ? AppColors.light
+                                              : AppColors.lightShadow),
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: AppColors.cyan,
+                                          width: 0.4,
+                                        ),
+                                      ),
+                                    ),
+                                    margin: EdgeInsets.symmetric(
+                                      vertical: 2,
+                                      horizontal: 8,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 12,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        title,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: AppColors.dark,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        body,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: AppColors.grey,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      category ?? 'N/A',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: AppColors.purple,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      ids.toString(),
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: AppColors.purple,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                  margin: EdgeInsets.symmetric(
-                                    vertical: 2,
-                                    horizontal: 8,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 12,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    title,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: AppColors.dark,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      body,
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: AppColors.grey,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    category ?? 'N/A',
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: AppColors.purple,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    ids.toString(),
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: AppColors.purple,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                          },
+                                );
+                              }
+                              return null;
+                            },
+                          ),
                         );
                       });
                 },
