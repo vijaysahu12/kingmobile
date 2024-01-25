@@ -44,11 +44,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   String _enteredOTP = '';
 
   String _smsCode = "";
-  final _formKey = new GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  // final _formKey = new GlobalKey<FormState>();
+  // final TextEditingController _nameController = TextEditingController();
+  // final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
+  // final TextEditingController _cityController = TextEditingController();
   String? selectedGender;
   StateSetter? _setState;
 
@@ -186,7 +186,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
         _sharedPref.save(
             SessionConstants.UserProfileImage, vv.data.profileImage);
 
-        int statusCode = responseBody['statusCode'];
+        // int statusCode = responseBody['statusCode'];
 
         // if (statusCode == 200) {
         showDialog(

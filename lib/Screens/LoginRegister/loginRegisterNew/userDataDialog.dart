@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kraapp/Screens/Constants/app_color.dart';
 import 'package:kraapp/Screens/all_screens.dart';
 
+// ignore: must_be_immutable
 class UserDataDialog extends StatefulWidget {
   final Function(String fullName, String email, String mobile, String city,
       String gender) onRegister;

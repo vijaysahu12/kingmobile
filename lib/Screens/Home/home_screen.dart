@@ -1,18 +1,9 @@
-import 'dart:convert';
-// import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:kraapp/Models/Response/GetTopGainers.dart';
 import 'package:kraapp/Models/Response/HomeResponse.dart';
 import 'package:kraapp/Screens/Common/shimmerScreen.dart';
 
-// import 'package:kraapp/Screens/Common/refresh.dart';
-
-import '../../Helpers/ApiUrls.dart';
-
 import '../../Helpers/sharedPref.dart';
-// import '../Common/app_bar.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
@@ -31,84 +22,33 @@ class _Personal extends State<Personal> {
   String selectedButton = 'NSE';
   String selectedMarketButton = 'Gainers';
   late Future<List<HomeResponse>?> dataFuture;
+  late Future<List<String>?> dataFutureGainers;
+  late Future<List<String>?> dataFutureLosers;
+  late Future<List<String>?> dataFuture52WHigh;
+  late Future<List<String>?> dataFuture52WLow;
 
   @override
   void initState() {
     print("Home Screen");
-
-    // dataFuture = fetchData();
     super.initState();
   }
 
   @override
   void dispose() {
-    dataFuture = fetchData();
     super.dispose();
   }
 
-  Future<List<HomeResponse>?> fetchData() async {
-    String UserKey = await _sharedPref.read(SessionConstants.UserKey);
-    String MobileKey = UserKey.replaceAll('"', '');
-    UsingSharedPref usingSharedPref = UsingSharedPref();
-    final jwtToken = await usingSharedPref.getJwtToken();
-    Map<String, String> headers =
-        usingHeaders.createHeaders(jwtToken: jwtToken);
-    print(jwtToken);
-    final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
-    print(apiUrl);
-    final response = await http.get(Uri.parse(apiUrl), headers: headers);
-
-    if (response.statusCode == 200) {
-      List<HomeResponse>? list;
-      final dynamic parsedData = json.decode(response.body);
-      if (parsedData['data'] is List) {
-        List<dynamic> parsedList = parsedData['data'];
-        list = parsedList.map((val) => HomeResponse.fromJson(val)).toList();
-        print(list);
-      }
-      return list;
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
-
-  Future<List<GetTopGainers>?> getTopUsersData(String type) async {
-    UsingSharedPref usingSharedPref = UsingSharedPref();
-    final jwtToken = await usingSharedPref.getJwtToken();
-    Map<String, String> headers =
-        usingHeaders.createHeaders(jwtToken: jwtToken);
-    print(jwtToken);
-    final String apiUrl = '${ApiUrlConstants.GetTopGainers}/$type';
-    final response = await http.get(Uri.parse(apiUrl), headers: headers);
-    if (response.statusCode == 200) {
-      List<GetTopGainers>? list;
-      final dynamic getTopGainersInfo = json.decode(response.body);
-      if (getTopGainersInfo['data'] is List) {
-        List<dynamic> getTopGainersList = getTopGainersInfo['data'];
-        list = getTopGainersList
-            .map((val) => GetTopGainers.fromJson(val))
-            .toList();
-      }
-      return list;
-    } else {
-      throw Exception("failed fetch data from api");
-    }
-  }
-
   Future<void> refreshData() async {
-    setState(() {
-      dataFuture = fetchData();
-      // NotificationList();
-    });
+    setState(() {});
   }
 
   int _currentIndex = 0;
   Key carouselKey = UniqueKey();
 
   final List<String> imagePaths = [
-    // 'images/cr_1.jpg',
-    // 'images/cr_2.jpg',
-    // 'images/cr_3.jpg'
+    'images/cr_1.jpg',
+    'images/cr_2.jpg',
+    'images/cr_3.jpg'
   ];
 
   @override
@@ -480,612 +420,227 @@ class _Personal extends State<Personal> {
             SizedBox(
               height: 10,
             ),
-            FutureBuilder<List<GetTopGainers>?>(
-              future: getTopUsersData('g'),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return ShimmerListViewForHome(itemCount: 1);
-                } else if (snapshot.hasData && snapshot.data != null) {
-                  List<GetTopGainers> data = snapshot.data!;
-                  return Column(
+            // FutureBuilder<List<String>?>(
+            //   future: _sharedPref.readList("topGainersList"),
+            //   builder: (context, snapshot) {
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       return ShimmerListViewForHome(itemCount: 1);
+            //     } else if (snapshot.hasData && snapshot.data != null) {
+            //       List<String> topGainersList = snapshot.data!;
+            //       return
+
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      Row(
+                        children: [
+                          Text(
+                            'In Markets',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'poppins'),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: AppColors.grey, width: 0.3),
+                          color: AppColors.lightShadow,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.dark.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 2,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
                         child: Column(
                           children: [
                             Row(
                               children: [
-                                Text(
-                                  'In Markets',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'poppins'),
-                                )
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: selectedMarketButton == 'Gainers'
+                                          ? Border(
+                                              bottom: BorderSide(
+                                                  color: AppColors.dark,
+                                                  width: 1))
+                                          : null),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedMarketButton = 'Gainers';
+                                      });
+                                    },
+                                    style: ButtonStyle(
+                                      minimumSize:
+                                          MaterialStateProperty.all(Size(0, 0)),
+                                    ),
+                                    child: Text(
+                                      'Gainers',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontFamily: 'poppins',
+                                        color: selectedMarketButton == 'Gainers'
+                                            ? AppColors.primaryColor
+                                            : AppColors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: selectedMarketButton == 'Losers'
+                                          ? Border(
+                                              bottom: BorderSide(
+                                                  color: AppColors.dark,
+                                                  width: 1))
+                                          : null),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedMarketButton = 'Losers';
+                                      });
+                                    },
+                                    style: ButtonStyle(
+                                      minimumSize:
+                                          MaterialStateProperty.all(Size(0, 0)),
+                                    ),
+                                    child: Text(
+                                      'Losers',
+                                      style: TextStyle(
+                                        color: selectedMarketButton == 'Losers'
+                                            ? AppColors.primaryColor
+                                            : AppColors.grey,
+                                        fontSize: 10,
+                                        fontFamily: 'poppins',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: selectedMarketButton == '52W High'
+                                          ? Border(
+                                              bottom: BorderSide(
+                                                  color: AppColors.dark,
+                                                  width: 1),
+                                            )
+                                          : null),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedMarketButton = '52W High';
+                                      });
+                                    },
+                                    style: ButtonStyle(
+                                      minimumSize:
+                                          MaterialStateProperty.all(Size(0, 0)),
+                                    ),
+                                    child: Text(
+                                      '52W High',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontFamily: 'poppins',
+                                        color:
+                                            selectedMarketButton == '52W High'
+                                                ? AppColors.primaryColor
+                                                : AppColors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: selectedMarketButton == '52W Low'
+                                          ? Border(
+                                              bottom: BorderSide(
+                                                  color: AppColors.dark,
+                                                  width: 1))
+                                          : null),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedMarketButton = '52W Low';
+                                      });
+                                    },
+                                    style: ButtonStyle(
+                                      minimumSize:
+                                          MaterialStateProperty.all(Size(0, 0)),
+                                    ),
+                                    child: Text(
+                                      '52W Low',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontFamily: 'poppins',
+                                        color: selectedMarketButton == '52W Low'
+                                            ? AppColors.primaryColor
+                                            : AppColors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
                               ],
                             ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                    color: AppColors.grey, width: 0.3),
-                                color: AppColors.lightShadow,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.dark.withOpacity(
-                                        0.2), // Color and opacity of the shadow
-                                    spreadRadius:
-                                        2, // Spread radius of the shadow
-                                    blurRadius: 2, // Blur radius of the shadow
-                                    offset:
-                                        Offset(0, 3), // Offset of the shadow
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 2,
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            border: selectedMarketButton ==
-                                                    'Gainers'
-                                                ? Border(
-                                                    bottom: BorderSide(
-                                                        color: AppColors.dark,
-                                                        width: 1))
-                                                : null),
-                                        child: TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              getTopUsersData('g');
-                                              selectedMarketButton = 'Gainers';
-                                            });
-                                          },
-                                          style: ButtonStyle(
-                                            minimumSize:
-                                                MaterialStateProperty.all(
-                                                    Size(0, 0)),
-                                          ),
-                                          child: Text(
-                                            'Gainers',
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              fontFamily: 'poppins',
-                                              color: selectedMarketButton ==
-                                                      'Gainers'
-                                                  ? AppColors.primaryColor
-                                                  : AppColors.grey,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            border: selectedMarketButton ==
-                                                    'Losers'
-                                                ? Border(
-                                                    bottom: BorderSide(
-                                                        color: AppColors.dark,
-                                                        width: 1))
-                                                : null),
-                                        child: TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              getTopUsersData('l');
-                                              selectedMarketButton = 'Losers';
-                                            });
-                                          },
-                                          style: ButtonStyle(
-                                            minimumSize:
-                                                MaterialStateProperty.all(
-                                                    Size(0, 0)),
-                                          ),
-                                          child: Text(
-                                            'Losers',
-                                            style: TextStyle(
-                                              color: selectedMarketButton ==
-                                                      'Losers'
-                                                  ? AppColors.primaryColor
-                                                  : AppColors.grey,
-                                              fontSize: 10,
-                                              fontFamily: 'poppins',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            border: selectedMarketButton ==
-                                                    '52W High'
-                                                ? Border(
-                                                    bottom: BorderSide(
-                                                        color: AppColors.dark,
-                                                        width: 1),
-                                                  )
-                                                : null),
-                                        child: TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              selectedMarketButton = '52W High';
-                                            });
-                                          },
-                                          style: ButtonStyle(
-                                            minimumSize:
-                                                MaterialStateProperty.all(
-                                                    Size(0, 0)),
-                                          ),
-                                          child: Text(
-                                            '52W High',
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              fontFamily: 'poppins',
-                                              color: selectedMarketButton ==
-                                                      '52W High'
-                                                  ? AppColors.primaryColor
-                                                  : AppColors.grey,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            border: selectedMarketButton ==
-                                                    '52W Low'
-                                                ? Border(
-                                                    bottom: BorderSide(
-                                                        color: AppColors.dark,
-                                                        width: 1))
-                                                : null),
-                                        child: TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              selectedMarketButton = '52W Low';
-                                            });
-                                          },
-                                          style: ButtonStyle(
-                                            minimumSize:
-                                                MaterialStateProperty.all(
-                                                    Size(0, 0)),
-                                          ),
-                                          child: Text(
-                                            '52W Low',
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              fontFamily: 'poppins',
-                                              color: selectedMarketButton ==
-                                                      '52W Low'
-                                                  ? AppColors.primaryColor
-                                                  : AppColors.grey,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Spacer(),
-                                    ],
-                                  ),
-                                  if (data.isNotEmpty)
-                                    Column(
-                                      children: [
-                                        if (selectedMarketButton == 'Gainers')
-                                          Column(
-                                            children: data.map((product) {
-                                              return Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border(
-                                                        top: BorderSide(
-                                                            color:
-                                                                AppColors.grey,
-                                                            width: 0.3))),
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(
-                                                    8,
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Text(
-                                                            product.stockName,
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Text(
-                                                            // product['price']
-                                                            //     .toString(),
-                                                            product.ltp
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Text(
-                                                            product.exchange,
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .grey,
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Text(
-                                                            // product['rating']
-                                                            //         ['count']
-                                                            //     .toString(),
-                                                            product.price
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .green,
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          )
-                                        else if (selectedMarketButton ==
-                                            'Losers')
-                                          Column(
-                                            children: data.map((product) {
-                                              return Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border(
-                                                        top: BorderSide(
-                                                            color:
-                                                                AppColors.grey,
-                                                            width: 0.3))),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Text(
-                                                            'Bank',
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Text(
-                                                            // product['price']
-                                                            //     .toString(),
-                                                            product.price
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Text(
-                                                            'RSE',
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .grey,
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Text(
-                                                            // product['rating']
-                                                            //         ['count']
-                                                            //     .toString(),
-                                                            product.price
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .green,
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          )
-                                        else if (selectedMarketButton ==
-                                            '52W High')
-                                          Column(
-                                            children: data.map((product) {
-                                              return Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border(
-                                                        top: BorderSide(
-                                                            color:
-                                                                AppColors.grey,
-                                                            width: 0.3))),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Text(
-                                                            'Bajaj ',
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Text(
-                                                            // product['price']
-                                                            //     .toString(),
-                                                            product.price
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Text(
-                                                            'NE',
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .grey,
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Text(
-                                                            // product['rating']
-                                                            //         ['count']
-                                                            //     .toString(),
-                                                            product.price
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .green,
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          )
-                                        else if (selectedMarketButton ==
-                                            '52W Low')
-                                          Column(
-                                            children: data.map((product) {
-                                              return Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border(
-                                                        top: BorderSide(
-                                                            color:
-                                                                AppColors.grey,
-                                                            width: 0.3))),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Text(
-                                                            'Only Finance',
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Text(
-                                                            // product['price']
-                                                            //     .toString(),
-                                                            product.price
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Text(
-                                                            'NIFTY',
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .grey,
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Text(
-                                                            // product['rating']
-                                                            //         ['count']
-                                                            //     .toString(),
-                                                            product.price
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .green,
-                                                              fontSize: 10,
-                                                              fontFamily:
-                                                                  'poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          )
-                                      ],
-                                    )
-                                ],
-                              ),
-                            ),
+                            Column(
+                              children: [
+                                if (selectedMarketButton == 'Gainers')
+                                  FutureBuilder<List<String>?>(
+                                    future:
+                                        _sharedPref.readList('topGainersList'),
+                                    builder: (context, snapshot) {
+                                      return buildDataListView(snapshot);
+                                    },
+                                  )
+                                else if (selectedMarketButton == 'Losers')
+                                  FutureBuilder<List<String>?>(
+                                    future:
+                                        _sharedPref.readList('topLosersList'),
+                                    builder: (context, snapshot) {
+                                      return buildDataListView(snapshot);
+                                    },
+                                  )
+                                else if (selectedMarketButton == '52W High')
+                                  FutureBuilder<List<String>?>(
+                                    future:
+                                        _sharedPref.readList('topLosersList'),
+                                    builder: (context, snapshot) {
+                                      return buildDataListView(snapshot);
+                                    },
+                                  )
+                                else if (selectedMarketButton == '52W Low')
+                                  FutureBuilder<List<String>?>(
+                                    future:
+                                        _sharedPref.readList('topLosersList'),
+                                    builder: (context, snapshot) {
+                                      return buildDataListView(snapshot);
+                                    },
+                                  )
+                              ],
+                            )
                           ],
                         ),
-                      )
+                      ),
                     ],
-                  );
-                } else {
-                  return ShimmerListViewForHome(itemCount: 1);
-                }
-              },
+                  ),
+                )
+              ],
             ),
           ]),
         ),
@@ -1094,16 +649,120 @@ class _Personal extends State<Personal> {
   }
 }
 
+Widget buildDataListView(AsyncSnapshot<List<String>?> snapshot) {
+  if (snapshot.connectionState == ConnectionState.waiting ||
+      snapshot.hasError) {
+    return ShimmerListViewForHome(itemCount: 1);
+  } else if (snapshot.hasData && snapshot.data != null) {
+    List<String> data = snapshot.data!;
+    return Column(
+      children: data.map((product) {
+        List<String> parts = product.split(', cp:');
+        if (parts.length == 2) {
+          String stockName = parts[0].trim();
+          String cpValue = parts[1].trim();
 
- // Future<List<HomeResponse>> fetchData() async {
-  //   final response = await http.get(Uri.parse(ApiUrlConstants.getProducts));
-  //   if (response.statusCode == 200) {
-  //     final List parsedList = json.decode(response.body);
-  //     List<HomeResponse> list =
-  //         parsedList.map((val) => HomeResponse.fromJson(val)).toList();
-  //     print(list);
-  //     return list;
-  //   } else {
-  //     throw Exception('Failed to load data');
-  //   }
-  // }
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(color: AppColors.grey, width: 0.3),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(width: 5),
+                      Text(
+                        stockName,
+                        style: TextStyle(
+                          color: AppColors.grey,
+                          fontSize: 10,
+                          fontFamily: 'poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        '$cpValue',
+                        style: TextStyle(
+                          color: AppColors.green,
+                          fontSize: 10,
+                          fontFamily: 'poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else {
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(color: AppColors.grey, width: 0.3),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(width: 5),
+                      Text(
+                        'Invalid Notification Format',
+                        style: TextStyle(
+                          color: AppColors.grey,
+                          fontSize: 10,
+                          fontFamily: 'poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      }).toList(),
+    );
+  } else {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: AppColors.grey, width: 0.3),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                SizedBox(width: 5),
+                Text(
+                  'Empty List',
+                  style: TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 10,
+                    fontFamily: 'poppins',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(width: 5),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
