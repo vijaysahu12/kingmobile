@@ -8,6 +8,7 @@ import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
 // import '../Common/app_bar.dart';
 // import '../../notificationCountfunctions.dart';
+// import '../Common/NotificationEmpty.dart';
 import '../Common/NotificationEmpty.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
@@ -223,6 +224,9 @@ class _AllNotifications extends State<AllNotifications> {
 
   @override
   Widget build(BuildContext context) {
+    // if (Items.isEmpty) {
+    //   return Scaffold(body: NotificationEmptyScreen());
+    // }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.purple,
@@ -246,216 +250,226 @@ class _AllNotifications extends State<AllNotifications> {
           Spacer(),
         ]),
       ),
-      // ignore: deprecated_member_use
-      body: Column(
-        children: [
-          FutureBuilder<List<Category>?>(
-            future: fetchCategories(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasData && snapshot.data != null) {
-                List<Category> data = snapshot.data!;
-                selectedCategoryId = data.first.id;
+      body: Items.isEmpty
+          ? NotificationEmptyScreen()
+          : Column(
+              children: [
+                FutureBuilder<List<Category>?>(
+                  future: fetchCategories(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasData && snapshot.data != null) {
+                      List<Category> data = snapshot.data!;
+                      selectedCategoryId = data.first.id;
 
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: data.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      Category category = entry.value;
-                      bool isActive = selectedCategoryIndex == index;
-                      return Container(
-                        margin: EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              selectedCategoryId = category.id;
-                              selectedCategoryIndex = index;
-                              page = 0;
-                              Items.clear();
-                              pageController.animateToPage(
-                                selectedCategoryIndex,
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            });
-                            fetchData();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: isActive
-                                ? AppColors.light
-                                : AppColors.lightShadow,
-                            side: BorderSide(
-                              color: isActive
-                                  ? AppColors.grey
-                                  : Colors.transparent,
-                              width: 0.5,
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                          ),
-                          child: Text(
-                            category.name,
-                            style: TextStyle(
-                              color: isActive ? AppColors.blue : Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: data.asMap().entries.map((entry) {
+                            int index = entry.key;
+                            Category category = entry.value;
+                            bool isActive = selectedCategoryIndex == index;
+                            return Container(
+                              margin: EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    selectedCategoryId = category.id;
+                                    selectedCategoryIndex = index;
+                                    page = 0;
+                                    Items.clear();
+                                    pageController.animateToPage(
+                                      selectedCategoryIndex,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  });
+                                  fetchData();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isActive
+                                      ? AppColors.light
+                                      : AppColors.lightShadow,
+                                  side: BorderSide(
+                                    color: isActive
+                                        ? AppColors.grey
+                                        : Colors.transparent,
+                                    width: 0.5,
+                                  ),
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                ),
+                                child: Text(
+                                  category.name,
+                                  style: TextStyle(
+                                    color: isActive
+                                        ? AppColors.blue
+                                        : Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       );
-                    }).toList(),
-                  ),
-                );
-              } else {
-                return Container(
-                  color: Colors.transparent,
-                );
-              }
-            },
-          ),
-          Expanded(
-            child: Container(
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  if (Items.isEmpty) {
-                    return DataEmptyScreen();
-                  }
-                  return PageView.builder(
-                      controller: pageController,
-                      itemCount: categories?.length ?? 0,
-                      onPageChanged: (int index) {
-                        setState(() {
-                          selectedCategoryIndex = index;
-                          selectedCategoryId = categories![index].id;
-                          page = 0;
-                          Items.clear();
-                        });
-                        fetchData();
-                      },
-                      itemBuilder: (context, index) {
-                        return RefreshIndicator(
-                          onRefresh: onRefresh,
-                          child: ListView.builder(
-                            controller: scrollContoller,
-                            itemCount:
-                                isLoadingMore ? Items.length + 1 : Items.length,
+                    } else {
+                      return Container(
+                        color: Colors.transparent,
+                      );
+                    }
+                  },
+                ),
+                Expanded(
+                  child: Container(
+                    child: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return PageView.builder(
+                            controller: pageController,
+                            itemCount: categories?.length ?? 0,
+                            onPageChanged: (int index) {
+                              setState(() {
+                                selectedCategoryIndex = index;
+                                selectedCategoryId = categories![index].id;
+                                page = 0;
+                                Items.clear();
+                              });
+                              fetchData();
+                            },
                             itemBuilder: (context, index) {
-                              if (index < Items.length) {
-                                final title = Items[index]['title'];
-                                final body = Items[index]['body'];
-                                final category = Items[index]['category'];
-                                final ids = Items[index]['id'];
-                                final isRead = Items[index]['isRead'];
-                                bool isTapped =
-                                    tappedNotificationIds.contains(ids);
-                                return GestureDetector(
-                                  onTap: () async {
-                                    await markNotificationAsRead(ids);
-                                    setState(() {
-                                      if (!tappedNotificationIds
-                                          .contains(ids)) {
-                                        tappedNotificationIds.add(ids);
-                                      }
-                                    });
-                                    fetchData();
-                                    unReadCountNotificationList();
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: isTapped
-                                          ? AppColors.light
-                                          : (isRead
-                                              ? AppColors.light
-                                              : AppColors.lightShadow),
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: AppColors.cyan,
-                                          width: 0.4,
-                                        ),
-                                      ),
-                                    ),
-                                    margin: EdgeInsets.symmetric(
-                                      vertical: 2,
-                                      horizontal: 8,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 12,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
+                              return RefreshIndicator(
+                                onRefresh: onRefresh,
+                                child: ListView.builder(
+                                  controller: scrollContoller,
+                                  itemCount: isLoadingMore
+                                      ? Items.length + 1
+                                      : Items.length,
+                                  itemBuilder: (context, index) {
+                                    if (index < Items.length) {
+                                      final title = Items[index]['title'];
+                                      final body = Items[index]['body'];
+                                      final category = Items[index]['category'];
+                                      final ids = Items[index]['id'];
+                                      final isRead = Items[index]['isRead'];
+                                      bool isTapped =
+                                          tappedNotificationIds.contains(ids);
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          await markNotificationAsRead(ids);
+                                          setState(() {
+                                            if (!tappedNotificationIds
+                                                .contains(ids)) {
+                                              tappedNotificationIds.add(ids);
+                                            }
+                                          });
+                                          fetchData();
+                                          unReadCountNotificationList();
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: isTapped
+                                                ? AppColors.light
+                                                : (isRead
+                                                    ? AppColors.light
+                                                    : AppColors.lightShadow),
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: AppColors.cyan,
+                                                width: 0.4,
+                                              ),
+                                            ),
+                                          ),
+                                          margin: EdgeInsets.symmetric(
+                                            vertical: 2,
+                                            horizontal: 8,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 12,
+                                            ),
+                                            child: Row(
                                               children: [
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        title,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: AppColors.dark,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
+                                                Expanded(
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              title,
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                color: AppColors
+                                                                    .dark,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
                                                       ),
-                                                    )
-                                                  ],
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              body,
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                color: AppColors
+                                                                    .grey,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            category ?? 'N/A',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: AppColors
+                                                                  .purple,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            ids.toString(),
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: AppColors
+                                                                  .purple,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        body,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: AppColors.grey,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      category ?? 'N/A',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: AppColors.purple,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      ids.toString(),
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: AppColors.purple,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
                                               ],
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                              return DataEmptyScreen();
-                            },
-                          ),
-                        );
-                      });
-                },
-              ),
+                                        ),
+                                      );
+                                    }
+                                    return NotificationEmptyScreen();
+                                  },
+                                ),
+                              );
+                            });
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

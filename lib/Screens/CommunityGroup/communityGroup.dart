@@ -6,6 +6,7 @@ import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/CommunityGroupResponse.dart';
 
+import '../Common/OopsScreen.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/shimmerScreen.dart';
 import '../Constants/app_color.dart';
@@ -137,9 +138,10 @@ class _CommunityGroupState extends State<CommunityGroup> {
                   FutureBuilder<List<CommunityGroupResponse>?>(
                     future: dataFuture,
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          snapshot.hasError) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
                         return ShimmerListView(itemCount: 5);
+                      } else if (snapshot.hasError) {
+                        return OopsScreen();
                       } else {
                         List<CommunityGroupResponse> data = snapshot.data!;
 
@@ -184,9 +186,10 @@ class _CommunityGroupState extends State<CommunityGroup> {
                   FutureBuilder<List<CommunityGroupResponse>?>(
                     future: dataFuture,
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          snapshot.hasError) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
                         return ShimmerListViewForListofItems(itemCount: 7);
+                      } else if (snapshot.hasError) {
+                        return OopsScreen();
                       } else {
                         List<CommunityGroupResponse> data = snapshot.data!;
                         return RefreshHelper.buildRefreshIndicator(

@@ -10,6 +10,7 @@ import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/ProductResponseModel.dart';
 import '../../Models/Response/SingleProductResponse.dart';
 import '../../Models/Response/myBucketListResponse.dart';
+import '../Common/myBucketEmpty.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
@@ -185,15 +186,16 @@ class _MyBucketScreen extends State<MyBucketScreen> {
       body: FutureBuilder<List<myBucketListResponse>?>(
           future: myBucketList,
           builder: (context, snapshot) {
-            // if (snapshot.connectionState == ConnectionState.waiting) {
-            //   return CircularProgressIndicator();
-            // } else
             if (snapshot.hasError) {
-              return OopsScreen();
+              return MyBucketScreenEmpty();
             } else if (!snapshot.hasData || snapshot.data == null) {
-              return MyBucketScreen();
+              return MyBucketScreenEmpty();
             } else {
               List<myBucketListResponse>? data = snapshot.data!;
+              // ignore: unnecessary_null_comparison
+              if (data == null) {
+                return Container();
+              }
 
               return RefreshHelper.buildRefreshIndicator(
                 onRefresh: refreshScreen,
