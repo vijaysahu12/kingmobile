@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
+import 'package:kraapp/Screens/Common/OopsScreen.dart';
 
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/ProductResponseModel.dart';
@@ -184,12 +185,13 @@ class _MyBucketScreen extends State<MyBucketScreen> {
       body: FutureBuilder<List<myBucketListResponse>?>(
           future: myBucketList,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
+            // if (snapshot.connectionState == ConnectionState.waiting) {
+            //   return CircularProgressIndicator();
+            // } else
+            if (snapshot.hasError) {
+              return OopsScreen();
             } else if (!snapshot.hasData || snapshot.data == null) {
-              return Text("No data available");
+              return MyBucketScreen();
             } else {
               List<myBucketListResponse>? data = snapshot.data!;
 

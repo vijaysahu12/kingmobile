@@ -146,7 +146,11 @@ class AppBarBuilder {
 
                           return CircleAvatar(
                             radius: 25,
-                            backgroundImage: NetworkImage('$imgurl'),
+                            // ignore: unnecessary_null_comparison
+                            backgroundImage: imgurl != null
+                                ? NetworkImage(imgurl)
+                                : NetworkImage(
+                                    'https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg'),
                             backgroundColor: AppColors.lightShadow,
                           );
                         } else {

@@ -162,11 +162,11 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
     try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: widget.verificationId, smsCode: smsCode);
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      print(userCredential);
+      // PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      //     verificationId: widget.verificationId, smsCode: smsCode);
+      // UserCredential userCredential =
+      //     await FirebaseAuth.instance.signInWithCredential(credential);
+      // print(userCredential);
       print('OTP verification successful!');
       String deviceType = widget.deviceType;
       String? firebaseToken = widget.fcmToken;
@@ -186,51 +186,57 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
         _sharedPref.save(
             SessionConstants.UserProfileImage, vv.data.profileImage);
 
-        // int statusCode = responseBody['statusCode'];
+        int statusCode = responseBody['statusCode'];
 
-        // if (statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return StatefulBuilder(builder: (context, setState) {
-              _setState = setState;
-              return Center(
-                  child: UserDataDialog(
-                onRegister: (_fullName, _email, _mobile, _city, _gender) async {
-                  String? fullName = _fullName;
-                  String? email = _email;
-                  String? mobile = _mobile;
-                  String? city = _city;
-                  _sharedPref.save("KingUserProfileName", fullName);
-                  _sharedPref.save("KingUserProfileEmail", email);
-                  _sharedPref.save("KingUserProfileMobile", mobile);
-                  _sharedPref.save("KingUserProfileCity", city);
-                  _sharedPref.save("KingUserProfileGender", _gender);
+        if (statusCode == 200) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return StatefulBuilder(builder: (context, setState) {
+                _setState = setState;
+                return Center(
+                    child: UserDataDialog(
+                  onRegister: (
+                    _fullName,
+                    _email,
+                    _mobile,
+                    _city,
+                    _gender,
+                  ) async {
+                    String? fullName = _fullName;
+                    String? email = _email;
+                    String? mobile = _mobile;
+                    String? city = _city;
+                    _sharedPref.save("KingUserProfileName", fullName);
+                    _sharedPref.save("KingUserProfileEmail", email);
+                    _sharedPref.save("KingUserProfileMobile", mobile);
+                    _sharedPref.save("KingUserProfileCity", city);
+                    _sharedPref.save("KingUserProfileGender", _gender);
 
-                  print(fullName);
-                  print(email);
-                  print(mobile);
-                  print(city);
-                  print(_gender);
-                  // configureFirebaseMessaging();
+                    print(fullName);
+                    print(email);
+                    print(mobile);
+                    print(city);
+                    print(_gender);
+                    // configureFirebaseMessaging();
 
-                  Map<String, String> userData = {
-                    "fullName": fullName,
-                    "emailId": email,
-                    "mobile": mobile,
-                    "city": city,
-                    "gender": _gender,
-                    "dob": "08-08-20"
-                  };
+                    Map<String, String> userData = {
+                      "fullName": fullName,
+                      "emailId": email,
+                      "mobile": mobile,
+                      "city": city,
+                      "gender": _gender,
+                      "dob": "08-08-20"
+                    };
 
-                  postUserData(userData);
-                },
-                mobile: widget.mobileNumber,
-              ));
-            });
-          },
-        );
-        // }
+                    postUserData(userData);
+                  },
+                  mobile: widget.mobileNumber,
+                ));
+              });
+            },
+          );
+        }
       }
     } catch (e) {
       if (e is FirebaseAuthException && e.code == 'invalid-verification-code') {

@@ -8,6 +8,7 @@ import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/ProductResponseModel.dart';
 import '../../Models/Response/SingleProductResponse.dart';
+import '../Common/OopsScreen.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/shimmerScreen.dart';
 import '../Common/useSharedPref.dart';
@@ -301,9 +302,10 @@ class _TradingScreen extends State<TradingScreen> {
                       future: productsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
-                                ConnectionState.waiting ||
-                            snapshot.hasError) {
+                            ConnectionState.waiting) {
                           return ShimmerListView(itemCount: 5);
+                        } else if (snapshot.hasError) {
+                          return OopsScreen();
                         } else {
                           List<ProductResponseModel> data = snapshot.data!;
                           return RefreshHelper.buildRefreshIndicator(
@@ -348,9 +350,10 @@ class _TradingScreen extends State<TradingScreen> {
                       future: productsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
-                                ConnectionState.waiting ||
-                            snapshot.hasError) {
+                            ConnectionState.waiting) {
                           return ShimmerListViewForListofItems(itemCount: 7);
+                        } else if (snapshot.hasError) {
+                          return OopsScreen();
                         } else {
                           List<ProductResponseModel> data = snapshot.data!;
 

@@ -8,6 +8,7 @@ import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/getNotificationsResponse.dart';
 // import '../Common/app_bar.dart';
 // import '../../notificationCountfunctions.dart';
+import '../Common/NotificationEmpty.dart';
 import '../Common/useSharedPref.dart';
 import '../Constants/app_color.dart';
 
@@ -316,6 +317,9 @@ class _AllNotifications extends State<AllNotifications> {
             child: Container(
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
+                  if (Items.isEmpty) {
+                    return DataEmptyScreen();
+                  }
                   return PageView.builder(
                       controller: pageController,
                       itemCount: categories?.length ?? 0,
@@ -441,7 +445,7 @@ class _AllNotifications extends State<AllNotifications> {
                                   ),
                                 );
                               }
-                              return null;
+                              return DataEmptyScreen();
                             },
                           ),
                         );

@@ -716,9 +716,19 @@ Widget buildDataListView(AsyncSnapshot<List<String>?> snapshot) {
                     children: [
                       SizedBox(width: 5),
                       Text(
-                        'Invalid Notification Format',
+                        "stockName",
                         style: TextStyle(
                           color: AppColors.grey,
+                          fontSize: 10,
+                          fontFamily: 'poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'cpValue',
+                        style: TextStyle(
+                          color: AppColors.green,
                           fontSize: 10,
                           fontFamily: 'poppins',
                           fontWeight: FontWeight.w500,
