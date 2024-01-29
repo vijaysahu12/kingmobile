@@ -224,9 +224,6 @@ class _AllNotifications extends State<AllNotifications> {
 
   @override
   Widget build(BuildContext context) {
-    // if (Items.isEmpty) {
-    //   return Scaffold(body: NotificationEmptyScreen());
-    // }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.purple,
@@ -250,97 +247,94 @@ class _AllNotifications extends State<AllNotifications> {
           Spacer(),
         ]),
       ),
-      body: Items.isEmpty
-          ? NotificationEmptyScreen()
-          : Column(
-              children: [
-                FutureBuilder<List<Category>?>(
-                  future: fetchCategories(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasData && snapshot.data != null) {
-                      List<Category> data = snapshot.data!;
-                      selectedCategoryId = data.first.id;
+      body: Column(
+        children: [
+          FutureBuilder<List<Category>?>(
+            future: fetchCategories(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasData && snapshot.data != null) {
+                List<Category> data = snapshot.data!;
+                selectedCategoryId = data.first.id;
 
-                      return SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: data.asMap().entries.map((entry) {
-                            int index = entry.key;
-                            Category category = entry.value;
-                            bool isActive = selectedCategoryIndex == index;
-                            return Container(
-                              margin: EdgeInsets.all(8.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    selectedCategoryId = category.id;
-                                    selectedCategoryIndex = index;
-                                    page = 0;
-                                    Items.clear();
-                                    pageController.animateToPage(
-                                      selectedCategoryIndex,
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.easeInOut,
-                                    );
-                                  });
-                                  fetchData();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isActive
-                                      ? AppColors.light
-                                      : AppColors.lightShadow,
-                                  side: BorderSide(
-                                    color: isActive
-                                        ? AppColors.grey
-                                        : Colors.transparent,
-                                    width: 0.5,
-                                  ),
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                ),
-                                child: Text(
-                                  category.name,
-                                  style: TextStyle(
-                                    color: isActive
-                                        ? AppColors.blue
-                                        : Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: data.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      Category category = entry.value;
+                      bool isActive = selectedCategoryIndex == index;
+                      return Container(
+                        margin: EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedCategoryId = category.id;
+                              selectedCategoryIndex = index;
+                              page = 0;
+                              Items.clear();
+                              pageController.animateToPage(
+                                selectedCategoryIndex,
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            });
+                            fetchData();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isActive
+                                ? AppColors.light
+                                : AppColors.lightShadow,
+                            side: BorderSide(
+                              color: isActive
+                                  ? AppColors.grey
+                                  : Colors.transparent,
+                              width: 0.5,
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                          ),
+                          child: Text(
+                            category.name,
+                            style: TextStyle(
+                              color: isActive ? AppColors.blue : Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       );
-                    } else {
-                      return Container(
-                        color: Colors.transparent,
-                      );
-                    }
-                  },
-                ),
-                Expanded(
-                  child: Container(
-                    child: LayoutBuilder(
-                      builder:
-                          (BuildContext context, BoxConstraints constraints) {
-                        return PageView.builder(
-                            controller: pageController,
-                            itemCount: categories?.length ?? 0,
-                            onPageChanged: (int index) {
-                              setState(() {
-                                selectedCategoryIndex = index;
-                                selectedCategoryId = categories![index].id;
-                                page = 0;
-                                Items.clear();
-                              });
-                              fetchData();
-                            },
-                            itemBuilder: (context, index) {
-                              return RefreshIndicator(
-                                onRefresh: onRefresh,
-                                child: ListView.builder(
+                    }).toList(),
+                  ),
+                );
+              } else {
+                return Container(
+                  color: Colors.transparent,
+                );
+              }
+            },
+          ),
+          Expanded(
+            child: Container(
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return PageView.builder(
+                      controller: pageController,
+                      itemCount: categories?.length ?? 0,
+                      onPageChanged: (int index) {
+                        setState(() {
+                          selectedCategoryIndex = index;
+                          selectedCategoryId = categories![index].id;
+                          page = 0;
+                          Items.clear();
+                        });
+                        fetchData();
+                      },
+                      itemBuilder: (context, index) {
+                        return RefreshIndicator(
+                          onRefresh: onRefresh,
+                          child: Items.isEmpty
+                              ? NotificationEmptyScreen()
+                              : ListView.builder(
                                   controller: scrollContoller,
                                   itemCount: isLoadingMore
                                       ? Items.length + 1
@@ -462,14 +456,14 @@ class _AllNotifications extends State<AllNotifications> {
                                     return NotificationEmptyScreen();
                                   },
                                 ),
-                              );
-                            });
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                        );
+                      });
+                },
+              ),
             ),
+          ),
+        ],
+      ),
     );
   }
 }

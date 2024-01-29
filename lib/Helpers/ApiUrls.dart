@@ -1,6 +1,6 @@
 class ApiUrlConstants {
-  static String baseUrl = 'http://192.168.29.246:8083/api/';
-  // static String baseUrl = 'http://mobile.kingresearch.co.in/api/';
+  //static String baseUrl = 'http://192.168.29.246:8083/api/';
+  static String baseUrl = 'http://mobile.kingresearch.co.in/api/';
   static String login = baseUrl + "Account/login";
   static String getProducts = baseUrl + 'Product/GetProducts/';
   static String getProductById = baseUrl + 'Product/GetProductById';
@@ -28,6 +28,7 @@ class SessionConstants {
   static String Token = "KingUserToken";
   static String UserKey = "KingUserId";
   static String UserProfileImage = "KingUserProfileImage";
+  static String OneTimePassword = "OneTimePassword";
   static String UserName = "KingUserName";
 }
 // class SessionConstants {

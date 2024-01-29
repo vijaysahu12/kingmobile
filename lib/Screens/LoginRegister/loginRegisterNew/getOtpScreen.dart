@@ -1,16 +1,25 @@
 // import 'dart:convert';
 
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:kraapp/Helpers/ApiUrls.dart';
+import 'package:kraapp/Models/Response/OtpVerficationResponse.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreen.dart';
+import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreencopy.dart';
+import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/userDataDialog.dart';
+import 'package:kraapp/Screens/all_screens.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import '../../../Helpers/sharedPref.dart';
 import '../../Constants/app_color.dart';
+import 'package:http/http.dart' as http;
 
 class GetMobileOtp extends StatefulWidget {
   const GetMobileOtp({super.key});
@@ -20,6 +29,9 @@ class GetMobileOtp extends StatefulWidget {
 }
 
 class _GetMobileOtp extends State<GetMobileOtp> {
+  String verificationId = '';
+  StateSetter? _setState;
+
   Country selectedCountry = Country(
       phoneCode: "91",
       countryCode: "IN",
@@ -33,25 +45,27 @@ class _GetMobileOtp extends State<GetMobileOtp> {
       e164Key: "");
 
   TextEditingController phoneNumberController = TextEditingController();
-
-  TextEditingController countryCodeController = TextEditingController();
+  // TextEditingController countryCodeController = TextEditingController();
   // HttpRequestHelper _httpHelper = HttpRequestHelper();
   SharedPref _sharedPref = SharedPref();
 
   Future<void> signInWithMobile(BuildContext context) async {
     _sharedPref.save("UserProfileMobile", phoneNumberController.text);
-    String? imei = await getImei();
-    String? deviceType = await getDeviceType();
-    if (imei != null) {
-      print('IMEI: $imei');
-    } else {
-      print('Failed to get IMEI');
-    }
-    if (deviceType != null) {
-      await signInWithOtpOld(selectedCountry.phoneCode, deviceType);
-    } else {
-      print('Failed to get device type');
-    }
+    await signInWithNewOtpAuthentication(
+        phoneNumberController.text, selectedCountry.phoneCode);
+    // String? imei = await getImei();
+    // String? deviceType = await getDeviceType();
+    // if (imei != null) {
+    //   print('IMEI: $imei');
+    // } else {
+    //   print('Failed to get IMEI');
+    // }
+    // if (deviceType != null) {
+    //   // await signInWithOtpOld(selectedCountry.phoneCode, deviceType);
+
+    // } else {
+    //   print('Failed to get device type');
+    // }
   }
 
   Future<String?> getImei() async {
@@ -71,7 +85,6 @@ class _GetMobileOtp extends State<GetMobileOtp> {
     return null;
   }
 
-  String verificationId = '';
   signInWithOtpOld(
     String countryPhoneCode,
     String deviceType,
@@ -116,6 +129,103 @@ class _GetMobileOtp extends State<GetMobileOtp> {
         print(' $verificationId');
       },
     );
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    // invoke dialog setState to refresh dialog content when need
+    _setState?.call(fn);
+    super.setState(fn);
+  }
+
+  signInWithNewOtpAuthentication(
+      String mobileNumber, String countryCode) async {
+    final apiUrl = ApiUrlConstants.otpLogin +
+        '?mobileNumber=${mobileNumber}&countryCode=${countryCode}';
+
+    print(apiUrl);
+
+    final response = await http.get(Uri.parse(apiUrl));
+    debugger();
+    if (response.statusCode == 200) {
+      print(response);
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      final OtpVerificationResponse otpVerificationResponse =
+          OtpVerificationResponse.fromJson(responseBody);
+
+      _sharedPref.save(
+          SessionConstants.UserKey, otpVerificationResponse.data.publicKey);
+      _sharedPref.save(
+          SessionConstants.Token, otpVerificationResponse.data.token);
+      _sharedPref.save(SessionConstants.UserProfileImage,
+          otpVerificationResponse.data.profileImage);
+      _sharedPref.save(SessionConstants.OneTimePassword,
+          otpVerificationResponse.data.OneTimePassword);
+
+      if (responseBody['statusCode'] == 200) {
+        print(responseBody);
+        debugger();
+        if (responseBody['data'][0]['isExistingUser'] == true) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => otp_verificationScreencopy(
+                  otpVerificationResponse.data.OneTimePassword),
+            ),
+            (route) => false,
+          );
+        } else {
+          //ToDo:POP UP
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return StatefulBuilder(builder: (context, setState) {
+                _setState = setState;
+                return Center(
+                    child: UserDataDialog(
+                  onRegister: (
+                    _fullName,
+                    _email,
+                    _mobile,
+                    _city,
+                    _gender,
+                  ) async {
+                    String? fullName = _fullName;
+                    String? email = _email;
+                    String? mobile = _mobile;
+                    String? city = _city;
+                    _sharedPref.save("KingUserProfileName", fullName);
+                    _sharedPref.save("KingUserProfileEmail", email);
+                    _sharedPref.save("KingUserProfileMobile", mobile);
+                    _sharedPref.save("KingUserProfileCity", city);
+                    _sharedPref.save("KingUserProfileGender", _gender);
+
+                    print(fullName);
+                    print(email);
+                    print(mobile);
+                    print(city);
+                    print(_gender);
+                    // configureFirebaseMessaging();
+
+                    Map<String, String> userData = {
+                      "fullName": fullName,
+                      "emailId": email,
+                      "mobile": mobile,
+                      "city": city,
+                      "gender": _gender,
+                      "dob": "08-08-20"
+                    };
+
+                    //postUserData(userData);
+                  },
+                  mobile: mobileNumber,
+                ));
+              });
+            },
+          );
+        }
+      }
+    }
   }
 
   Future<String?> getDeviceType() async {

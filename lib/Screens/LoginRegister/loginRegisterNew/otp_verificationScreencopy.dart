@@ -16,29 +16,16 @@ import 'package:http/http.dart' as http;
 
 import '../../all_screens.dart';
 
-class OtpVerificationScreen extends StatefulWidget {
-  final String verificationId;
-  final int? resendToken;
-  final String mobileNumber;
-  final String deviceType;
-  final String countryCode;
-  final String? fcmToken;
+class otp_verificationScreencopy extends StatefulWidget {
+  final String oneTimePassword;
 
-  const OtpVerificationScreen({
-    required this.verificationId,
-    required this.resendToken,
-    required this.mobileNumber,
-    required this.deviceType,
-    required this.countryCode,
-    required this.fcmToken,
-    super.key,
-  });
+  otp_verificationScreencopy(this.oneTimePassword);
 
   @override
-  State<OtpVerificationScreen> createState() => _OtpVerificationScreen();
+  State<otp_verificationScreencopy> createState() => _OtpVerificationScreen();
 }
 
-class _OtpVerificationScreen extends State<OtpVerificationScreen> {
+class _OtpVerificationScreen extends State<otp_verificationScreencopy> {
   List<TextEditingController> _otpControllers =
       List.generate(6, (index) => TextEditingController());
   // TextEditingController _smsController = TextEditingController();
@@ -164,89 +151,16 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   void signInWithOtp(BuildContext context, String smsCode) async {
     print("signInWithOtp function called");
     try {
-      // PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      //     verificationId: widget.verificationId, smsCode: smsCode);
-      // UserCredential userCredential =
-      //     await FirebaseAuth.instance.signInWithCredential(credential);
-      // print(userCredential);
-      // print('OTP verification successful!');
-      String deviceType = widget.deviceType;
-      String? firebaseToken = widget.fcmToken;
-      String countryCode = widget.countryCode;
-      final apiUrl = ApiUrlConstants.otpLoginVerfication +
-          '?mobileNumber=${widget.mobileNumber}&FirebaseFcmToken=$firebaseToken&deviceType=$deviceType&countryCode=$countryCode';
-      print(apiUrl);
-      final response = await http.post(Uri.parse(apiUrl));
-      if (response.statusCode == 200) {
-        print(response);
-        final Map<String, dynamic> responseBody = json.decode(response.body);
-        final OtpVerificationResponse vv =
-            OtpVerificationResponse.fromJson(responseBody);
-
-        _sharedPref.save(SessionConstants.UserKey, vv.data.publicKey);
-        _sharedPref.save(SessionConstants.Token, vv.data.token);
-        _sharedPref.save(
-            SessionConstants.UserProfileImage, vv.data.profileImage);
-
-        int statusCode = responseBody['statusCode'];
-
-        if (statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return StatefulBuilder(builder: (context, setState) {
-                _setState = setState;
-                return Center(
-                    child: UserDataDialog(
-                  onRegister: (
-                    _fullName,
-                    _email,
-                    _mobile,
-                    _city,
-                    _gender,
-                  ) async {
-                    String? fullName = _fullName;
-                    String? email = _email;
-                    String? mobile = _mobile;
-                    String? city = _city;
-                    _sharedPref.save("KingUserProfileName", fullName);
-                    _sharedPref.save("KingUserProfileEmail", email);
-                    _sharedPref.save("KingUserProfileMobile", mobile);
-                    _sharedPref.save("KingUserProfileCity", city);
-                    _sharedPref.save("KingUserProfileGender", _gender);
-
-                    print(fullName);
-                    print(email);
-                    print(mobile);
-                    print(city);
-                    print(_gender);
-                    // configureFirebaseMessaging();
-
-                    Map<String, String> userData = {
-                      "fullName": fullName,
-                      "emailId": email,
-                      "mobile": mobile,
-                      "city": city,
-                      "gender": _gender,
-                      "dob": "08-08-20"
-                    };
-
-                    postUserData(userData);
-                  },
-                  mobile: widget.mobileNumber,
-                ));
-              });
-            },
-          );
-        } else {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomeScreen(),
-            ),
-            (route) => false,
-          );
-        }
+      if (smsCode == widget.oneTimePassword) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ),
+          (route) => false,
+        );
+      } else {
+        // ToDO : Password Failed message with try again....
       }
     } catch (e) {
       if (e is FirebaseAuthException && e.code == 'invalid-verification-code') {

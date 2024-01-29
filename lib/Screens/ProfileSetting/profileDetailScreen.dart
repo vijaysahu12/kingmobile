@@ -143,11 +143,16 @@ class _PersonalInformation extends State<PersonalInformation> {
                               snapshot.data != null) {
                             List<UserDetailsResponse>? userDetails =
                                 snapshot.data;
-                            String ImageUrl = userDetails![0].profileImage;
+                            String? ImageUrl = userDetails![0].profileImage;
 
                             return CircleAvatar(
                               radius: 25,
-                              backgroundImage: NetworkImage(ImageUrl),
+                              backgroundImage:
+                                  (ImageUrl != null && ImageUrl.isNotEmpty)
+                                      ? NetworkImage(ImageUrl)
+                                      : NetworkImage(
+                                          'https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg',
+                                        ),
                               backgroundColor: AppColors.lightShadow,
                             );
                           } else {

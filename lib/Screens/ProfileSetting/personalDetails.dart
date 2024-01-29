@@ -326,20 +326,23 @@ class _PersonalDetails extends State<PersonalDetails> {
                                 snapshot.data != null) {
                               List<UserDetailsResponse>? userDetails =
                                   snapshot.data;
-                              String ProfileImageUrl =
-                                  userDetails![0].profileImage;
+                              String? imgurl = userDetails![0].profileImage;
 
                               return CircleAvatar(
                                 radius: 25,
-                                backgroundImage: NetworkImage(ProfileImageUrl),
+                                backgroundImage:
+                                    (imgurl != null && imgurl.isNotEmpty)
+                                        ? NetworkImage(imgurl)
+                                        : NetworkImage(
+                                            'https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg',
+                                          ),
                                 backgroundColor: AppColors.lightShadow,
                               );
                             } else {
                               return CircleAvatar(
                                 radius: 25,
-                                backgroundImage: AssetImage(
-                                  'images/person_logo.png',
-                                ),
+                                backgroundImage:
+                                    AssetImage('images/person_logo.png'),
                                 backgroundColor: AppColors.light,
                               );
                             }
@@ -360,7 +363,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                           fontFamily: 'poppins',
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 5),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -407,7 +410,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -452,7 +455,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                         ],
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 8,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -503,7 +506,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                                 ),
                               ),
                               SizedBox(
-                                width: 10,
+                                width: 8,
                               ),
                               Expanded(
                                 child: Container(
@@ -542,7 +545,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 8),
                       Text(
                         'Contact Details',
                         style: TextStyle(
@@ -602,7 +605,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              SizedBox(width: 8),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -652,7 +655,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -694,7 +697,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                         ],
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 15,
                       ),
                       Container(
                         child: Align(
@@ -734,7 +737,7 @@ class _PersonalDetails extends State<PersonalDetails> {
                                 ),
                                 backgroundColor: AppColors.primaryColor,
                                 padding: EdgeInsets.symmetric(
-                                  vertical: 20,
+                                  vertical: 18,
                                   horizontal: 100,
                                 ),
                                 elevation: 20,

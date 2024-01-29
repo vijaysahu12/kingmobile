@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:kraapp/Helpers/ApiUrls.dart';
 import 'package:kraapp/Screens/Common/OopsScreen.dart';
+// import 'package:kraapp/Screens/Common/OopsScreen.dart';
 
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/ProductResponseModel.dart';
@@ -187,7 +188,7 @@ class _MyBucketScreen extends State<MyBucketScreen> {
           future: myBucketList,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return MyBucketScreenEmpty();
+              return OopsScreen();
             } else if (!snapshot.hasData || snapshot.data == null) {
               return MyBucketScreenEmpty();
             } else {

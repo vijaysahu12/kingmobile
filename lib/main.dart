@@ -23,6 +23,8 @@ void main() async {
   print(DateTime.now());
   WidgetsFlutterBinding.ensureInitialized();
 
+  runApp(const MyApp());
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate();
   print(DateTime.now());
@@ -30,8 +32,51 @@ void main() async {
   print(DateTime.now());
   await initializeNotifications();
 
-  runApp(const MyApp());
   print(DateTime.now());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isLoggedIn = false;
+  SharedPref _sharedPref = SharedPref();
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
+  void checkLoginStatus() async {
+    String token = await _sharedPref.read("KingUserToken");
+
+    setState(() {
+      isLoggedIn = token.isNotEmpty;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScrollConfiguration(
+      behavior: ScrollBehavior(),
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
+          // body: HomeScreen(),
+        ),
+        routes: {
+          '/notifications': (context) => AllNotifications(),
+        },
+      ),
+    );
+  }
 }
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -250,51 +295,6 @@ void showNotificationFromPusher(String? title, String? body) async {
     platformChannelSpecifics,
   );
 }
-
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  bool isLoggedIn = false;
-  SharedPref _sharedPref = SharedPref();
-
-  @override
-  void initState() {
-    super.initState();
-    checkLoginStatus();
-  }
-
-  void checkLoginStatus() async {
-    String token = await _sharedPref.read("KingUserToken");
-
-    setState(() {
-      isLoggedIn = token.isNotEmpty;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
-      behavior: ScrollBehavior(),
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: isLoggedIn ? HomeScreen() : GetMobileOtp(),
-          // body: HomeScreen(),
-        ),
-        routes: {
-          '/notifications': (context) => AllNotifications(),
-        },
-      ),
-    );
-  }
-}
-
 
 
 

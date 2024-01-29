@@ -142,12 +142,13 @@ class AppBarBuilder {
                         } else if (snapshot.hasData && snapshot.data != null) {
                           List<UserDetailsResponse>? userDetails =
                               snapshot.data;
-                          String imgurl = userDetails![0].profileImage;
+                          String? imgurl = userDetails![0].profileImage;
 
                           return CircleAvatar(
                             radius: 25,
                             // ignore: unnecessary_null_comparison
-                            backgroundImage: imgurl != null
+                            backgroundImage: (imgurl != null &&
+                                    imgurl.isNotEmpty)
                                 ? NetworkImage(imgurl)
                                 : NetworkImage(
                                     'https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg'),
