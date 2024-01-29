@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kraapp/Screens/Constants/app_color.dart';
+
+import '../Constants/app_color.dart';
 
 class TalkToMeInstantly extends StatefulWidget {
   const TalkToMeInstantly({super.key});

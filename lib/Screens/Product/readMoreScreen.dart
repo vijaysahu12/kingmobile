@@ -18,7 +18,7 @@ import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 // import '../Common/shimmerScreen.dart';
 // import '../../Models/Response/ManagePurchaseResponse.dart';
-import '../Common/useSharedPref.dart';
+import '../Common/usingJwt_Headers.dart';
 import 'youtube.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -36,7 +36,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   var isPaid = false;
 
   SharedPref _sharedPref = SharedPref();
-  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingJwtToken usingJwtToken = UsingJwtToken();
   UsingHeaders usingHeaders = UsingHeaders();
   // int _currentIndex = 0;
   bool isCommunitySelected = true;
@@ -46,7 +46,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Future<void> Isliked(String productId, bool isHeart) async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
 
@@ -76,7 +76,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       PaymentSuccessResponse responseOfpayment, String paymentAmount) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiURL = '${ApiUrlConstants.ManagePurchaseOrder}';
@@ -569,12 +569,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
-                                child: Image.asset(
-                                  'images/cr_1.jpg',
-                                  height: 130,
-                                  width: 300,
-                                  fit: BoxFit.cover,
-                                ),
+                                child: getImage(currentProduct.imageUrl),
                               ),
                             )
                           ],
@@ -751,7 +746,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             Column(
                               children: [
                                 Image.network(
-                                  "http://192.168.29.246:8083/api/Product/GetImage?imageName=cloud.jpg",
+                                  "http://mobile.kingresearch.co.in/api/Product/GetImage?imageName=cloud.jpg",
                                   height: 50,
                                   width: 50,
                                 )
@@ -1078,6 +1073,30 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ));
         },
       ),
+    );
+  }
+}
+
+Widget getImage(String imageUrl) {
+  if (imageUrl != null && imageUrl.isNotEmpty) {
+    return Image.network(
+      'http://mobile.kingresearch.co.in/api/Product/GetImage?imageName=' +
+          imageUrl,
+      width: 300,
+      height: 150,
+      errorBuilder: (context, error, stackTrace) {
+        return Image.network(
+          'http://mobile.kingresearch.co.in/api/Product/GetImage?imageName=product.DEFAULT.jpg',
+          width: 300,
+          height: 150,
+        );
+      },
+    );
+  } else {
+    return Image.asset(
+      'images/cr_1.jpg',
+      width: 300,
+      height: 150,
     );
   }
 }

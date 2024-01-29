@@ -1,7 +1,7 @@
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 
-class UsingSharedPref {
+class UsingJwtToken {
   Future<String> getJwtToken() async {
     SharedPref _sharedPref = SharedPref();
     final String jsonWebToken = await _sharedPref.read(SessionConstants.Token);

@@ -14,7 +14,6 @@ import 'package:kraapp/Models/Response/OtpVerficationResponse.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreen.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/otp_verificationScreencopy.dart';
 import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/userDataDialog.dart';
-import 'package:kraapp/Screens/all_screens.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import '../../../Helpers/sharedPref.dart';
@@ -146,7 +145,6 @@ class _GetMobileOtp extends State<GetMobileOtp> {
     print(apiUrl);
 
     final response = await http.get(Uri.parse(apiUrl));
-    debugger();
     if (response.statusCode == 200) {
       print(response);
       final Map<String, dynamic> responseBody = json.decode(response.body);
@@ -164,7 +162,6 @@ class _GetMobileOtp extends State<GetMobileOtp> {
 
       if (responseBody['statusCode'] == 200) {
         print(responseBody);
-        debugger();
         if (responseBody['data'][0]['isExistingUser'] == true) {
           Navigator.pushAndRemoveUntil(
             context,

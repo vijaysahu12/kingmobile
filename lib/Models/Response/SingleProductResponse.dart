@@ -30,7 +30,7 @@ class Product {
   final bool isInMyBucket;
   final bool isInValidity;
   final double price;
-  // final double overAllRating;
+  final String imageUrl;
   final String userRating;
   late bool isHeart;
   final List<ExtraBenefit> extraBenefits;
@@ -46,7 +46,7 @@ class Product {
     required this.subscriptionData,
     required this.isHeart,
     required this.price,
-    // required this.overAllRating,
+    required this.imageUrl,
     required this.userRating,
     required this.extraBenefits,
     required this.content,
@@ -80,6 +80,7 @@ class Product {
         isInMyBucket: json['isInMyBucket'] ?? false,
         subscriptionData: json['subscriptionData'] ?? '',
         isHeart: json['isHeart'],
+        imageUrl: json['imageUrl'] ?? '',
         extraBenefits: parseExtraBenefits(
           json['extraBenefits'] != null
               ? jsonDecode(json['extraBenefits'])

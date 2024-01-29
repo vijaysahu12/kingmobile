@@ -10,7 +10,7 @@ import 'package:kraapp/Screens/Common/refreshtwo.dart';
 
 import '../../../Helpers/sharedPref.dart';
 import '../../../Models/Response/OtpVerficationResponse.dart';
-import '../../Common/useSharedPref.dart';
+import '../../Common/usingJwt_Headers.dart';
 import '../../Constants/app_color.dart';
 import 'package:http/http.dart' as http;
 
@@ -55,7 +55,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   StateSetter? _setState;
 
   SharedPref _sharedPref = SharedPref();
-  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingJwtToken usingJwtToken = UsingJwtToken();
   UsingHeaders usingHeaders = UsingHeaders();
 
   void _handleAutoFilledOtp(String otp) {
@@ -125,7 +125,7 @@ class _OtpVerificationScreen extends State<OtpVerificationScreen> {
   }
 
   Future<void> postUserData(userData) async {
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.ManageUserDetails}';

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +13,7 @@ import '../../Models/Response/SingleProductResponse.dart';
 import '../Common/OopsScreen.dart';
 import '../Common/refreshtwo.dart';
 import '../Common/shimmerScreen.dart';
-import '../Common/useSharedPref.dart';
+import '../Common/usingJwt_Headers.dart';
 import '../Constants/app_color.dart';
 
 class TradingScreen extends StatefulWidget {
@@ -24,23 +26,23 @@ class TradingScreen extends StatefulWidget {
 class _TradingScreen extends State<TradingScreen> {
   late PageController _pageController;
   bool isCommunitySelected = true;
-  late List<bool> isFavoriteList = [];
+  // late List<bool> isFavoriteList = [];
   // late List<int> likeCountList = [];
-  late Future<List<ProductResponseModel>?> productsFuture = fetchDataThree();
+  late Future<List<ProductResponseModel>?> productsList = fetchDataThree();
   SharedPref _sharedPref = SharedPref();
-  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingJwtToken usingJwtToken = UsingJwtToken();
   UsingHeaders usingHeaders = UsingHeaders();
 
   @override
   void initState() {
     super.initState();
-    productsFuture = fetchDataThree();
+    productsList = fetchDataThree();
     _pageController = PageController(initialPage: 0);
   }
 
   void updateParent() {
     setState(() {
-      productsFuture = fetchDataThree();
+      productsList = fetchDataThree();
     });
   }
 
@@ -114,7 +116,7 @@ class _TradingScreen extends State<TradingScreen> {
   Future<List<ProductResponseModel>?> fetchDataThree() async {
     String UserKey = await _sharedPref.read(SessionConstants.UserKey);
     String MobileKey = UserKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
@@ -127,7 +129,7 @@ class _TradingScreen extends State<TradingScreen> {
         list = parsedList
             .map((val) => ProductResponseModel.fromJson(val))
             .toList();
-        isFavoriteList = List.generate(list.length, (index) => false);
+        // isFavoriteList = List.generate( parsedData['data'].length, (index) => false);
         // likeCountList = List.generate(list.length, (index) => 0);
         print(list);
       }
@@ -140,7 +142,7 @@ class _TradingScreen extends State<TradingScreen> {
   Future<SingleProductResponse?> fetchProductById(String productId) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     print(MobileKey);
@@ -159,7 +161,7 @@ class _TradingScreen extends State<TradingScreen> {
   Future<void> Isliked(String productId, bool userHasHeart) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.LikeUnlikeProduct}';
@@ -299,7 +301,7 @@ class _TradingScreen extends State<TradingScreen> {
                   },
                   children: [
                     FutureBuilder<List<ProductResponseModel>?>(
-                      future: productsFuture,
+                      future: productsList,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -311,7 +313,7 @@ class _TradingScreen extends State<TradingScreen> {
                           return RefreshHelper.buildRefreshIndicator(
                             onRefresh: () async {
                               setState(() {
-                                productsFuture = fetchDataThree();
+                                productsList = fetchDataThree();
                               });
                             },
                             child: ListView.builder(
@@ -347,7 +349,7 @@ class _TradingScreen extends State<TradingScreen> {
                       },
                     ),
                     FutureBuilder<List<ProductResponseModel>?>(
-                      future: productsFuture,
+                      future: productsList,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -362,7 +364,7 @@ class _TradingScreen extends State<TradingScreen> {
                             child: RefreshHelper.buildRefreshIndicator(
                               onRefresh: () async {
                                 setState(() {
-                                  productsFuture = fetchDataThree();
+                                  productsList = fetchDataThree();
                                 });
                               },
                               child: ListView.builder(
@@ -426,16 +428,8 @@ class _TradingScreen extends State<TradingScreen> {
                                                         color: AppColors.grey,
                                                         width: 0.2),
                                                   ),
-                                                  child: Image.asset(
-                                                    // data[index].image != null &&
-                                                    //         data[index].image.isNotEmpty
-                                                    //     ? data[index]['image']
-                                                    //     :
-                                                    //
-                                                    'images/cr_1.jpg',
-                                                    height: 100,
-                                                    width: 100,
-                                                  ),
+                                                  child: getImage(
+                                                      data[index].imageUrl),
                                                 ),
                                                 SizedBox(width: 10),
                                                 Expanded(
@@ -658,6 +652,30 @@ class _TradingScreen extends State<TradingScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+Widget getImage(String imageUrl) {
+  if (imageUrl != null && imageUrl.isNotEmpty) {
+    return Image.network(
+      'http://mobile.kingresearch.co.in/api/Product/GetImage?imageName=' +
+          imageUrl,
+      width: 100,
+      height: 100,
+      errorBuilder: (context, error, stackTrace) {
+        return Image.network(
+          'http://mobile.kingresearch.co.in/api/Product/GetImage?imageName=product.DEFAULT.jpg',
+          width: 100,
+          height: 100,
+        );
+      },
+    );
+  } else {
+    return Image.asset(
+      'images/cr_1.jpg',
+      width: 100,
+      height: 100,
     );
   }
 }

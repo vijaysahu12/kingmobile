@@ -13,7 +13,7 @@ import '../../Helpers/httpRequest.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/UserDetailsResponse.dart';
 import '../Common/refreshtwo.dart';
-import '../Common/useSharedPref.dart';
+import '../Common/usingJwt_Headers.dart';
 import '../Constants/app_color.dart';
 import 'package:http/http.dart' as http;
 
@@ -36,7 +36,7 @@ class _PersonalDetails extends State<PersonalDetails> {
   String? selectedGender;
   File? _image;
   DateTime selectedDate = DateTime.now();
-  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingJwtToken usingJwtToken = UsingJwtToken();
   UsingHeaders usingHeaders = UsingHeaders();
 
 // handleRadioValueChange(String? value) {
@@ -133,8 +133,8 @@ class _PersonalDetails extends State<PersonalDetails> {
     try {
       String userKey = await _sharedPref.read(SessionConstants.UserKey);
       String mobileKey = userKey.replaceAll('"', '');
-      UsingSharedPref usingSharedPref = UsingSharedPref();
-      final jwtToken = await usingSharedPref.getJwtToken();
+      UsingJwtToken usingJwtToken = UsingJwtToken();
+      final jwtToken = await usingJwtToken.getJwtToken();
       Map<String, String> headers =
           usingHeaders.createHeaders(jwtToken: jwtToken);
       final String apiUrl =
@@ -223,7 +223,7 @@ class _PersonalDetails extends State<PersonalDetails> {
   Future<void> updateUserData() async {
     String userKey = await _sharedPref.read(SessionConstants.UserKey);
     String mobileKey = userKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     final String apiUrl = '${ApiUrlConstants.ManageUserDetails}';
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);

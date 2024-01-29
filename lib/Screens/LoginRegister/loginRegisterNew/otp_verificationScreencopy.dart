@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/userDataDialog.dart';
+// import 'package:kraapp/Screens/LoginRegister/loginRegisterNew/userDataDialog.dart';
 // import 'package:permission_handler/permission_handler.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,8 +9,8 @@ import 'package:kraapp/Screens/Common/refreshtwo.dart';
 // import 'package:kraapp/Screens/all_screens.dart';
 
 import '../../../Helpers/sharedPref.dart';
-import '../../../Models/Response/OtpVerficationResponse.dart';
-import '../../Common/useSharedPref.dart';
+// import '../../../Models/Response/OtpVerficationResponse.dart';
+import '../../Common/usingJwt_Headers.dart';
 import '../../Constants/app_color.dart';
 import 'package:http/http.dart' as http;
 
@@ -42,7 +42,7 @@ class _OtpVerificationScreen extends State<otp_verificationScreencopy> {
   StateSetter? _setState;
 
   SharedPref _sharedPref = SharedPref();
-  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingJwtToken usingJwtToken = UsingJwtToken();
   UsingHeaders usingHeaders = UsingHeaders();
 
   void _handleAutoFilledOtp(String otp) {
@@ -112,7 +112,7 @@ class _OtpVerificationScreen extends State<otp_verificationScreencopy> {
   }
 
   Future<void> postUserData(userData) async {
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.ManageUserDetails}';

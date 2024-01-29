@@ -14,7 +14,7 @@ import 'package:pusher_beams/pusher_beams.dart';
 import 'Helpers/ApiUrls.dart';
 import 'Helpers/sharedPref.dart';
 import 'Screens/Common/firebase_options.dart';
-import 'Screens/Common/useSharedPref.dart';
+import 'Screens/Common/usingJwt_Headers.dart';
 import 'Screens/LoginRegister/loginRegisterNew/getOtpScreen.dart';
 import 'Screens/Notifications/allNotificationList.dart';
 import 'Screens/all_screens.dart';
@@ -28,7 +28,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate();
   print(DateTime.now());
-  await initializePusherBeams();
+  // await initializePusherBeams();
   print(DateTime.now());
   await initializeNotifications();
 
@@ -85,11 +85,11 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 SharedPref _sharedPref = SharedPref();
 UsingHeaders usingHeaders = UsingHeaders();
-UsingSharedPref usingSharedPref = UsingSharedPref();
+UsingJwtToken usingJwtToken = UsingJwtToken();
 
 Future<void> initializePusherBeams() async {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  await PusherBeams.instance.start('b16893bd-70f8-4868-ba42-32e53e665741');
+  await PusherBeams.instance.start(ApiUrlConstants.pusherBeamAuthCode);
 
   final List<String> latestSubscriptionList = await fetchSubscriptionTopics();
   final List<String?> currentSubscriptionList =
@@ -142,7 +142,7 @@ Future<List<String>> fetchSubscriptionTopics() async {
     final String? userKey = await _sharedPref.read(SessionConstants.UserKey);
     if (userKey != null) {
       final mobileUserKey = userKey.replaceAll('"', '');
-      final jwtToken = await usingSharedPref.getJwtToken();
+      final jwtToken = await usingJwtToken.getJwtToken();
 
       // ignore: unnecessary_null_comparison
       if (jwtToken != null) {

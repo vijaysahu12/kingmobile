@@ -17,7 +17,7 @@ import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/UserDetailsResponse.dart';
 import '../Common/app_bar.dart';
 import '../Common/refreshtwo.dart';
-import '../Common/useSharedPref.dart';
+import '../Common/usingJwt_Headers.dart';
 // import '../Common/refresh.dart';
 
 class PersonalInformation extends StatefulWidget {
@@ -43,8 +43,8 @@ class _PersonalInformation extends State<PersonalInformation> {
     try {
       String userKey = await _sharedPref.read(SessionConstants.UserKey);
       String mobileKey = userKey.replaceAll('"', '');
-      UsingSharedPref usingSharedPref = UsingSharedPref();
-      final jwtToken = await usingSharedPref.getJwtToken();
+      UsingJwtToken usingJwtToken = UsingJwtToken();
+      final jwtToken = await usingJwtToken.getJwtToken();
       Map<String, String> headers =
           usingHeaders.createHeaders(jwtToken: jwtToken);
       final String apiUrl =

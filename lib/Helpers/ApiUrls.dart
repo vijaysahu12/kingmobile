@@ -1,6 +1,10 @@
 class ApiUrlConstants {
   //static String baseUrl = 'http://192.168.29.246:8083/api/';
-  static String baseUrl = 'http://mobile.kingresearch.co.in/api/';
+  static String mainUrl = 'http://mobile.kingresearch.co.in/';
+  // static String mainUrl = 'http://192.168.29.246:8083/';
+
+  static String baseUrl = mainUrl + 'api/';
+  static String pusherBeamAuthCode = 'b16893bd-70f8-4868-ba42-32e53e665741';
   static String login = baseUrl + "Account/login";
   static String getProducts = baseUrl + 'Product/GetProducts/';
   static String getProductById = baseUrl + 'Product/GetProductById';

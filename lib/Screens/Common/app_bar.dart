@@ -1,7 +1,9 @@
+// import 'dart:developer';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:kraapp/Screens/Common/useSharedPref.dart';
+import 'package:kraapp/Screens/Common/usingJwt_Headers.dart';
 import '../../Helpers/ApiUrls.dart';
 import '../../Helpers/sharedPref.dart';
 import '../../Models/Response/UserDetailsResponse.dart';
@@ -16,8 +18,8 @@ UsingHeaders usingHeaders = UsingHeaders();
 Future<int?> NotificationList() async {
   final String userKey = await _sharedPref.read(SessionConstants.UserKey);
   String mobileKey = userKey.replaceAll('"', '');
-  UsingSharedPref usingSharedPref = UsingSharedPref();
-  final jwtToken = await usingSharedPref.getJwtToken();
+  UsingJwtToken usingJwtToken = UsingJwtToken();
+  final jwtToken = await usingJwtToken.getJwtToken();
   Map<String, String> headers = usingHeaders.createHeaders(jwtToken: jwtToken);
   final String apiUrl = '${ApiUrlConstants.GetNotifications}';
   final Map<String, dynamic> requestBody = {
@@ -54,8 +56,8 @@ Future<List<UserDetailsResponse>?> GetUserDetails() async {
   try {
     String userKey = await _sharedPref.read(SessionConstants.UserKey);
     String mobileKey = userKey.replaceAll('"', '');
-    UsingSharedPref usingSharedPref = UsingSharedPref();
-    final jwtToken = await usingSharedPref.getJwtToken();
+    UsingJwtToken usingJwtToken = UsingJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl =

@@ -10,7 +10,7 @@ import '../../Models/Response/getNotificationsResponse.dart';
 // import '../../notificationCountfunctions.dart';
 // import '../Common/NotificationEmpty.dart';
 import '../Common/NotificationEmpty.dart';
-import '../Common/useSharedPref.dart';
+import '../Common/usingJwt_Headers.dart';
 import '../Constants/app_color.dart';
 
 class AllNotifications extends StatefulWidget {
@@ -30,7 +30,7 @@ class _AllNotifications extends State<AllNotifications> {
   final scrollContoller = ScrollController();
   int selectedCategoryId = 0;
   SharedPref _sharedPref = SharedPref();
-  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingJwtToken usingJwtToken = UsingJwtToken();
   UsingHeaders usingHeaders = UsingHeaders();
   PageController pageController = PageController();
   int selectedCategoryIndex = 0;
@@ -42,7 +42,7 @@ class _AllNotifications extends State<AllNotifications> {
     if (!mounted) return;
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     String apiURL = "${ApiUrlConstants.GetNotifications}";
@@ -122,7 +122,7 @@ class _AllNotifications extends State<AllNotifications> {
   Future<List<Category>?> fetchCategories() async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     try {
@@ -162,7 +162,7 @@ class _AllNotifications extends State<AllNotifications> {
   Future<int?> unReadCountNotificationList() async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.GetNotifications}';
@@ -201,7 +201,7 @@ class _AllNotifications extends State<AllNotifications> {
   }
 
   Future<void> markNotificationAsRead(int id) async {
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     String apiUrl = '${ApiUrlConstants.MarkNotificationsIsRead}?id=${id}';
@@ -453,7 +453,8 @@ class _AllNotifications extends State<AllNotifications> {
                                         ),
                                       );
                                     }
-                                    return NotificationEmptyScreen();
+                                    return Center(
+                                        child: CircularProgressIndicator());
                                   },
                                 ),
                         );

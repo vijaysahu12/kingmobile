@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:kraapp/Helpers/ApiUrls.dart';
 import 'package:kraapp/Models/Response/HomeResponse.dart';
 import 'package:kraapp/Screens/Common/shimmerScreen.dart';
+import 'package:pusher_beams/pusher_beams.dart';
+import 'package:http/http.dart' as http;
 
 import '../../Helpers/sharedPref.dart';
 import '../Common/refreshtwo.dart';
-import '../Common/useSharedPref.dart';
+import '../Common/usingJwt_Headers.dart';
 import '../Constants/app_color.dart';
 
 SharedPref _sharedPref = SharedPref();
@@ -30,12 +36,79 @@ class _Personal extends State<Personal> {
   @override
   void initState() {
     print("Home Screen");
+    initializePusherBeams();
     super.initState();
+    print(DateTime.now());
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> initializePusherBeams() async {
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    await PusherBeams.instance.start(ApiUrlConstants.pusherBeamAuthCode);
+
+    final List<String> latestSubscriptionList = await fetchSubscriptionTopics();
+
+    final List<String?> pusherCurrentSubscriptionList =
+        await PusherBeams.instance.getDeviceInterests();
+
+    //ToDo: RaviKumar : how to get subscription list of Firebase.
+    // final List<String?> fireBaseCurrentSubscriptionList =
+    //     await _firebaseMessaging.
+
+    for (final topic in latestSubscriptionList) {
+      // await PusherBeams.instance.addDeviceInterest(topic);
+      await PusherBeams.instance.addDeviceInterest(topic);
+      await _firebaseMessaging.subscribeToTopic(topic);
+    }
+
+    for (final item in pusherCurrentSubscriptionList) {
+      if (!latestSubscriptionList.contains(item)) {
+        await PusherBeams.instance.removeDeviceInterest(item.toString());
+        await _firebaseMessaging.unsubscribeFromTopic(item.toString());
+      }
+    }
+    print(pusherCurrentSubscriptionList);
+  }
+
+  Future<List<String>> fetchSubscriptionTopics() async {
+    UsingJwtToken usingJwtToken = UsingJwtToken();
+
+    try {
+      final String? userKey = await _sharedPref.read(SessionConstants.UserKey);
+      if (userKey != null) {
+        final mobileUserKey = userKey.replaceAll('"', '');
+        final jwtToken = await usingJwtToken.getJwtToken();
+
+        // ignore: unnecessary_null_comparison
+        if (jwtToken != null) {
+          Map<String, String> headers =
+              usingHeaders.createHeaders(jwtToken: jwtToken);
+          final apiUrl =
+              '${ApiUrlConstants.GetSubscriptionTopics}?userKey=$mobileUserKey';
+          final response = await http.get(Uri.parse(apiUrl), headers: headers);
+
+          if (response.statusCode == 200) {
+            final getSubscriptionData = jsonDecode(response.body);
+            final List<dynamic> topicList =
+                json.decode(getSubscriptionData['data']);
+            return topicList.map((topic) => topic['code'].toString()).toList();
+          } else {
+            throw Exception("Failed to fetch Subscription topics");
+          }
+        } else {
+          throw Exception("JWT Token is null");
+        }
+      } else {
+        throw Exception("User key is null");
+      }
+    } catch (e) {
+      print('Error fetching subscription topics: $e');
+      return []; // Return an empty list or handle the error accordingly
+    }
   }
 
   Future<void> refreshData() async {

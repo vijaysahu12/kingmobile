@@ -13,7 +13,7 @@ import '../../Models/Response/SingleProductResponse.dart';
 import '../../Models/Response/myBucketListResponse.dart';
 import '../Common/myBucketEmpty.dart';
 import '../Common/refreshtwo.dart';
-import '../Common/useSharedPref.dart';
+import '../Common/usingJwt_Headers.dart';
 import '../Constants/app_color.dart';
 import '../Product/readMoreScreen.dart';
 
@@ -26,7 +26,7 @@ class MyBucketScreen extends StatefulWidget {
 class _MyBucketScreen extends State<MyBucketScreen> {
   SharedPref _sharedPref = SharedPref();
   late Future<List<myBucketListResponse>?> myBucketList = myBucketdata();
-  UsingSharedPref usingSharedPref = UsingSharedPref();
+  UsingJwtToken usingJwtToken = UsingJwtToken();
   UsingHeaders usingHeaders = UsingHeaders();
   late List<bool> isFavoriteList = [];
 
@@ -50,7 +50,7 @@ class _MyBucketScreen extends State<MyBucketScreen> {
   Future<SingleProductResponse?> fetchProductById(int productId) async {
     String UserKey = await _sharedPref.read("KingUserId");
     String MobileKey = UserKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     print(MobileKey);
@@ -69,7 +69,7 @@ class _MyBucketScreen extends State<MyBucketScreen> {
   Future<List<ProductResponseModel>?> fetchDataThree() async {
     String UserKey = await _sharedPref.read(SessionConstants.UserKey);
     String MobileKey = UserKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
     final String apiUrl = '${ApiUrlConstants.getProducts}${MobileKey}';
@@ -96,7 +96,7 @@ class _MyBucketScreen extends State<MyBucketScreen> {
     try {
       final String userKey = await _sharedPref.read(SessionConstants.UserKey);
       final mobileUserKey = userKey.replaceAll('"', '');
-      final jwtToken = await usingSharedPref.getJwtToken();
+      final jwtToken = await usingJwtToken.getJwtToken();
       Map<String, String> headers =
           usingHeaders.createHeaders(jwtToken: jwtToken);
       final String apiUrl =
@@ -125,7 +125,7 @@ class _MyBucketScreen extends State<MyBucketScreen> {
   Future<void> Isliked(String productId, bool isHeart) async {
     String userKey = await _sharedPref.read("KingUserId");
     String mobileKey = userKey.replaceAll('"', '');
-    final jwtToken = await usingSharedPref.getJwtToken();
+    final jwtToken = await usingJwtToken.getJwtToken();
     Map<String, String> headers =
         usingHeaders.createHeaders(jwtToken: jwtToken);
 
